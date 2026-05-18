@@ -1,0 +1,27 @@
+<header>
+  <p-menubar [model]="menuItems">
+    <ng-template #start>
+      <img
+        src="/images/logos/coyote-transparency-white-v3.svg"
+        alt="Hipótesis v2.0"
+        style="max-width: 100px;">
+      <span class="text-xl font-normal text-primary">
+        Hipótesis 2.0
+      </span>
+      <span class="text-xl font-semibold">
+        &nbsp;
+      </span>
+    </ng-template>
+
+    <ng-template #end>
+      <div>
+        <button type="button" pButton title="Create chapter" class="p-button-outlined p-button-info">
+          <em class="pi pi-language"></em>
+        </button>
+        <button type="button" pButton title="Print list of chapters" class="p-button-outlined p-button-success">
+          <em class="pi pi-print"></em>
+        </button>
+      </div>
+    </ng-template>
+  </p-menubar>
+</header>

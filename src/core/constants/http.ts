@@ -1,0 +1,10 @@
+export const ALL = '*/*',
+APPLICATION_JSON = 'application/json',
+ARRAY_BUFFER = 'arraybuffer',
+BASIC = 'Basic',
+BEARER = 'Bearer',
+CALLBACK = 'callback',
+EVENTS = 'events',
+HEADER_ACCEPT = 'Accept',
+HEADER_CONTENT_TYPE = 'Content-Type',
+HEADER_AUTHORIZATION = 'Authorization';
