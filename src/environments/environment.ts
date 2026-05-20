@@ -5,12 +5,8 @@ environment = {
   api: {
     host: SERVER,
     basePath: 'hipotesis-api',
-    parameters: {
-      where: '&where=',
-      orderBy: '&orderBy='
-    },
     resources: {
-      getTable: 'repository/model/getTable.php?table=',
+      getTable: 'repository/model/getTable.php',
       postExecuteSQLQuery: 'repository/model/postExecuteSQLQuery.php',
       postUploadFile: 'repository/model/postUploadFile.php'
     }

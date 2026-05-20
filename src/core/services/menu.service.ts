@@ -4,7 +4,7 @@ import { MenuItem, PrimeIcons } from 'primeng/api';
 @Injectable({
   providedIn: 'root',
 })
-export class Menu {
+export class MenuService {
   public menuItems: MenuItem[] = [
     {
       icon: PrimeIcons.WAVE_PULSE,

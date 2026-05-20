@@ -1,0 +1,44 @@
+name: CI/CD
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup
+        uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+          cache: "npm"
+
+      - name: Angular installation
+        run: npm install --global @angular/cli@21.2.11
+
+      - name: Dependencies installation
+        run: npm install
+
+      - name: Build
+        run: ng build
+
+      - name: Web Deploy
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{secrets.FTP_SERVER_PROD}}
+          username: ${{secrets.FTP_USER_PROD}}
+          password: ${{secrets.FTP_PASSWORD_PROD}}
+          local-dir: ./dist/hipotesis-v2/browser/
+          server-dir: public_html/
+          dangerous-clean-slate: false

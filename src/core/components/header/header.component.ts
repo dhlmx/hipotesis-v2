@@ -2,13 +2,13 @@ import { Component } from '@angular/core';
 import { MenuItem } from 'primeng/api';
 import { MenubarModule } from 'primeng/menubar';
 import { ButtonModule } from 'primeng/button';
-import { Menu } from '../../services/menu';
+import { MenuService } from '../../services/menu.service';
 
 @Component({
   selector: 'app-header',
   standalone: true,
   imports: [ButtonModule, MenubarModule],
-  providers: [Menu],
+  providers: [MenuService],
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss']
 })
@@ -16,7 +16,7 @@ export class HeaderComponent {
 
   menuItems: MenuItem[] = [];
 
-  constructor(private readonly menu: Menu) {
-    this.menuItems = this.menu.menuItems;
+  constructor(private readonly menuService: MenuService) {
+    this.menuItems = this.menuService.menuItems;
   }
 }

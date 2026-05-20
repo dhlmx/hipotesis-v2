@@ -16,7 +16,7 @@ import { DatePicker } from "primeng/datepicker";
 import { DialogModule } from 'primeng/dialog';
 import { DividerModule } from 'primeng/divider';
 import { DynamicDialogModule } from 'primeng/dynamicdialog';
-// import { EditorModule } from 'primeng/editor';
+import { EditorModule } from 'primeng/editor';
 import { FileUpload } from 'primeng/fileupload';
 import { InputGroupModule } from 'primeng/inputgroup';
 import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
@@ -59,7 +59,7 @@ import { TreeModule } from 'primeng/tree';
     DialogModule,
     DividerModule,
     DynamicDialogModule,
-    // EditorModule,
+    EditorModule,
     FileUpload,
     InputGroupModule,
     InputGroupAddonModule,
@@ -100,7 +100,7 @@ import { TreeModule } from 'primeng/tree';
     DialogModule,
     DividerModule,
     DynamicDialogModule,
-    // EditorModule,
+    EditorModule,
     FileUpload,
     InputGroupModule,
     InputGroupAddonModule,
