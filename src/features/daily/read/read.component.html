@@ -1,25 +1,31 @@
-<p-panel header="Daily - Read">
+<p-panel header="Daily - Read - {{daily.dailyId > 0 ? daily.dailyId : 'Not Found'}}">
   <form form="form">
-    <div class="grid">
-      <div class="col-12 md:col-10">
-        <label for="remark">&nbsp;Remark</label>
-        <p-editor inputId="remark"
-          [formControl]="controls.remark"
-          class="w-full">
-        </p-editor>
-      </div>
-
-      <div class="col-12 md:col-1">
-        <label for="isActive">&nbsp;Is Active?</label>
-        <p-select inputId="isActive"
-          readonly="true"
-          [options]="activeOptions"
-          [formControl]="controls.isActive"
-          optionLabel="label" optionValue="value" optionDisabled="inactive"
-          class="w-full">
-        </p-select>
-      </div>
-
+    <div class="card">
+      @if (daily.dailyId > 0) {
+        <div class="columns-1 py-2">
+          <label for="remark">&nbsp;Remark</label>
+          <p-editor inputId="remark"
+            [formControl]="controls.remark"
+            [readonly]="true"
+            class="w-full">
+          </p-editor>
+        </div>
+        <div class="columns-1 md:columns-2 py-2">
+          <div>
+            <label for="isActive">&nbsp;Is Active?</label>
+            <p-select inputId="isActive"
+              [options]="activeOptions"
+              [formControl]="controls.isActive"
+              optionLabel="label" optionValue="value" optionDisabled="inactive"
+              [readonly]="true"
+              class="w-full">
+            </p-select>
+          </div>
+          <div>
+            <br />
+          </div>
+        </div>
+      }
       <p-confirmDialog [style]="{width: '50vw'}" [baseZIndex]="10000" rejectButtonStyleClass="p-button-text"></p-confirmDialog>
       <p-toast></p-toast>
     </div>
@@ -27,6 +33,6 @@
 </p-panel>
 
 <app-message-modal
-  [visible]="appService.process.isInProcess"
-  [message]="appService.process.message">
+  [visible]="appService.process.isInProcess()"
+  [message]="appService.process.message()">
 </app-message-modal>

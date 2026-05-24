@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormControl, FormGroup } from '@angular/forms';
 import { DatePipe } from '@angular/common';
 import { ConfirmationService, MessageService } from 'primeng/api';
 
@@ -22,15 +22,15 @@ import { APP_TITLE } from '../../../core/constants/general';
   selector: 'app-list',
   templateUrl: './list.component.html',
   styleUrls: ['./list.component.scss'],
-  providers: [ConfirmationService, MessageService, DatePipe, AppService, DailyService],
+  providers: [ConfirmationService, MessageService, AppService, DailyService, DatePipe],
   imports: [CoreModule, PrimeNgModule]
 })
 export class ListComponent implements OnInit {
 
   controls = {
-    dailyId: new FormControl(0),
-    remark: new FormControl(''),
-    createdAt: new FormControl(new Date(), Validators.required)
+    dailyId: new FormControl(),
+    remark: new FormControl(),
+    createdAt: new FormControl()
   };
 
   form = new FormGroup({
@@ -40,6 +40,7 @@ export class ListComponent implements OnInit {
   constructor(
     public appService: AppService,
     private readonly dailyService: DailyService,
+    private readonly messageService: MessageService,
     private readonly datePipe: DatePipe
   ) {
     this.appService.setTitle(APP_TITLE, 'Diario - Listado');
@@ -73,9 +74,13 @@ export class ListComponent implements OnInit {
   private readonly initialize = (): void => {
     this.appService.process.start('Loading daily...');
 
-    this.dailyService.getDaily( { table: 'daily', where: 'isActive = 1', orderBy: 'createdAt DESC' }).subscribe({
+    this.dailyService.getDailies().subscribe({
       next: () => {
         this.processDaily(this.dailyService.daily);
+
+        if (this.dailyService.daily.dailyId <= 0) {
+          this.messageService.add({ severity: 'warn', summary: 'Información', detail: 'Daily not found' });
+        }
       },
       complete: () => {
         this.appService.process.stop();

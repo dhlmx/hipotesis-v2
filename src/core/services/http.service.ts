@@ -13,7 +13,6 @@ import { handleError } from '../utilities/error.utils';
 import { HttpResponse } from '../models/http/http-response';
 import { IHttpOptions } from '../interfaces/http/ihttp-options';
 import { IHttpResponse } from '../interfaces/http/ihttp-response';
-import { ISqlQuery } from '../interfaces/sql/isql-query';
 
 // Enums & Constants
 import { HttpResponseCode, HttpResponseStatus } from '../enums/http';
@@ -66,16 +65,6 @@ export class HttpService {
     options: IHttpOptions = this.getCommonOptions()
   ): Observable<HttpResponse> {
     return this.http.post<IHttpResponse>(url, body, options).pipe(
-      map((response: any) => this.handleResponse(response)),
-      catchError((err: any) => of(handleError(err)))
-    );
-  }
-
-  postExecuteSQLQuery = (data: ISqlQuery): Observable<HttpResponse> => {
-    return this.post(
-      `${api.host}${api.basePath ? '/' : ''}${api.basePath}/${api.resources.postExecuteSQLQuery}`,
-      data
-    ).pipe(
       map((response: any) => this.handleResponse(response)),
       catchError((err: any) => of(handleError(err)))
     );

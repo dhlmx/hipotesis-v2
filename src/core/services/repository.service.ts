@@ -24,7 +24,7 @@ export class RepositoryService {
     return this.httpService.get(this.getTableUrl(params));
   }
 
-  postExecuteSQLQuery = (data: ISqlQuery): Observable<HttpResponse> => {
+  postExecuteSqlQuery = (data: ISqlQuery): Observable<HttpResponse> => {
     return this.httpService.post(
       `${api.host}${api.basePath ? '/' : ''}${api.basePath}/${api.resources.postExecuteSQLQuery}`,
       data

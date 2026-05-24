@@ -1,0 +1,98 @@
+<p-panel header="MindMaps - Update - {{mindMap.mindMapId > 0 ? mindMap.mindMapId : 'Not Found'}}">
+  <form form="form">
+    <p-card>
+      <div class="card">
+        @if (categories.length > 0) {
+          <div class="columns-1 sm:columns-2 py-2">
+            <div>
+              <label for="categoryId">&nbsp;Category</label>
+              <p-select inputId="categoryId"
+                [formControl]="controls.categoryId"
+                [options]="categories"
+                optionLabel="label" optionValue="value" optionDisabled="inactive"
+                class="w-full">
+              </p-select>
+            </div>
+            <div>
+              <label for="title">&nbsp;Title</label>
+              <input type="text" inputId="title" pInputText
+                [formControl]="controls.title"
+                title="Title" placeholder="Enter a title"
+                class="w-full" />
+            </div>
+          </div>
+          <div class="columns-1 sm:columns-2 py-2">
+            <div>
+              <label for="subtitle">&nbsp;Subtitle</label>
+              <input type="text" inputId="subtitle" pInputText
+                [formControl]="controls.subtitle"
+                title="Subtitle" placeholder="Enter a subtitle"
+                class="w-full" />
+            </div>
+            <div>
+              <label for="author">&nbsp;Author</label>
+              <input type="text" inputId="author" pInputText
+                [formControl]="controls.author"
+                title="Authot" placeholder="Enter an author"
+                class="w-full" />
+            </div>
+          </div>
+          <div class="columns-1 sm:columns-2 py-2">
+            <div>
+              <label for="jpg">&nbsp;JPG</label>
+              <input type="text" inputId="jpg" pInputText
+                [formControl]="controls.jpg"
+                title="JPG file" placeholder="JPG file name"
+                class="w-full" />
+            </div>
+            <div>
+              <label for="png">&nbsp;PNG</label>
+              <input type="text" inputId="png" pInputText
+                [formControl]="controls.png"
+                title="PNG file" placeholder="PNG file name"
+                class="w-full" />
+            </div>
+          </div>
+          <div class="columns-1 sm:columns-2 py-2">
+            <div>
+              <label for="svg">&nbsp;SVG</label>
+              <input type="text" inputId="svg" pInputText
+                [formControl]="controls.svg"
+                  title="SVG file" placeholder="SVG file name"
+                  class="w-full" />
+            </div>
+            <div>
+              <label for="pdf">&nbsp;PDF</label>
+              <input type="text" inputId="pdf" pInputText
+                [formControl]="controls.pdf"
+                title="PDF file" placeholder="PDF file name"
+                class="w-full" />
+            </div>
+          </div>
+          <div class="columns-1 md:columns-2 py-2">
+            <div>
+              <label for="isActive">&nbsp;Is Active?</label>
+              <p-select inputId="isActive"
+                [options]="activeOptions"
+                [formControl]="controls.isActive"
+                optionLabel="label" optionValue="value" optionDisabled="inactive"
+                class="w-full">
+              </p-select>
+            </div>
+            <div>
+              <br />
+              <button pButton type="button" label="Update" title="Save" [disabled]="form.invalid" (click)="onClickSave()" class="p-button-outlined p-button-info w-full"></button>
+            </div>
+          </div>
+        }
+        <p-confirmDialog [style]="{width: '50vw'}" [baseZIndex]="10000" rejectButtonStyleClass="p-button-text"></p-confirmDialog>
+        <p-toast></p-toast>
+      </div>
+    </p-card>
+  </form>
+</p-panel>
+
+<app-message-modal
+  [visible]="appService.process.isInProcess()"
+  [message]="appService.process.message()">
+</app-message-modal>

@@ -1,0 +1,44 @@
+<p-panel header="Análisis">
+  <form form="form">
+    <p-card>
+      <div class="card">
+        <div class="columns-1 sm:columns-2">
+          <div>
+            <label for="categoryId">&nbsp;Categoría</label>
+            <p-select inputId="categoryId"
+              [options]="categories" [formControl]="controls.categoryId"
+              optionLabel="label" optionValue="value" optionDisabled="inactive"
+              (onChange)="onChangeCategory()"
+              class="w-full">
+            </p-select>
+          </div>
+          <div>
+            <label for="mindMapId">&nbsp;Tema</label>
+            <p-select inputId="mindMapId"
+              [options]="mindMaps" [formControl]="controls.mindMapId"
+              optionLabel="label" optionValue="value" optionDisabled="inactive"
+              (onChange)="onChangeMindMap()"
+              class="w-full">
+            </p-select>
+          </div>
+        </div>
+      </div>
+    </p-card>
+  </form>
+  <div class="columns-1">
+    @if (mindMap.mindMapId > 0) {
+      <p-card>
+        <img
+          alt="{{mindMap.title}} - {{mindMap.subtitle}}"
+          [src]="getSvgUrl(mindMap)"
+          class="w-full"/>
+      </p-card>
+    }
+  </div>
+</p-panel>
+
+<app-message-modal
+  [visible]="appService.process.isInProcess()"
+  [message]="appService.process.message()">
+</app-message-modal>
+

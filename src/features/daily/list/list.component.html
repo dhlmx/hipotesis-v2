@@ -1,63 +1,67 @@
 <p-panel header="Diario">
   <form form="form">
     <p-card>
-      <div class="columns-1">
-        <label for="remark" class="w-full text-right">&nbsp;{{dailyCreatedAt}}</label>
-        <p-editor
-          inputId="remark"
-          [readonly]="true"
-          [formControl]="controls.remark"
-          class="w-full">
-        </p-editor>
-      </div>
-      <div class="columns-3 py-3">
-        <div class="text-right">
-          <button type="button"
-            title="Go to first"
-            [disabled]="index <= 0"
-            (click)="onClickFirst()"
-            pButton
-            icon="pi pi-step-backward-alt"
-            class="p-button-outlined p-button-info">
-          </button>
-          <button type="button"
-            title="Go to previous"
-            [disabled]="index <= 0"
-            (click)="onClickPrevious()"
-            pButton
-            icon="pi pi-backward"
-            class="p-button-outlined p-button-info">
-          </button>
+      @if (daily && daily.dailyId) {
+        <div class="columns-1">
+          <label for="remark" class="w-full text-right">&nbsp;{{dailyCreatedAt}}</label>
+          <p-editor
+            inputId="remark"
+            [readonly]="true"
+            [formControl]="controls.remark"
+            class="w-full">
+          </p-editor>
         </div>
-        <div>
-          <input type="text" inputId="photoIndex" placeholder="n/m" disabled [value]="indexPosition" pInputText class="w-full text-center" />
+        <div class="columns-3 py-3">
+          <div class="text-right">
+            <button type="button"
+              title="Go to first"
+              [disabled]="index <= 0"
+              (click)="onClickFirst()"
+              pButton
+              icon="pi pi-step-backward-alt"
+              class="p-button-outlined p-button-info">
+            </button>
+            <button type="button"
+              title="Go to previous"
+              [disabled]="index <= 0"
+              (click)="onClickPrevious()"
+              pButton
+              icon="pi pi-backward"
+              class="p-button-outlined p-button-info">
+            </button>
+          </div>
+          <div>
+            <input type="text" inputId="photoIndex" placeholder="n/m" disabled [value]="indexPosition" pInputText class="w-full text-center" />
+          </div>
+          <div>
+            <button
+              type="button"
+              title="Go to next"
+              [disabled]="index >= (dates.length - 1)"
+              (click)="onClickNext()"
+              pButton
+              icon="pi pi-forward"
+              class="p-button-outlined p-button-info">
+            </button>
+            <button
+              type="button"
+              title="Go to last"
+              [disabled]="index >= (dates.length - 1)"
+              (click)="onClickLast()"
+              pButton
+              icon="pi pi-step-forward-alt"
+              class="p-button-outlined p-button-info">
+            </button>
+          </div>
         </div>
-        <div>
-          <button
-            type="button"
-            title="Go to next"
-            [disabled]="index >= (dates.length - 1)"
-            (click)="onClickNext()"
-            pButton
-            icon="pi pi-forward"
-            class="p-button-outlined p-button-info">
-          </button>
-          <button
-            type="button"
-            title="Go to last"
-            [disabled]="index >= (dates.length - 1)"
-            (click)="onClickLast()"
-            pButton
-            icon="pi pi-step-forward-alt"
-            class="p-button-outlined p-button-info">
-          </button>
-        </div>
-      </div>
+      }
+      <p-confirmDialog [style]="{width: '50vw'}" [baseZIndex]="10000" rejectButtonStyleClass="p-button-text"></p-confirmDialog>
+      <p-toast></p-toast>
     </p-card>
   </form>
 </p-panel>
 
 <app-message-modal
-  [visible]="appService.process.isInProcess"
-  [message]="appService.process.message">
+  [visible]="appService.process.isInProcess()"
+  [message]="appService.process.message()">
 </app-message-modal>

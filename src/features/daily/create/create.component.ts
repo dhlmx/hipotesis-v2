@@ -12,10 +12,10 @@ import { RepositoryService } from '../../../core/services/repository.service';
 
 // Interfaces & Models
 import { HttpResponse } from '../../../core/models/http/http-response';
-import { ISELECT_YES_NO } from '../../../core/constants/select';
 
 // Enums & Constants
 import { APP_TITLE } from '../../../core/constants/general';
+import { ISELECT_YES_NO } from '../../../core/constants/select';
 
 @Component({
   standalone: true,
@@ -26,7 +26,7 @@ import { APP_TITLE } from '../../../core/constants/general';
   imports: [CoreModule, PrimeNgModule]
 })
 export class CreateComponent {
-  public activeOptions = ISELECT_YES_NO;
+  activeOptions = ISELECT_YES_NO;
 
   controls: {
     remark: FormControl,
@@ -57,8 +57,9 @@ export class CreateComponent {
       accept: () => {
         this.appService.process.start('Creating remark...');
 
-        this.repositoryService.postExecuteSQLQuery({
-          query: this.prepareQueryToInsert()
+        this.repositoryService.postExecuteSqlQuery({
+          query: this.prepareQueryToInsert(),
+          entityName: 'SqlResponse'
         }).subscribe({
           next: (response: HttpResponse) => {
             if (response.isOK) {

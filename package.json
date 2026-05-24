@@ -19,6 +19,7 @@
     "@angular/router": "^21.2.0",
     "@primeuix/themes": "^2.0.3",
     "chart.js": "^4.5.1",
+    "ngx-image-compress": "^18.1.7",
     "primeicons": "^7.0.0",
     "primeng": "^21.1.7",
     "quill": "^2.0.3",

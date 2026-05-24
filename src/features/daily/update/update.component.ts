@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ConfirmationService, ConfirmEventType, MessageService } from 'primeng/api';
+import { ActivatedRoute } from '@angular/router';
 
 // Modules
 import { CoreModule } from '../../../core/modules/core.module';
@@ -12,13 +13,13 @@ import { DailyService } from '../../../core/services/daily.service';
 import { RepositoryService } from '../../../core/services/repository.service';
 
 // Interfaces & Models
-import { HttpResponse } from '../../../core/models/http/http-response';
-import { ISELECT_YES_NO } from '../../../core/constants/select';
-import { ActivatedRoute } from '@angular/router';
 import { Daily } from '../../../core/models/daily';
+import { HttpResponse } from '../../../core/models/http/http-response';
+import { ISqlQuery } from '../../../core/interfaces/sql/isql-query';
 
 // Enums & Constants
 import { APP_TITLE } from '../../../core/constants/general';
+import { ISELECT_YES_NO } from '../../../core/constants/select';
 
 @Component({
   standalone: true,
@@ -60,13 +61,21 @@ export class UpdateComponent implements OnInit {
     this.initialize();
   }
 
+  get daily(): Daily {
+    return this.dailyService.daily;
+  }
+
   private readonly initialize = (): void => {
     this.appService.process.start('Loading data...');
 
     this.controls.dailyId.setValue(Number.parseInt(this.activatedRoute.snapshot.paramMap.get('id') || '0'));
-    this.dailyService.getDaily({ table: 'daily', where: `dailyId = ${this.controls.dailyId.value}` }).subscribe({
+    this.dailyService.getDaily(this.controls.dailyId.value).subscribe({
       next: () => {
         this.processDaily(this.dailyService.daily);
+
+        if (this.dailyService.daily.dailyId <= 0) {
+          this.messageService.add({ severity: 'warn', summary: 'Información', detail: 'Daily not found' });
+        }
       },
       complete: () => {
         this.appService.process.stop();
@@ -81,10 +90,7 @@ export class UpdateComponent implements OnInit {
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
         this.appService.process.start('Updating remark...');
-
-        this.repositoryService.postExecuteSQLQuery({
-          query: this.prepareQueryToUpdate()
-        }).subscribe({
+        this.repositoryService.postExecuteSqlQuery(this.prepareQueryToUpdate()).subscribe({
           next: (response: HttpResponse) => {
             if (response.isOK) {
               this.messageService.add({ severity: 'success', summary: 'Confirmación', detail: 'Remark saved' });
@@ -113,9 +119,11 @@ export class UpdateComponent implements OnInit {
     });
   }
 
-  private readonly prepareQueryToUpdate = (): string => {
-    let query = `CALL up_update_daily(${this.controls.dailyId.value}, '${this.controls.remark.value}', ${this.controls.isActive.value ? 1 : 0});`;
-    return query;
+  private readonly prepareQueryToUpdate = (): ISqlQuery => {
+    return {
+      query: `CALL up_update_daily(${this.controls.dailyId.value}, '${this.controls.remark.value}', ${this.controls.isActive.value ? 1 : 0});`,
+      entityName: 'SqlResponse'
+    };
   }
 
   private readonly processDaily = (daily: Daily): void => {

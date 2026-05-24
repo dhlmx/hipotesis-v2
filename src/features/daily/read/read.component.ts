@@ -46,6 +46,7 @@ export class ReadComponent implements OnInit {
   constructor(
     public appService: AppService,
     private readonly dailyService: DailyService,
+    private readonly messageService: MessageService,
     private readonly activatedRoute: ActivatedRoute
   ) {
     this.appService.setTitle(APP_TITLE, 'Daily - Read');
@@ -55,13 +56,21 @@ export class ReadComponent implements OnInit {
     this.initialize();
   }
 
+  get daily(): Daily {
+    return this.dailyService.daily;
+  }
+
   private readonly initialize = (): void => {
     this.appService.process.start('Loading data...');
 
     this.controls.dailyId.setValue(Number.parseInt(this.activatedRoute.snapshot.paramMap.get('id') || '0'));
-    this.dailyService.getDaily( { table: 'daily', where: `dailyId = ${this.controls.dailyId.value}` }).subscribe({
+    this.dailyService.getDaily(this.controls.dailyId.value).subscribe({
       next: () => {
         this.processDaily(this.dailyService.daily);
+
+        if (this.dailyService.daily.dailyId <= 0) {
+          this.messageService.add({ severity: 'warn', summary: 'Información', detail: 'Daily not found' });
+        }
       },
       complete: () => {
         this.appService.process.stop();

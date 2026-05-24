@@ -30,6 +30,6 @@
 </p-panel>
 
 <app-message-modal
-  [visible]="appService.process.isInProcess"
-  [message]="appService.process.message">
+  [visible]="appService.process.isInProcess()"
+  [message]="appService.process.message()">
 </app-message-modal>
