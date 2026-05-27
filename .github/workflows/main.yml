@@ -24,7 +24,7 @@ jobs:
           cache: "npm"
 
       - name: Angular installation
-        run: npm install --global @angular/cli@21.2.11
+        run: npm install --global @angular/cli@21.2.12
 
       - name: Dependencies installation
         run: npm install
