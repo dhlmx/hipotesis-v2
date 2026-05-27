@@ -10,23 +10,22 @@ import { PrimeNgModule } from '../../../core/modules/prime-ng.module';
 // Services
 import { AppService } from '../../../core/services/app.service';
 import { DailyService } from '../../../core/services/daily.service';
-import { RepositoryService } from '../../../core/services/repository.service';
 
 // Interfaces & Models
 import { Daily } from '../../../core/models/daily';
-import { HttpResponse } from '../../../core/models/http/http-response';
-import { ISqlQuery } from '../../../core/interfaces/sql/isql-query';
 
 // Enums & Constants
 import { APP_TITLE } from '../../../core/constants/general';
 import { ISELECT_YES_NO } from '../../../core/constants/select';
+import { IPhpDateTime } from '../../../core/interfaces/php/iphp-datetime';
+import { IDaily } from '../../../core/interfaces/idaily';
 
 @Component({
   standalone: true,
   selector: 'app-update',
   templateUrl: './update.component.html',
   styleUrls: ['./update.component.scss'],
-  providers: [ConfirmationService, MessageService, DailyService, RepositoryService],
+  providers: [ConfirmationService, MessageService, DailyService],
   imports: [CoreModule, PrimeNgModule]
 })
 export class UpdateComponent implements OnInit {
@@ -51,7 +50,6 @@ export class UpdateComponent implements OnInit {
     private readonly confirmationService: ConfirmationService,
     private readonly messageService: MessageService,
     private readonly dailyService: DailyService,
-    private readonly repositoryService: RepositoryService,
     private readonly activatedRoute: ActivatedRoute
   ) {
     this.appService.setTitle(APP_TITLE, 'Daily - Update');
@@ -90,9 +88,9 @@ export class UpdateComponent implements OnInit {
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
         this.appService.process.start('Updating remark...');
-        this.repositoryService.postExecuteSqlQuery(this.prepareQueryToUpdate()).subscribe({
-          next: (response: HttpResponse) => {
-            if (response.isOK) {
+        this.dailyService.updateDaily(this.getFormData()).subscribe({
+          next: () => {
+            if (this.dailyService.sqlResponse.isSuccessfulUpdate()) {
               this.messageService.add({ severity: 'success', summary: 'Confirmación', detail: 'Remark saved' });
             } else {
               this.messageService.add({ severity: 'warn', summary: 'Confirmación', detail: 'Remark not saved' });
@@ -119,10 +117,15 @@ export class UpdateComponent implements OnInit {
     });
   }
 
-  private readonly prepareQueryToUpdate = (): ISqlQuery => {
+  // Private methods
+  private readonly getFormData = (): IDaily => {
     return {
-      query: `CALL up_update_daily(${this.controls.dailyId.value}, '${this.controls.remark.value}', ${this.controls.isActive.value ? 1 : 0});`,
-      entityName: 'SqlResponse'
+      dailyId: this.controls.dailyId.value,
+      remark: this.controls.remark.value,
+      createdAt: {} as IPhpDateTime,
+      updatedAt: {} as IPhpDateTime,
+      deletedAt: {} as IPhpDateTime,
+      isActive: this.controls.isActive.value
     };
   }
 

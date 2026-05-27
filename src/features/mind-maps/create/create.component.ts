@@ -136,6 +136,7 @@ export class CreateComponent implements OnInit {
     });
   }
 
+  // Private methods
   private readonly resetForm = (): void => {
     this.controls.categoryId.setValue(0);
     this.controls.title.setValue('');
@@ -152,18 +153,6 @@ export class CreateComponent implements OnInit {
     if (this.mindMapsService.categoriesSelect.length > 0) {
       this.controls.categoryId.setValue(this.mindMapsService.categoriesSelect[0].value);
     }
-  }
-
-  private readonly setForm = (mindMap: IMindMap): void => {
-    this.controls.categoryId.setValue(mindMap.categoryId);
-    this.controls.title.setValue(mindMap.title);
-    this.controls.subtitle.setValue(mindMap.subtitle);
-    this.controls.author.setValue(mindMap.author);
-    this.controls.jpg.setValue(mindMap.jpg);
-    this.controls.png.setValue(mindMap.png);
-    this.controls.svg.setValue(mindMap.svg);
-    this.controls.pdf.setValue(mindMap.pdf);
-    this.controls.isActive.setValue(mindMap.isActive);
   }
 
   private readonly toIMindMap = (): IMindMap => {

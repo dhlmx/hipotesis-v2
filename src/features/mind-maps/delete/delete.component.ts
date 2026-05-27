@@ -30,7 +30,7 @@ const { mindMaps } = DB;
   providers: [ConfirmationService, MessageService],
   imports: [CoreModule, PrimeNgModule]
 })
-export class DeleteComponent {
+export class DeleteComponent implements OnInit {
 
   activeOptions = ISELECT_YES_NO;
 
@@ -157,6 +157,7 @@ export class DeleteComponent {
     });
   }
 
+  // Private methods
   private readonly selectCategory = (): void => {
     if (this.mindMapsService.categoriesSelect.length > 0) {
       this.controls.categoryId.setValue(this.mindMapsService.categoriesSelect[0].value);

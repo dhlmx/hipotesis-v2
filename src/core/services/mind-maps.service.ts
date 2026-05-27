@@ -14,6 +14,7 @@ import { IMindMapCategory } from '../interfaces/mind-maps/imind-map-category';
 import { ISqlQuery } from '../interfaces/sql/isql-query';
 import { ISqlResponse } from '../interfaces/sql/isql-response';
 import { ISelect } from '../interfaces/iselect';
+import { SqlResponse } from '../models/http/sql-response';
 
 // Enums & Constants
 import { IMIND_MAP_DEFAULT, IMIND_MAP_CATEGORY_DEFAULT } from '../constants/interfaces';
@@ -30,7 +31,7 @@ export class MindMapsService {
   public mindMapsSelect: ISelect[] = [];
   public mindMap: IMindMap = IMIND_MAP_DEFAULT;
   public index = -1;
-  public sqlResponse: ISqlResponse = {} as ISqlResponse;
+  public sqlResponse = new SqlResponse();
 
   constructor(private readonly repository: RepositoryService) { }
 
@@ -109,7 +110,7 @@ export class MindMapsService {
     return this.repository.postExecuteSqlQuery(query).pipe(
       map((response: HttpResponse) => response.isOK ? response.data as ISqlResponse : response.data),
       map((data: any) => {
-        this.sqlResponse = toSqlResponse(data);
+        this.sqlResponse = new SqlResponse(toSqlResponse(data));
       })
     );
   }

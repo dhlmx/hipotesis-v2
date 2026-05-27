@@ -8,10 +8,11 @@ import { PrimeNgModule } from '../../../core/modules/prime-ng.module';
 
 // Services
 import { AppService } from '../../../core/services/app.service';
-import { RepositoryService } from '../../../core/services/repository.service';
+import { DailyService } from '../../../core/services/daily.service';
 
 // Interfaces & Models
-import { HttpResponse } from '../../../core/models/http/http-response';
+import { IDaily } from '../../../core/interfaces/idaily';
+import { IPhpDateTime } from '../../../core/interfaces/php/iphp-datetime';
 
 // Enums & Constants
 import { APP_TITLE } from '../../../core/constants/general';
@@ -22,7 +23,7 @@ import { ISELECT_YES_NO } from '../../../core/constants/select';
   selector: 'app-create',
   templateUrl: './create.component.html',
   styleUrls: ['./create.component.scss'],
-  providers: [ConfirmationService, MessageService, RepositoryService],
+  providers: [ConfirmationService, MessageService, AppService, DailyService],
   imports: [CoreModule, PrimeNgModule]
 })
 export class CreateComponent {
@@ -44,7 +45,7 @@ export class CreateComponent {
     public appService: AppService,
     private readonly confirmationService: ConfirmationService,
     private readonly messageService: MessageService,
-    private readonly repositoryService: RepositoryService
+    private readonly dailyService: DailyService
   ) {
     this.appService.setTitle(APP_TITLE, 'Daily - Create');
   }
@@ -57,12 +58,9 @@ export class CreateComponent {
       accept: () => {
         this.appService.process.start('Creating remark...');
 
-        this.repositoryService.postExecuteSqlQuery({
-          query: this.prepareQueryToInsert(),
-          entityName: 'SqlResponse'
-        }).subscribe({
-          next: (response: HttpResponse) => {
-            if (response.isOK) {
+        this.dailyService.createDaily(this.getFormData()).subscribe({
+          next: () => {
+            if (this.dailyService.sqlResponse.isSuccessfulCreation()) {
               this.resetForm();
               this.messageService.add({ severity: 'success', summary: 'Confirmación', detail: 'Remark saved' });
             } else {
@@ -90,12 +88,19 @@ export class CreateComponent {
     });
   }
 
-  private readonly prepareQueryToInsert = (): string => {
-    let query = `CALL up_create_daily('${this.controls.remark.value}', ${this.controls.isActive.value ? 1 : 0});`;
-    return query;
+  // Private Methods
+  private readonly getFormData = (): IDaily => {
+    return {
+      dailyId: 0,
+      remark: this.controls.remark.value,
+      createdAt: {} as IPhpDateTime,
+      updatedAt: {} as IPhpDateTime,
+      deletedAt: {} as IPhpDateTime,
+      isActive: this.controls.isActive.value
+    };
   }
 
-  resetForm = (): void => {
+  private readonly resetForm = (): void => {
     this.controls.remark.setValue('');
     this.controls.isActive.setValue(true);
   }

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { iif, map, Observable, of } from 'rxjs';
+import { map, Observable } from 'rxjs';
 
 // Services
 import { RepositoryService } from './repository.service';
@@ -11,6 +11,7 @@ import { HttpResponse } from '../models/http/http-response';
 import { IDaily } from '../interfaces/idaily';
 import { ISqlQuery } from '../interfaces/sql/isql-query';
 import { ISqlResponse } from '../interfaces/sql/isql-response';
+import { SqlResponse } from '../models/http/sql-response';
 
 @Injectable({
   providedIn: 'root'
@@ -20,7 +21,7 @@ export class DailyService {
   public daily: Daily = new Daily();
   public index = -1;
   public httpResponse: HttpResponse = {} as HttpResponse;
-  public sqlResponse: ISqlResponse = {} as ISqlResponse;
+  public sqlResponse = new SqlResponse();
 
   constructor(private readonly repositoryService: RepositoryService) {};
 
@@ -84,11 +85,10 @@ export class DailyService {
     return this.repositoryService.postExecuteSqlQuery(query).pipe(
       map((response: HttpResponse) => response.isOK ? response.data as ISqlResponse : response.data),
       map((data: any) => {
-        this.sqlResponse = toSqlResponse(data);
+        this.sqlResponse = new SqlResponse(toSqlResponse(data));
       })
     );
   }
-
 
   updateDaily = (daily: IDaily): Observable<void> => {
     return this.postExecuteSqlQuery(this.getUpdateQuery(daily));
@@ -98,7 +98,6 @@ export class DailyService {
   private readonly getCreateQuery = (daily: IDaily): ISqlQuery => {
     return {
       query: `CALL up_create_daily(
-        ${daily.dailyId},
         '${daily.remark}',
         ${daily.isActive ? 1 : 0}
       )`,
@@ -116,6 +115,7 @@ export class DailyService {
   private readonly getUpdateQuery = (daily: IDaily): ISqlQuery => {
     return {
       query: `CALL up_update_daily(
+        ${daily.dailyId},
         '${daily.remark}',
         ${daily.isActive ? 1 : 0}
       )`,

@@ -157,6 +157,7 @@ export class UpdateComponent implements OnInit {
     });
   }
 
+  // Private methods
   private readonly selectCategory = (): void => {
     if (this.mindMapsService.categoriesSelect.length > 0) {
       this.controls.categoryId.setValue(this.mindMapsService.categoriesSelect[0].value);

@@ -10,12 +10,9 @@ import { PrimeNgModule } from '../../../core/modules/prime-ng.module';
 // Services
 import { AppService } from '../../../core/services/app.service';
 import { DailyService } from '../../../core/services/daily.service';
-import { RepositoryService } from '../../../core/services/repository.service';
 
 // Interfaces & Models
 import { Daily } from '../../../core/models/daily';
-import { HttpResponse } from '../../../core/models/http/http-response';
-import { ISqlQuery } from '../../../core/interfaces/sql/isql-query';
 
 // Enums & Constants
 import { APP_TITLE } from '../../../core/constants/general';
@@ -26,7 +23,7 @@ import { ISELECT_YES_NO } from '../../../core/constants/select';
   selector: 'app-delete',
   templateUrl: './delete.component.html',
   styleUrls: ['./delete.component.scss'],
-  providers: [ConfirmationService, MessageService, DailyService, RepositoryService],
+  providers: [ConfirmationService, MessageService, AppService, DailyService],
   imports: [CoreModule, PrimeNgModule]
 })
 export class DeleteComponent implements OnInit {
@@ -51,7 +48,6 @@ export class DeleteComponent implements OnInit {
     private readonly confirmationService: ConfirmationService,
     private readonly messageService: MessageService,
     private readonly dailyService: DailyService,
-    private readonly repositoryService: RepositoryService,
     private readonly activatedRoute: ActivatedRoute
   ) {
     this.appService.setTitle(APP_TITLE, 'Daily - Update');
@@ -90,9 +86,9 @@ export class DeleteComponent implements OnInit {
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
         this.appService.process.start('Updating remark...');
-        this.repositoryService.postExecuteSqlQuery(this.prepareQueryToDelete()).subscribe({
-          next: (response: HttpResponse) => {
-            if (response.isOK) {
+        this.dailyService.deleteDaily(this.getFormData()).subscribe({
+          next: () => {
+            if (this.dailyService.sqlResponse.isSuccessfulDeletion()) {
               this.messageService.add({ severity: 'success', summary: 'Confirmación', detail: 'Remark saved' });
             } else {
               this.messageService.add({ severity: 'warn', summary: 'Confirmación', detail: 'Remark not saved' });
@@ -119,12 +115,8 @@ export class DeleteComponent implements OnInit {
     });
   }
 
-  private readonly prepareQueryToDelete = (): ISqlQuery => {
-    return {
-      query: `CALL up_delete_daily(${this.controls.dailyId.value});`,
-      entityName: 'SqlResponse'
-    };
-  }
+  // Private methods
+  private readonly getFormData = (): number => this.controls.dailyId.value;
 
   private readonly processDaily = (daily: Daily): void => {
     if (this.dailyService.daily.dailyId) {
