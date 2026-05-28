@@ -9,6 +9,7 @@ import { categoriesToISelect, mindMapsToISelect } from '../services/mapper.servi
 
 // Interfaces & Models
 import { HttpResponse } from '../models/http/http-response';
+import { IFileUpload } from '../interfaces/ifile-upload';
 import { IMindMap } from '../interfaces/mind-maps/imind-map';
 import { IMindMapCategory } from '../interfaces/mind-maps/imind-map-category';
 import { ISqlQuery } from '../interfaces/sql/isql-query';
@@ -18,6 +19,9 @@ import { SqlResponse } from '../models/http/sql-response';
 
 // Enums & Constants
 import { IMIND_MAP_DEFAULT, IMIND_MAP_CATEGORY_DEFAULT } from '../constants/interfaces';
+import { environment } from '../../environments/environment';
+
+const { api, publicHtml } = environment;
 
 @Injectable({
   providedIn: 'root'
@@ -31,9 +35,13 @@ export class MindMapsService {
   public mindMapsSelect: ISelect[] = [];
   public mindMap: IMindMap = IMIND_MAP_DEFAULT;
   public index = -1;
+  public fileUpload: IFileUpload = {} as IFileUpload;
+  public httpResponse = new HttpResponse();
   public sqlResponse = new SqlResponse();
 
-  constructor(private readonly repository: RepositoryService) { }
+  constructor(private readonly repository: RepositoryService) {
+    this.setFileUpload();
+  }
 
   createMindMap(mindMap: IMindMap): Observable<void> {
     return this.postExecuteSqlQuery(this.getInsertQuery(mindMap));
@@ -50,11 +58,13 @@ export class MindMapsService {
       query: 'CALL up_get_mind_map_categories();',
       entityName: 'MindMapCategory'
     }).pipe(
-      map((response: HttpResponse) => response.isOK ? response.data as IMindMapCategory[] : [] as IMindMapCategory[]),
+      map((response: HttpResponse) => {
+        this.httpResponse = response;
+        return response.isOK ? response.data as IMindMapCategory[] : [] as IMindMapCategory[];
+      }),
       map((categories: IMindMapCategory[]) => this.processCategories(categories))
     );
   }
-
 
   getMindMap(mindMapId: number): Observable<void> {
     this.resetMindMaps();
@@ -73,7 +83,10 @@ export class MindMapsService {
 
   getRawMindMaps(query: ISqlQuery): Observable<void> {
     return this.repository.postExecuteSqlQuery(query).pipe(
-      map((response: HttpResponse) => response.isOK ? response.data as IMindMap[] : [] as IMindMap[]),
+      map((response: HttpResponse) => {
+        this.httpResponse = response;
+        return  response.isOK ? response.data as IMindMap[] : [] as IMindMap[];
+      }),
       map((mindMaps: IMindMap[]) => this.processMindMaps(mindMaps))
     );
   }
@@ -115,6 +128,14 @@ export class MindMapsService {
     );
   }
 
+  postUploadFile = (targetPath: string, fileName: string, file: Blob): Observable<void> => {
+    return this.repository.postUploadFile(targetPath, fileName, file).pipe(
+      map((response: HttpResponse) => {
+        this.httpResponse = response;
+      })
+    );
+  }
+
   resetCategory = (categoryId: number): void => {
     this.category = this.categories.find((category: IMindMapCategory) => category.categoryId === categoryId) || IMIND_MAP_CATEGORY_DEFAULT;
   }
@@ -128,6 +149,25 @@ export class MindMapsService {
   }
 
   // Private Methods
+  /*
+    mode="basic"
+    name="svgFile[]"
+    url="http://localhost/hipotesis-api/repository/model/postUploadFile.php"
+    accept="image/*"
+    maxFileSize="1000000"
+  */
+
+  private readonly setFileUpload = (): void => {
+    this.fileUpload = {
+      mode: 'basic',
+      name: 'file[]',
+      accept: 'image/*',
+      maxFileSize: 24000000,
+      phpUrl: `${api.host}${api.basePath ? '/' : ''}${api.basePath}/${api.resources.postUploadFile}`,
+      publicHtml: `${publicHtml.base}/${publicHtml.mindMaps}`
+    };
+  }
+
   private readonly getDeleteQuery = (mindMapId: number): ISqlQuery => {
     return {
       query: `CALL up_delete_mind_map(${mindMapId})`,

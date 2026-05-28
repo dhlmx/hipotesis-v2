@@ -18,7 +18,7 @@ import { ISelect } from '../../../core/interfaces/iselect';
 
 // Enums & Constants
 import { APP_TITLE } from '../../../core/constants/general';
-const { resources } = environment;
+const { publicHtml } = environment;
 
 @Component({
   standalone: true,
@@ -70,11 +70,11 @@ export class ListComponent implements OnInit {
   }
 
   getPdfUrl = (mindMap: IMindMap): string => {
-    return `/${resources.mindMaps}/${mindMap.pdf}`;
+    return `/${publicHtml.base}/${publicHtml.mindMaps}/${mindMap.pdf}`;
   }
 
   getSvgUrl = (mindMap: IMindMap): string => {
-    return `/${resources.mindMaps}/${mindMap.svg}`;
+    return `/${publicHtml.base}/${publicHtml.mindMaps}/${mindMap.svg}`;
   }
 
   private readonly initialize = (): void => {

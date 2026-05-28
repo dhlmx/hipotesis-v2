@@ -62,6 +62,28 @@
               <button pButton type="button" label="Create" title="Save" [disabled]="form.invalid" (click)="onClickSave()" class="p-button-outlined p-button-info w-full"></button>
             </div>
           </div>
+
+          <div class="columns-1 md:columns-2 py-2">
+            <div>
+              <label for="svgFile">&nbsp;File Upload</label>
+              <input
+                type="file"
+                #fileUpload
+                title="File Upload"
+                (change)="onFileSelected($event)"
+                accept="*/*"
+                class="hidden"/>
+              <button
+                type="button"
+                pButton
+                label="{{fileName}}"
+                title="File Upload"
+                (click)="fileUpload.click()"
+                class="p-button-outlined p-button-info w-full">
+              </button>
+            </div>
+            <div><br /></div>
+          </div>
         }
         <p-confirmDialog [style]="{width: '50vw'}" [baseZIndex]="10000" rejectButtonStyleClass="p-button-text"></p-confirmDialog>
         <p-toast></p-toast>

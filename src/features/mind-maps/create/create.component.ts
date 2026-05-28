@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ConfirmationService, ConfirmEventType, MessageService } from 'primeng/api';
+import { environment } from '../../../environments/environment';
 
 // Modules
 import { PrimeNgModule } from '../../../core/modules/prime-ng.module';
@@ -10,6 +11,7 @@ import { AppService } from '../../../core/services/app.service';
 import { MindMapsService } from '../../../core/services/mind-maps.service';
 
 // Interfaces & Models
+import { IFileUpload } from '../../../core/interfaces/ifile-upload';
 import { IMindMap } from '../../../core/interfaces/mind-maps/imind-map';
 import { ISelect } from '../../../core/interfaces/iselect';
 import { CoreModule } from '../../../core/modules/core.module';
@@ -19,7 +21,8 @@ import { APP_TITLE } from '../../../core/constants/general';
 import { DB } from '../../../core/constants/db';
 import { ISELECT_YES_NO } from '../../../core/constants/select';
 
-const { mindMaps } = DB;
+const { mindMaps } = DB,
+  { publicHtml } = environment;
 
 @Component({
   standalone: true,
@@ -32,6 +35,9 @@ const { mindMaps } = DB;
 export class CreateComponent implements OnInit {
 
   activeOptions = ISELECT_YES_NO;
+  file: File|null = null;
+  totalSize: number = 0;
+  totalSizePercent: number = 0;
 
   controls: {
     categoryId: FormControl,
@@ -74,6 +80,18 @@ export class CreateComponent implements OnInit {
 
   get categories(): ISelect[] {
     return this.mindMapsService.categoriesSelect;
+  }
+
+  get fileUpload(): IFileUpload {
+    return this.mindMapsService.fileUpload;
+  }
+
+  get fileName(): string {
+    if (this.file === null) {
+      return 'SVG File not selected';
+    }
+
+    return `${this.file.name} (${this.file.size} bytes)`;
   }
 
   get isValidSqlResponse(): boolean {
@@ -135,6 +153,74 @@ export class CreateComponent implements OnInit {
       }
     });
   }
+
+  public onFileSelected(event: Event): void {
+    const input = event.target! as HTMLInputElement;
+    this.file = input.files && input.files.length > 0 ? input.files.item(0) : null;
+
+    if (this.file === null) {
+      return;
+    }
+
+    this.appService.process.start('Upload file');
+
+    this.mindMapsService.postUploadFile(this.mindMapsService.fileUpload.publicHtml, this.file.name, this.file).subscribe({
+      next: () => {
+        if (this.mindMapsService.httpResponse.isOK) {
+          this.messageService.add({ severity: 'success', summary: 'Confirmación', detail: 'File saved' });
+        } else {
+          this.messageService.add({ severity: 'warn', summary: 'Confirmación', detail: 'File not saved' });
+        }
+      },
+      complete: () => {
+        this.appService.process.stop();
+      }
+    });
+  }
+
+  /*
+  onRemoveTemplatingFile(event: UploadEvent, file: File, removeFileCallback: Function, index: number): void {
+    removeFileCallback(event, index);
+    this.totalSize -= Number.parseInt(this.formatSize(file.size));
+    this.totalSizePercent = this.totalSize / 10;
+  }
+
+  onClearTemplatingUpload(clear: Function): void {
+    clear();
+    this.totalSize = 0;
+    this.totalSizePercent = 0;
+  }
+
+  onTemplatedUpload() {
+    this.messageService.add({ severity: 'info', summary: 'Success', detail: 'File Uploaded', life: 3000 });
+  }
+
+  onSelectedFiles(event: UploadEvent): void {
+    this.files = event.currentFiles;
+    this.files.forEach((file) => {
+      this.totalSize += Number.parseInt(this.formatSize(file.size));
+    });
+    this.totalSizePercent = this.totalSize / 10;
+  }
+
+  uploadEvent(callback: Function): void {
+    callback();
+  }
+
+  formatSize(bytes: number) {
+    const k = 1024;
+    const dm = 3;
+    const sizes = this.config.translation.fileSizeTypes;
+    if (bytes === 0) {
+      return `0 ${sizes[0]}`;
+    }
+
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    const formattedSize = Number.parseFloat((bytes / Math.pow(k, i)).toFixed(dm));
+
+    return `${formattedSize} ${sizes[i]}`;
+  }
+ */
 
   // Private methods
   private readonly resetForm = (): void => {

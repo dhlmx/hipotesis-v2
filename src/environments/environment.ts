@@ -30,8 +30,9 @@ environment = {
       strike: ''
     }
   },
-  resources: {
-    mindMaps: 'resources/mind_maps',
-    photos: 'resources/images'
+  publicHtml: {
+    base: 'hipotesis/resources',
+    mindMaps: 'mind_maps',
+    photos: 'images'
   }
 };

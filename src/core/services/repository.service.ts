@@ -31,6 +31,10 @@ export class RepositoryService {
     );
   }
 
+  postUploadFile = (targetPath: string, fileName: string, file: Blob): Observable<HttpResponse> => {
+    return this.httpService.postUploadFile(targetPath, fileName, file);
+  }
+
   // Private Methods
   private readonly getTableUrl = (params: ISqlQueryParameters): string => {
     let url = `${api.host}${api.basePath ? '/' : ''}${api.basePath}/${api.resources.getTable}`;
