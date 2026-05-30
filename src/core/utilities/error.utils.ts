@@ -12,7 +12,7 @@ import { IHttpResponse } from '../interfaces/http/ihttp-response';
 import { HttpResponseCode, HttpResponseStatus } from '../enums/http';
 import { ERROR_DUPLICATE_ENTRY, ERROR_NOT_IDENTIFIED, ERROR_PDO_DUPLICATE_ENTRY, ERROR_PDO_SQL_SYNTAX, ERROR_SQL_SYNTAX, ERROR_UTILITIES_NAME, ERROR_WITHOUT_DESCRIPTION } from '../constants/error';
 
-export const handleError = (response: HttpErrorResponse): HttpResponse => {
+export const handleError = (response: any): HttpResponse => {
   const httpResponse: IHttpResponse = {
     status: HttpResponseStatus.OK,
     code: HttpResponseCode.OK,
@@ -20,8 +20,27 @@ export const handleError = (response: HttpErrorResponse): HttpResponse => {
     data: null
   };
 
+  if (!response) {
+    return new HttpResponse(httpResponse);
+  }
+
+  if (response instanceof File) {
+    httpResponse.message = response.name;
+    httpResponse.data = response;
+    return new HttpResponse(httpResponse);
+  }
+
+  if (response instanceof HttpResponse) {
+    return response;
+  }
+
+  if (response instanceof HttpErrorResponse) {
+    httpResponse.message = translateError(parseErrorMessage(response));
+    return new HttpResponse(httpResponse);
+  }
+
   if (!response.ok) {
-    httpResponse.message = translateError(parseErrorMessage(response.error));
+    httpResponse.message = translateError(parseErrorMessage(response?.error || response.status));
     return new HttpResponse(httpResponse);
   }
 

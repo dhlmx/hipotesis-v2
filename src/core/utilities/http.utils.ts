@@ -4,6 +4,7 @@ import { IPhpJsonSintaxError } from '../interfaces/php/iphp-json-sintax-error';
 import { IPhpResponse } from '../interfaces/php/iphp-response';
 import { IPhpPdoError } from '../interfaces/php/iphp-pdo-error';
 import { ISqlResponse } from '../interfaces/sql/isql-response';
+import { IHttpResponseExtended } from '../interfaces/http/ihttp-response-extended';
 
 export const isIHttpResponse = (entity: any): entity is IHttpResponse => {
   const test = entity as IHttpResponse;
@@ -11,6 +12,16 @@ export const isIHttpResponse = (entity: any): entity is IHttpResponse => {
     && test.code !== undefined
     && test.message !== undefined
     && test.data !== undefined;
+},
+
+isIHttpResponseExtended = (entity: any): entity is IHttpResponseExtended => {
+  const test = entity as IHttpResponseExtended;
+  return test.body !== undefined
+    && test.headers !== undefined
+    && test.ok !== undefined
+    && test.status !== undefined
+    && test.statusText !== undefined
+    && test.url !== undefined;
 },
 
 isIPhpError = (entity: any): entity is IPhpError => {

@@ -1,5 +1,5 @@
 export interface IFileUpload {
-  mode: "basic" | "advanced";
+  mode: string;
   name: string;
   accept: string;
   maxFileSize: number;

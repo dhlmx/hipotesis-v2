@@ -1,0 +1,50 @@
+<p-panel header="Files - Create">
+  <form form="form">
+    <p-card>
+      <div class="card">
+        <div class="columns-1 md:columns-3 py-2">
+          <div>
+            <label for="isActive">&nbsp;Is Active?</label>
+            <p-select inputId="isActive"
+              [options]="activeOptions"
+              [formControl]="controls.isActive"
+              optionLabel="label" optionValue="value" optionDisabled="inactive"
+              class="w-full">
+            </p-select>
+          </div>
+          <div>
+            <label for="sqlFile">&nbsp;File</label>
+            <input
+              type="file"
+              #sqlFileUpload
+              title="File Upload"
+              (change)="onFileSelected($event)"
+              accept="*/*"
+              class="hidden"/>
+            <button
+              type="button"
+              pButton
+              label="{{fileName}}"
+              title="File Upload"
+              (click)="sqlFileUpload.click()"
+              class="p-button-outlined p-button-info w-full">
+            </button>
+          </div>
+          <div>
+            <br />
+            <button pButton type="button" label="Create" title="Save" [disabled]="!file.name" (click)="onSave()" class="p-button-outlined p-button-info w-full"></button>
+          </div>
+
+        </div>
+
+        <p-confirmDialog [style]="{width: '50vw'}" [baseZIndex]="10000" rejectButtonStyleClass="p-button-text"></p-confirmDialog>
+        <p-toast></p-toast>
+      </div>
+    </p-card>
+  </form>
+</p-panel>
+
+<app-message-modal
+  [visible]="appService.process.isInProcess()"
+  [message]="appService.process.message()">
+</app-message-modal>

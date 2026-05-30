@@ -119,6 +119,14 @@ export class MindMapsService {
     }
   }
 
+  postCreateFile = (file: Blob, isActive: boolean): Observable<void> => {
+    return this.repository.postCreateFile(file, isActive).pipe(
+      map((response: HttpResponse) => {
+        this.httpResponse = response;
+      })
+    );
+  }
+
   postExecuteSqlQuery = (query: ISqlQuery): Observable<void> => {
     return this.repository.postExecuteSqlQuery(query).pipe(
       map((response: HttpResponse) => response.isOK ? response.data as ISqlResponse : response.data),

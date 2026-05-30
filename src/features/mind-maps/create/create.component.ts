@@ -11,7 +11,6 @@ import { AppService } from '../../../core/services/app.service';
 import { MindMapsService } from '../../../core/services/mind-maps.service';
 
 // Interfaces & Models
-import { IFileUpload } from '../../../core/interfaces/ifile-upload';
 import { IMindMap } from '../../../core/interfaces/mind-maps/imind-map';
 import { ISelect } from '../../../core/interfaces/iselect';
 import { CoreModule } from '../../../core/modules/core.module';
@@ -80,10 +79,6 @@ export class CreateComponent implements OnInit {
 
   get categories(): ISelect[] {
     return this.mindMapsService.categoriesSelect;
-  }
-
-  get fileUpload(): IFileUpload {
-    return this.mindMapsService.fileUpload;
   }
 
   get fileName(): string {
@@ -174,6 +169,21 @@ export class CreateComponent implements OnInit {
       },
       complete: () => {
         this.appService.process.stop();
+
+        this.appService.process.start('Upload SQL File');
+
+        this.mindMapsService.postCreateFile(this.file!, true).subscribe({
+          next: () => {
+            if (this.mindMapsService.httpResponse.isOK) {
+              this.messageService.add({ severity: 'success', summary: 'Confirmación', detail: 'SQL File saved' });
+            } else {
+              this.messageService.add({ severity: 'warn', summary: 'Confirmación', detail: 'SQL File not saved' });
+            }
+          },
+          complete: () => {
+            this.appService.process.stop();
+          }
+        })
       }
     });
   }

@@ -45,8 +45,14 @@ export class DailyService {
 
   getExecuteSqlQuery = (query: ISqlQuery): Observable<void> => {
     return this.repositoryService.postExecuteSqlQuery(query).pipe(
-      map((response: HttpResponse) => response.isOK ? response.data as IDaily[] : [] as IDaily[]),
-      map((dates: IDaily[]) => dates.map((date: IDaily) => new Daily(date))),
+      map((response: HttpResponse) => {
+        console.info('dailyService::getExecuteSqlQuery::map::HttpResponse', response);
+        return response.isOK ? response.data as IDaily[] : [] as IDaily[]
+      }),
+      map((dates: IDaily[]) => {
+        console.info('dailyService::getExecuteSqlQuery::map::IDaily', dates);
+        return dates.map((date: IDaily) => new Daily(date))
+      }),
       map((dates: Daily[]) => {
         this.processDates(dates);
       })

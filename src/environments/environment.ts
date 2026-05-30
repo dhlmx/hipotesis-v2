@@ -8,6 +8,11 @@ environment = {
     resources: {
       getTable: 'repository/model/getTable.php',
       postExecuteSQLQuery: 'repository/model/postExecuteSQLQuery.php',
+      postCreateFile: 'repository/model/postCreateFile.php',
+      postDeleteFile: 'repository/model/postDeleteFile.php',
+      postReadFile: 'repository/model/postReadFile.php',
+      postReadFileByName: 'repository/model/postReadFileByName.php',
+      postUpdateFile: 'repository/model/postUpdateFile.php',
       postUploadFile: 'repository/model/postUploadFile.php'
     }
   },

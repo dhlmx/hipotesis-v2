@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ConfirmationService, MessageService } from 'primeng/api';
+import { ActivatedRoute } from '@angular/router';
 
 // Modules
 import { CoreModule } from '../../../core/modules/core.module';
@@ -11,7 +12,6 @@ import { AppService } from '../../../core/services/app.service';
 import { DailyService } from '../../../core/services/daily.service';
 
 // Interfaces & Models
-import { ActivatedRoute } from '@angular/router';
 import { Daily } from '../../../core/models/daily';
 import { ISELECT_YES_NO } from '../../../core/constants/select';
 

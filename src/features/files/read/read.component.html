@@ -1,0 +1,27 @@
+<p-panel header="Files - Create">
+  <form form="form">
+    <p-card>
+      <div class="card">
+        @if (isFileOk) {
+          <div class="columns-1 sm:columns-3 py-2">
+            <div>
+            </div>
+            <div>
+              <label for="file">&nbsp;File</label>
+              <img [src]="[file]" loading="lazy" title="File" alt="File" class="w-full">
+            </div>
+            <div>
+            </div>
+          </div>
+        }
+        <p-confirmDialog [style]="{width: '50vw'}" [baseZIndex]="10000" rejectButtonStyleClass="p-button-text"></p-confirmDialog>
+        <p-toast></p-toast>
+      </div>
+    </p-card>
+  </form>
+</p-panel>
+
+<app-message-modal
+  [visible]="appService.process.isInProcess()"
+  [message]="appService.process.message()">
+</app-message-modal>
