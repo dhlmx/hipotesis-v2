@@ -13,7 +13,7 @@ environment = {
       postReadFile: 'repository/model/postReadFile.php',
       postReadFileByName: 'repository/model/postReadFileByName.php',
       postUpdateFile: 'repository/model/postUpdateFile.php',
-      postUploadSqlFile: 'repository/model/postUploadSqlFile.php'
+      postUploadFile: 'repository/model/postUploadFile.php'
     }
   },
   defaultValues: {
