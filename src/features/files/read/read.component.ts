@@ -14,6 +14,7 @@ import { CoreModule } from '../../../core/modules/core.module';
 
 // Enums & Constants
 import { APP_TITLE } from '../../../core/constants/general';
+import { SafeUrl } from '@angular/platform-browser';
 
 @Component({
   standalone: true,
@@ -25,7 +26,7 @@ import { APP_TITLE } from '../../../core/constants/general';
 })
 export class ReadComponent implements OnInit {
 
-  private fileId = 0;
+  public fileId = 0;
 
   constructor(
     public readonly appService: AppService,
@@ -41,9 +42,16 @@ export class ReadComponent implements OnInit {
     this.initialize();
   }
 
-  get file(): Blob {
-    return this.filesService.file;
+  get image(): SafeUrl|null {
+    return this.filesService.imageUrl;
   }
+
+  get imageSize(): string {
+    return this.filesService.blobSize;
+  }
+
+  get imageType(): string {
+    return this.filesService.blobType;  }
 
   get isFileOk(): boolean {
     return this.filesService.isFileOk;

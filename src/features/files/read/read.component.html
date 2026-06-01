@@ -1,16 +1,21 @@
-<p-panel header="Files - Create">
+<p-panel header="Files - Read - {{fileId > 0 && isFileOk ? fileId : 'Not Found'}}">
   <form form="form">
     <p-card>
       <div class="card">
-        @if (isFileOk) {
+        @if (isFileOk && image) {
           <div class="columns-1 sm:columns-3 py-2">
             <div>
+              <p class="text-sm text-gray-500 sm:text-right">
+                Type: {{ imageType }}
+              </p>
             </div>
             <div>
-              <label for="file">&nbsp;File</label>
-              <img [src]="[file]" loading="lazy" title="File" alt="File" class="w-full">
+              <img [src]="[image]" loading="lazy" title="File" alt="File" class="w-full">
             </div>
             <div>
+              <p class="text-sm text-gray-500 mt-2">
+                Size: {{ imageSize }}
+              </p>
             </div>
           </div>
         }
