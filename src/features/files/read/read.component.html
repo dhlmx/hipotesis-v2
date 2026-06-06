@@ -16,6 +16,11 @@
               <p class="text-sm text-gray-500 mt-2">
                 Size: {{ imageSize }}
               </p>
+              <a class="text-sm text-gray-200 mt-2"
+                [href]="image"
+                download="{{imageType}}-{{fileId}}"
+                target="_blank"
+                rel="noopener noreferrer">Download</a>
             </div>
           </div>
         }
