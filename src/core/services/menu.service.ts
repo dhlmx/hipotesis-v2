@@ -7,24 +7,13 @@ import { MenuItem, PrimeIcons } from 'primeng/api';
 export class MenuService {
   public menuItems: MenuItem[] = [
     {
-      icon: PrimeIcons.WAVE_PULSE,
-      label: 'Análisis',
+      icon: PrimeIcons.BRIEFCASE,
+      label: 'Tejidos',
       items: [
         {
-          icon: PrimeIcons.SITEMAP,
-          label: 'Mapas Mentales',
-          routerLink: '/mind-maps/'
-        },
-      ]
-    },
-    {
-      icon: PrimeIcons.CALENDAR,
-      label: 'Diario',
-      items: [
-        {
-          icon: PrimeIcons.LIST_CHECK,
-          label: 'Listado',
-          routerLink: '/daily/'
+          icon: PrimeIcons.EYE,
+          label: 'Muestras',
+          routerLink: '/professions/'
         },
       ]
     }
