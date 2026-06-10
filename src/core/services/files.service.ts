@@ -132,17 +132,12 @@ export class FilesService implements OnDestroy {
     );
   }
 
-  // Private methods
-  private readonly toBase64 = (blob: Blob): void => {
-    const reader = new FileReader();
-
-    reader.onload = (): void => {
-      this._imageUrl = this.sanitizer.sanitize(SecurityContext.URL, reader.result);
-    };
-
-    reader.readAsDataURL(blob);
+  resetBlob = (): void => {
+    this._blob = new Blob();
+    this._imageUrl = null;
   }
 
+  // Private methods
   private readonly formatSize = (size: number): string => {
     if (size < 1024) {
       return `${size} bytes`;
@@ -153,5 +148,15 @@ export class FilesService implements OnDestroy {
     } else {
       return `${(size / 1073741824).toFixed(2)} GB`;
     }
+  }
+
+  private readonly toBase64 = (blob: Blob): void => {
+    const reader = new FileReader();
+
+    reader.onload = (): void => {
+      this._imageUrl = this.sanitizer.sanitize(SecurityContext.URL, reader.result);
+    };
+
+    reader.readAsDataURL(blob);
   }
 }
