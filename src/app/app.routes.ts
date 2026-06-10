@@ -7,5 +7,6 @@ export const routes: Routes = [
   { path: 'files', loadChildren: () => import('./../features/files/files.module').then(m => m.FilesModule) },
   { path: 'maintenance', loadChildren: () => import('./../features/maintenance/maintenance.module').then(m => m.MaintenanceModule) },
   { path: 'mind-maps', loadChildren: () => import('./../features/mind-maps/mind-maps.module').then(m => m.MindMapsModule) },
+  { path: 'professions', loadChildren: () => import('./../features/professions/professions.module').then(m => m.ProfessionsModule) },
   { path: '**', component: PageNotFoundComponent }
 ];

@@ -10,10 +10,10 @@ import { PrimeNgModule } from '../../../core/modules/prime-ng.module';
 // Services
 import { AppService } from '../../../core/services/app.service';
 import { FilesService } from '../../../core/services/files.service';
-import { MaintenanceService } from '../../../core/services/maintenance.service';
+import { ProfessionsService } from '../../../core/services/professions.service';
 
 // Interfaces & Models
-import { IMaintenancePhoto } from '../../../core/interfaces/maintenance/imaintenance-photo';
+import { IProfessionPhoto } from '../../../core/interfaces/professions/iprofession-photo';
 import { ISelect } from '../../../core/interfaces/iselect';
 
 // Enums & Constants
@@ -24,7 +24,7 @@ import { APP_TITLE } from '../../../core/constants/general';
   selector: 'app-list',
   templateUrl: './list.component.html',
   styleUrls: ['./list.component.scss'],
-  providers: [ConfirmationService, MessageService, AppService, FilesService, MaintenanceService],
+  providers: [ConfirmationService, MessageService, AppService, FilesService, ProfessionsService],
   imports: [CoreModule, PrimeNgModule]
 })
 export class ListComponent implements OnInit {
@@ -44,11 +44,11 @@ export class ListComponent implements OnInit {
   constructor(
     public appService: AppService,
     private readonly filesService: FilesService,
-    private readonly maintenanceService: MaintenanceService,
+    private readonly professionsService: ProfessionsService,
     private readonly messageService: MessageService
   ) {
-    this.appService.setTitle(APP_TITLE, 'Mantenimiento - Listado');
-    this.appService.setDescription('Micrositio de mantenimiento en línea blanca, cocinas, baños, etc.');
+    this.appService.setTitle(APP_TITLE, 'Tejidos - Doña Carmelita');
+    this.appService.setDescription('Micrositio de tejidos de la maestra Doña Carmelita.');
   }
 
   ngOnInit() {
@@ -56,7 +56,7 @@ export class ListComponent implements OnInit {
   }
 
   get categories(): ISelect[] {
-    return this.maintenanceService.categories;
+    return this.professionsService.categories;
   }
 
   get image(): SafeUrl|null {
@@ -64,37 +64,37 @@ export class ListComponent implements OnInit {
   }
 
   get index(): number {
-    return this.maintenanceService.index;
+    return this.professionsService.index;
   }
 
   get indexPosition(): string {
-    return `${this.maintenanceService.index + 1} / ${this.maintenanceService.photos.length}`;
+    return `${this.professionsService.index + 1} / ${this.professionsService.photos.length}`;
   }
 
   get isFileOk(): boolean {
     return this.filesService.isFileOk;
   }
 
-  get photo(): IMaintenancePhoto|null {
-    return this.maintenanceService.photo;
+  get photo(): IProfessionPhoto|null {
+    return this.professionsService.photo;
   }
 
-  get photos(): IMaintenancePhoto[] {
-    return this.maintenanceService.photos;
+  get photos(): IProfessionPhoto[] {
+    return this.professionsService.photos;
   }
 
   get projects(): ISelect[] {
-    return this.maintenanceService.projects;
+    return this.professionsService.projects;
   }
 
   get subcategories(): ISelect[] {
-    return this.maintenanceService.subcategories;
+    return this.professionsService.subcategories;
   }
 
   private readonly initialize = (): void => {
     this.appService.process.start('Loading categories...');
 
-    this.maintenanceService.getCategories().subscribe({
+    this.professionsService.getCategories().subscribe({
       next: () => {
         this.processCategories();
       },
@@ -115,7 +115,7 @@ export class ListComponent implements OnInit {
 
     this.appService.process.start('Loading subcategories...');
 
-    this.maintenanceService.getSubcategories(this.controls.categoryId.value || 0).subscribe({
+    this.professionsService.getSubcategories(this.controls.categoryId.value || 0).subscribe({
       next: () => {
         this.processSubcategories();
       },
@@ -136,7 +136,7 @@ export class ListComponent implements OnInit {
 
     this.appService.process.start('Loading projects...');
 
-    this.maintenanceService.getProjects(this.controls.categoryId.value || 0, this.controls.subcategoryId.value || 0).subscribe({
+    this.professionsService.getProjects(this.controls.categoryId.value || 0, this.controls.subcategoryId.value || 0).subscribe({
       next: () => {
         this.processProjects();
       },
@@ -157,7 +157,7 @@ export class ListComponent implements OnInit {
 
     this.appService.process.start('Loading photos...');
 
-    this.maintenanceService.getPhotos(this.controls.projectId.value || 0).subscribe({
+    this.professionsService.getPhotos(this.controls.projectId.value || 0).subscribe({
       next: () => {
         this.processPhotos();
       },
@@ -174,22 +174,22 @@ export class ListComponent implements OnInit {
   }
 
   public onClickFirst = (): void => {
-    this.maintenanceService.goToFirst();
+    this.professionsService.goToFirst();
     this.loadPhoto();
   }
 
   public onClickLast = (): void => {
-    this.maintenanceService.goToLast();
+    this.professionsService.goToLast();
     this.loadPhoto();
   }
 
   public onClickNext = (): void => {
-    this.maintenanceService.goToNext();
+    this.professionsService.goToNext();
     this.loadPhoto();
   }
 
   public onClickPrevious = (): void => {
-    this.maintenanceService.goToPrevious();
+    this.professionsService.goToPrevious();
     this.loadPhoto();
   }
 

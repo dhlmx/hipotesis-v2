@@ -7,10 +7,10 @@ import { toSqlResponse } from '../utilities/http.utils';
 
 // Interfaces & Models
 import { HttpResponse } from '../models/http/http-response';
-import { IMaintenanceCategory } from '../interfaces/maintenance/imaintenance-category';
-import { IMaintenancePhoto } from '../interfaces/maintenance/imaintenance-photo';
-import { IMaintenanceProject } from '../interfaces/maintenance/imaintenance-project';
-import { IMaintenanceSubcategory } from '../interfaces/maintenance/imaintenance-subcategory';
+import { IProfessionCategory } from '../interfaces/professions/iprofession-category';
+import { IProfessionPhoto } from '../interfaces/professions/iprofession-photo';
+import { IProfessionProject } from '../interfaces/professions/iprofession-project';
+import { IProfessionSubcategory } from '../interfaces/professions/iprofession-subcategory';
 import { ISelect } from '../interfaces/iselect';
 import { ISqlQuery } from '../interfaces/sql/isql-query';
 import { ISqlResponse } from '../interfaces/sql/isql-response';
@@ -19,12 +19,12 @@ import { SqlResponse } from '../models/http/sql-response';
 @Injectable({
   providedIn: 'root'
 })
-export class MaintenanceService {
+export class ProfessionsService {
   private _categories: ISelect[] = [];
   private _subcategories: ISelect[] = [];
   private _projects: ISelect[] = [];
-  private _photos: IMaintenancePhoto[] = [];
-  private _photo: IMaintenancePhoto | null = null;
+  private _photos: IProfessionPhoto[] = [];
+  private _photo: IProfessionPhoto | null = null;
   private _index = -1;
   public httpResponse: HttpResponse = {} as HttpResponse;
   public sqlResponse = new SqlResponse();
@@ -39,11 +39,11 @@ export class MaintenanceService {
     return this._index;
   }
 
-  get photo(): IMaintenancePhoto|null {
+  get photo(): IProfessionPhoto|null {
     return this._photo;
   }
 
-  get photos(): IMaintenancePhoto[] {
+  get photos(): IProfessionPhoto[] {
     return this._photos;
   }
 
@@ -59,13 +59,13 @@ export class MaintenanceService {
     this.resetCategories();
 
     return this.repositoryService.postExecuteSqlQuery({
-      query: `CALL up_read_maintenance_categories()`,
-      entityName: 'MaintenanceCategory'
+      query: `CALL up_read_profession_categories()`,
+      entityName: 'ProfessionCategory'
     }).pipe(
       map((response: HttpResponse) => {
-        return response.isOK ? response.data as IMaintenanceCategory[] : [] as IMaintenanceCategory[]
+        return response.isOK ? response.data as IProfessionCategory[] : [] as IProfessionCategory[]
       }),
-      map((categories: IMaintenanceCategory[]) => this.processCategories(categories))
+      map((categories: IProfessionCategory[]) => this.processCategories(categories))
     );
   }
 
@@ -73,13 +73,13 @@ export class MaintenanceService {
     this.resetPhotos();
 
     return this.repositoryService.postExecuteSqlQuery({
-      query: `CALL up_read_maintenance_photos(${projectId})`,
-      entityName: 'MaintenancePhoto'
+      query: `CALL up_read_profession_photos(${projectId})`,
+      entityName: 'ProfessionPhoto'
     }).pipe(
       map((response: HttpResponse) => {
-        return response.isOK ? response.data as IMaintenancePhoto[] : [] as IMaintenancePhoto[]
+        return response.isOK ? response.data as IProfessionPhoto[] : [] as IProfessionPhoto[]
       }),
-      map((photos: IMaintenancePhoto[]) => this.processPhotos(photos))
+      map((photos: IProfessionPhoto[]) => this.processPhotos(photos))
     );
   }
 
@@ -87,13 +87,13 @@ export class MaintenanceService {
     this.resetProjects();
 
     return this.repositoryService.postExecuteSqlQuery({
-      query: `CALL up_read_maintenance_projects(${categoryId}, ${subcategoryId})`,
-      entityName: 'MaintenanceProject'
+      query: `CALL up_read_profession_projects(${categoryId}, ${subcategoryId})`,
+      entityName: 'ProfessionProject'
     }).pipe(
       map((response: HttpResponse) => {
-        return response.isOK ? response.data as IMaintenanceProject[] : [] as IMaintenanceProject[]
+        return response.isOK ? response.data as IProfessionProject[] : [] as IProfessionProject[]
       }),
-      map((projects: IMaintenanceProject[]) => this.processProjects(projects))
+      map((projects: IProfessionProject[]) => this.processProjects(projects))
     );
   }
 
@@ -101,13 +101,13 @@ export class MaintenanceService {
     this.resetSubcategories();
 
     return this.repositoryService.postExecuteSqlQuery({
-      query: `CALL up_read_maintenance_subcategories(${categoryId})`,
-      entityName: 'MaintenanceSubcategory'
+      query: `CALL up_read_profession_subcategories(${categoryId})`,
+      entityName: 'ProfessionSubcategory'
     }).pipe(
       map((response: HttpResponse) => {
-        return response.isOK ? response.data as IMaintenanceSubcategory[] : [] as IMaintenanceSubcategory[]
+        return response.isOK ? response.data as IProfessionSubcategory[] : [] as IProfessionSubcategory[]
       }),
-      map((subcategories: IMaintenanceSubcategory[]) => this.processSubcategories(subcategories))
+      map((subcategories: IProfessionSubcategory[]) => this.processSubcategories(subcategories))
     );
   }
 
@@ -149,15 +149,15 @@ export class MaintenanceService {
   }
 
   // Private Methods
-  private readonly processCategories = (categories: IMaintenanceCategory[]): void => {
-    this._categories = categories.map((category: IMaintenanceCategory) => ({ value: category.categoryId, label: category.category, inactive: false }));
+  private readonly processCategories = (categories: IProfessionCategory[]): void => {
+    this._categories = categories.map((category: IProfessionCategory) => ({ value: category.categoryId, label: category.category, inactive: false }));
   }
 
-  private readonly processSubcategories = (subcategories: IMaintenanceSubcategory[]): void => {
-    this._subcategories = subcategories.map((subcategory: IMaintenanceSubcategory) => ({ value: subcategory.subcategoryId, label: subcategory.subcategory, inactive: false }));
+  private readonly processSubcategories = (subcategories: IProfessionSubcategory[]): void => {
+    this._subcategories = subcategories.map((subcategory: IProfessionSubcategory) => ({ value: subcategory.subcategoryId, label: subcategory.subcategory, inactive: false }));
   }
 
-  private readonly processPhotos = (photos: IMaintenancePhoto[]): void => {
+  private readonly processPhotos = (photos: IProfessionPhoto[]): void => {
     this._photos = photos;
 
     if (this._photos.length > 0) {
@@ -166,8 +166,8 @@ export class MaintenanceService {
     }
   }
 
-  private readonly processProjects = (projects: IMaintenanceProject[]): void => {
-    this._projects = projects.map((project: IMaintenanceProject) => ({ value: project.projectId, label: project.project, inactive: false }));
+  private readonly processProjects = (projects: IProfessionProject[]): void => {
+    this._projects = projects.map((project: IProfessionProject) => ({ value: project.projectId, label: project.project, inactive: false }));
   }
 
   private readonly resetCategories = (): void => {

@@ -1,0 +1,13 @@
+<p-panel header="Maintenance - Read">
+  <form form="form">
+    <div class="card">
+      <p-confirmDialog [style]="{width: '50vw'}" [baseZIndex]="10000" rejectButtonStyleClass="p-button-text"></p-confirmDialog>
+      <p-toast></p-toast>
+    </div>
+  </form>
+</p-panel>
+
+<app-message-modal
+  [visible]="appService.process.isInProcess()"
+  [message]="appService.process.message()">
+</app-message-modal>
