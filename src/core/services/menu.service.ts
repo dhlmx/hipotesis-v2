@@ -13,7 +13,7 @@ export class MenuService {
         {
           icon: PrimeIcons.EYE,
           label: 'Muestras',
-          routerLink: '/professions/'
+          routerLink: '/tejidos/'
         },
       ]
     }

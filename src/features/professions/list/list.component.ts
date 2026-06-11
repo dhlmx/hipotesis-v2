@@ -47,8 +47,8 @@ export class ListComponent implements OnInit {
     private readonly professionsService: ProfessionsService,
     private readonly messageService: MessageService
   ) {
-    this.appService.setTitle(APP_TITLE, 'Tejidos - Doña Carmelita');
-    this.appService.setDescription('Micrositio de tejidos de la maestra Doña Carmelita.');
+    this.appService.setTitle(APP_TITLE, 'Muestras de tejidos');
+    this.appService.setDescription('Micro sitio de tejidos de la maestra Doña Carmelita.');
   }
 
   ngOnInit() {
