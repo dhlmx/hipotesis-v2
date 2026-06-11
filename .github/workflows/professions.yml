@@ -1,8 +1,5 @@
 name: CI/CD
 
-env:
-  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
-
 on:
   push:
     branches: [ "professions" ]
@@ -18,10 +15,10 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Setup
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: lts/*
           cache: "npm"
@@ -37,7 +34,7 @@ jobs:
 
       - name: Web Deploy
         if: github.event_name == 'push' && github.ref == 'refs/heads/professions'
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        uses: SamKirkland/FTP-Deploy-Action@v4.4.0
         with:
           server: ${{secrets.FTP_SERVER_PROD}}
           username: ${{secrets.FTP_USER_PROD}}
