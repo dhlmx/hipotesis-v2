@@ -9,10 +9,8 @@ import { PrimeNgModule } from '../../../core/modules/prime-ng.module';
 
 // Services
 import { AppService } from '../../../core/services/app.service';
-import { DailyService } from '../../../core/services/daily.service';
 
 // Interfaces & Models
-import { Daily } from '../../../core/models/daily';
 
 // Enums & Constants
 import { APP_TITLE } from '../../../core/constants/general';
@@ -23,7 +21,7 @@ import { ISELECT_YES_NO } from '../../../core/constants/select';
   selector: 'app-delete',
   templateUrl: './delete.component.html',
   styleUrls: ['./delete.component.scss'],
-  providers: [ConfirmationService, MessageService, AppService, DailyService],
+  providers: [ConfirmationService, MessageService, AppService],
   imports: [CoreModule, PrimeNgModule]
 })
 export class DeleteComponent implements OnInit {
@@ -47,7 +45,6 @@ export class DeleteComponent implements OnInit {
     public appService: AppService,
     private readonly confirmationService: ConfirmationService,
     private readonly messageService: MessageService,
-    private readonly dailyService: DailyService,
     private readonly activatedRoute: ActivatedRoute
   ) {
     this.appService.setTitle(APP_TITLE, 'Daily - Update');
@@ -57,26 +54,10 @@ export class DeleteComponent implements OnInit {
     this.initialize();
   }
 
-  get daily(): Daily {
-    return this.dailyService.daily;
-  }
-
   private readonly initialize = (): void => {
     this.appService.process.start('Loading data...');
 
     this.controls.dailyId.setValue(Number.parseInt(this.activatedRoute.snapshot.paramMap.get('id') || '0'));
-    this.dailyService.getDaily(this.controls.dailyId.value).subscribe({
-      next: () => {
-        this.processDaily(this.dailyService.daily);
-
-        if (this.dailyService.daily.dailyId <= 0) {
-          this.messageService.add({ severity: 'warn', summary: 'Información', detail: 'Daily not found' });
-        }
-      },
-      complete: () => {
-        this.appService.process.stop();
-      }
-    });
   }
 
   onClickSave = (): void => {
@@ -86,21 +67,6 @@ export class DeleteComponent implements OnInit {
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
         this.appService.process.start('Updating remark...');
-        this.dailyService.deleteDaily(this.getFormData()).subscribe({
-          next: () => {
-            if (this.dailyService.sqlResponse.isSuccessfulDeletion()) {
-              this.messageService.add({ severity: 'success', summary: 'Confirmación', detail: 'Remark saved' });
-            } else {
-              this.messageService.add({ severity: 'warn', summary: 'Confirmación', detail: 'Remark not saved' });
-            }
-          },
-          error: (err: any) => {
-            console.log(err);
-          },
-          complete: () => {
-            this.appService.process.stop();
-          }
-        });
       },
       reject: (type: ConfirmEventType) => {
         switch (type) {
@@ -118,23 +84,9 @@ export class DeleteComponent implements OnInit {
   // Private methods
   private readonly getFormData = (): number => this.controls.dailyId.value;
 
-  private readonly processDaily = (daily: Daily): void => {
-    if (this.dailyService.daily.dailyId) {
-      this.setForm(daily);
-    } else {
-      this.resetForm();
-    }
-  }
-
   private readonly resetForm = (): void => {
     this.controls.dailyId.setValue(0);
     this.controls.remark.setValue('');
     this.controls.isActive.setValue(false);
-  }
-
-  private readonly setForm = (daily: Daily): void => {
-    this.controls.dailyId.setValue(daily.dailyId);
-    this.controls.remark.setValue(daily.remark);
-    this.controls.isActive.setValue(daily.isActive);
   }
 }

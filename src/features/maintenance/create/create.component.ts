@@ -8,10 +8,8 @@ import { PrimeNgModule } from '../../../core/modules/prime-ng.module';
 
 // Services
 import { AppService } from '../../../core/services/app.service';
-import { DailyService } from '../../../core/services/daily.service';
 
 // Interfaces & Models
-import { IDaily } from '../../../core/interfaces/idaily';
 import { IPhpDateTime } from '../../../core/interfaces/php/iphp-datetime';
 
 // Enums & Constants
@@ -23,7 +21,7 @@ import { ISELECT_YES_NO } from '../../../core/constants/select';
   selector: 'app-create',
   templateUrl: './create.component.html',
   styleUrls: ['./create.component.scss'],
-  providers: [ConfirmationService, MessageService, AppService, DailyService],
+  providers: [ConfirmationService, MessageService, AppService],
   imports: [CoreModule, PrimeNgModule]
 })
 export class CreateComponent {
@@ -44,8 +42,7 @@ export class CreateComponent {
   constructor(
     public appService: AppService,
     private readonly confirmationService: ConfirmationService,
-    private readonly messageService: MessageService,
-    private readonly dailyService: DailyService
+    private readonly messageService: MessageService
   ) {
     this.appService.setTitle(APP_TITLE, 'Daily - Create');
   }
@@ -57,23 +54,6 @@ export class CreateComponent {
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
         this.appService.process.start('Creating remark...');
-
-        this.dailyService.createDaily(this.getFormData()).subscribe({
-          next: () => {
-            if (this.dailyService.sqlResponse.isSuccessfulCreation()) {
-              this.resetForm();
-              this.messageService.add({ severity: 'success', summary: 'Confirmación', detail: 'Remark saved' });
-            } else {
-              this.messageService.add({ severity: 'warn', summary: 'Confirmación', detail: 'Remark not saved' });
-            }
-
-            this.appService.process.stop();
-          },
-          error: (err: any) => {
-            console.log(err);
-            this.appService.process.stop();
-          }
-        });
       },
       reject: (type: ConfirmEventType) => {
         switch (type) {
@@ -89,17 +69,6 @@ export class CreateComponent {
   }
 
   // Private Methods
-  private readonly getFormData = (): IDaily => {
-    return {
-      dailyId: 0,
-      remark: this.controls.remark.value,
-      createdAt: {} as IPhpDateTime,
-      updatedAt: {} as IPhpDateTime,
-      deletedAt: {} as IPhpDateTime,
-      isActive: this.controls.isActive.value
-    };
-  }
-
   private readonly resetForm = (): void => {
     this.controls.remark.setValue('');
     this.controls.isActive.setValue(true);

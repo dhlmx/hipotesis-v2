@@ -12,7 +12,6 @@ import { AppService } from '../../../core/services/app.service';
 import { MaintenanceService } from '../../../core/services/maintenance.service';
 
 // Interfaces & Models
-import { Daily } from '../../../core/models/daily';
 import { ISELECT_YES_NO } from '../../../core/constants/select';
 
 // Enums & Constants

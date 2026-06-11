@@ -47,7 +47,7 @@ export class ListComponent implements OnInit {
     private readonly maintenanceService: MaintenanceService,
     private readonly messageService: MessageService
   ) {
-    this.appService.setTitle(APP_TITLE, 'Mantenimiento - Listado');
+    this.appService.setTitle(APP_TITLE, 'Proyectos');
     this.appService.setDescription('Micrositio de mantenimiento en línea blanca, cocinas, baños, etc.');
   }
 
