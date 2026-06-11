@@ -11,7 +11,7 @@ import { AppService } from '../../../core/services/app.service';
 import { DailyService } from '../../../core/services/daily.service';
 
 // Interfaces & Models
-import { IDaily } from '../../../core/interfaces/idaily';
+import { IDaily } from '../../../core/interfaces/daily/idaily';
 import { IPhpDateTime } from '../../../core/interfaces/php/iphp-datetime';
 
 // Enums & Constants

@@ -1,4 +1,4 @@
-import { IDaily } from '../interfaces/idaily';
+import { IDaily } from '../interfaces/daily/idaily';
 
 export class Daily {
   dailyId: number;

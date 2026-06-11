@@ -18,7 +18,7 @@ import { Daily } from '../../../core/models/daily';
 import { APP_TITLE } from '../../../core/constants/general';
 import { ISELECT_YES_NO } from '../../../core/constants/select';
 import { IPhpDateTime } from '../../../core/interfaces/php/iphp-datetime';
-import { IDaily } from '../../../core/interfaces/idaily';
+import { IDaily } from '../../../core/interfaces/daily/idaily';
 
 @Component({
   standalone: true,

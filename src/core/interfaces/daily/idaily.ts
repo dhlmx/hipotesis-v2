@@ -1,4 +1,4 @@
-import { IPhpDateTime } from './php/iphp-datetime';
+import { IPhpDateTime } from '../php/iphp-datetime';
 
 export interface IDaily {
   dailyId: number;

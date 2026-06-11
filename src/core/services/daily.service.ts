@@ -8,7 +8,7 @@ import { toSqlResponse } from '../utilities/http.utils';
 // Interfaces & Models
 import { Daily } from '../models/daily';
 import { HttpResponse } from '../models/http/http-response';
-import { IDaily } from '../interfaces/idaily';
+import { IDaily } from '../interfaces/daily/idaily';
 import { ISqlQuery } from '../interfaces/sql/isql-query';
 import { ISqlResponse } from '../interfaces/sql/isql-response';
 import { SqlResponse } from '../models/http/sql-response';
