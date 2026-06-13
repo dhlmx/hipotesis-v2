@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { PanelModule } from 'primeng/panel';
 
 @Component({
@@ -6,6 +6,7 @@ import { PanelModule } from 'primeng/panel';
   standalone: true,
   imports: [PanelModule],
   templateUrl: './footer.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./footer.component.scss']
 })
 export class FooterComponent {}
