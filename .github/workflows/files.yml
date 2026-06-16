@@ -2,9 +2,9 @@ name: CI/CD
 
 on:
   push:
-    branches: [ "professions" ]
+    branches: [ "files" ]
   pull_request:
-    branches: [ "professions" ]
+    branches: [ "files" ]
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -33,12 +33,12 @@ jobs:
         run: ng build
 
       - name: Web Deploy
-        if: github.event_name == 'push' && github.ref == 'refs/heads/professions'
+        if: github.event_name == 'push' && github.ref == 'refs/heads/files'
         uses: SamKirkland/FTP-Deploy-Action@v4.4.0
         with:
           server: ${{secrets.FTP_SERVER_PROD}}
           username: ${{secrets.FTP_USER_PROD}}
           password: ${{secrets.FTP_PASSWORD_PROD}}
           local-dir: ./dist/hipotesis-v2/browser/
-          server-dir: public_html/professions/
+          server-dir: public_html/files/
           dangerous-clean-slate: false

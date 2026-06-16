@@ -7,13 +7,13 @@ import { MenuItem, PrimeIcons } from 'primeng/api';
 export class MenuService {
   public menuItems: MenuItem[] = [
     {
-      icon: PrimeIcons.BRIEFCASE,
-      label: 'Tejidos',
+      icon: PrimeIcons.FILE,
+      label: 'Files',
       items: [
         {
           icon: PrimeIcons.EYE,
-          label: 'Muestras',
-          routerLink: '/tejidos/'
+          label: 'See',
+          routerLink: '/files/'
         },
       ]
     }

@@ -35,7 +35,7 @@ export class ReadComponent implements OnInit {
     private readonly filesService: FilesService,
     private readonly activatedRoute: ActivatedRoute
   ) {
-    this.appService.setTitle(APP_TITLE, 'Files - Create');
+    this.appService.setTitle(APP_TITLE, 'Files - Read');
   }
 
   ngOnInit(): void {

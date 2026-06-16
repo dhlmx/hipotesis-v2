@@ -1,2 +1,1 @@
-export const APP_TITLE = 'Tejidos Doña Carmelita';
-
+export const APP_TITLE = 'Files v2';

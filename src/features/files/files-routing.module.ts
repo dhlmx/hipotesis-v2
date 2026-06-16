@@ -5,7 +5,7 @@ import { CreateComponent } from './create/create.component';
 import { ReadComponent } from './read/read.component';
 
 const routes: Routes = [
-  { path: '', component: CreateComponent },
+  { path: '', component: ReadComponent },
   { path: 'c', component: CreateComponent },
   { path: 'r/:id', component: ReadComponent }
 ];
