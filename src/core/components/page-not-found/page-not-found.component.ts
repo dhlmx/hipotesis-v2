@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { PanelModule } from 'primeng/panel';
 
 @Component({
@@ -6,7 +6,7 @@ import { PanelModule } from 'primeng/panel';
   standalone: true,
   imports: [PanelModule],
   templateUrl: './page-not-found.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./page-not-found.component.scss']
 })
-export class PageNotFoundComponent {
-}
+export class PageNotFoundComponent {}

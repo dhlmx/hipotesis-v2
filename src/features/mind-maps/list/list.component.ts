@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { environment } from '../../../environments/environment';
@@ -26,14 +26,18 @@ const { publicHtml } = environment;
   templateUrl: './list.component.html',
   styleUrls: ['./list.component.scss'],
   providers: [ConfirmationService, MessageService],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [CoreModule, PrimeNgModule]
 })
 export class ListComponent implements OnInit {
-
   controls = {
     categoryId: new FormControl(0, Validators.required),
     mindMapId: new FormControl(0, Validators.required),
-    title: new FormControl('', [Validators.required, Validators.minLength(1), Validators.maxLength(200)]),
+    title: new FormControl('', [
+      Validators.required,
+      Validators.minLength(1),
+      Validators.maxLength(200)
+    ]),
   };
 
   form = new FormGroup({
@@ -46,7 +50,9 @@ export class ListComponent implements OnInit {
     private readonly mindMapsService: MindMapsService
   ) {
     this.appService.setTitle(APP_TITLE, 'Análisis - Mapas Mentales');
-    this.appService.setDescription('Análisis situacional de México y del Mundo. Una mirada crítica y alternativa.');
+    this.appService.setDescription(
+      'Análisis situacional de México y del Mundo. Una mirada crítica y alternativa.'
+    );
   }
 
   ngOnInit() {
@@ -71,11 +77,11 @@ export class ListComponent implements OnInit {
 
   getPdfUrl = (mindMap: IMindMap): string => {
     return `/${publicHtml.base}/${publicHtml.mindMaps}/${mindMap.pdf}`;
-  }
+  };
 
   getSvgUrl = (mindMap: IMindMap): string => {
     return `/${publicHtml.base}/${publicHtml.mindMaps}/${mindMap.svg}`;
-  }
+  };
 
   private readonly initialize = (): void => {
     this.appService.process.start('Loading categories...');
@@ -88,7 +94,11 @@ export class ListComponent implements OnInit {
         this.appService.process.stop();
 
         if (this.categories.length === 0) {
-          this.messageService.add({ severity: 'warn', summary: 'Información', detail: 'Categories not found' });
+          this.messageService.add({
+            severity: 'warn',
+            summary: 'Información',
+            detail: 'Categories not found'
+          });
         } else {
           this.appService.process.start('Loading mind maps...');
 
@@ -100,14 +110,18 @@ export class ListComponent implements OnInit {
               this.appService.process.stop();
 
               if (this.mindMaps.length === 0) {
-                this.messageService.add({ severity: 'warn', summary: 'Información', detail: 'Mind maps not found' });
+                this.messageService.add({
+                  severity: 'warn',
+                  summary: 'Información',
+                  detail: 'Mind maps not found',
+                });
               }
             }
           });
         }
-      }
+      },
     });
-  }
+  };
 
   onChangeCategory = (): void => {
     this.appService.process.start('Loading mind maps...');
@@ -122,27 +136,31 @@ export class ListComponent implements OnInit {
         this.appService.process.stop();
 
         if (this.mindMaps.length === 0) {
-          this.messageService.add({ severity: 'warn', summary: 'Información', detail: 'Mind maps not found' });
+          this.messageService.add({
+            severity: 'warn',
+            summary: 'Información',
+            detail: 'Mind maps not found'
+          });
         }
       }
     });
-  }
+  };
 
   onChangeMindMap = (): void => {
     this.appService.process.start('Loading mind map...');
     this.loadMindMap(Number(this.controls.mindMapId.value));
     this.appService.process.stop();
-  }
+  };
 
   loadMindMap = (mindMapId: number): void => {
     this.mindMapsService.resetMindMap(mindMapId);
-  }
+  };
 
   resetCategory = (): void => {
     this.controls.categoryId.setValue(this.categories.length > 0 ? this.categories[0].value : 0);
-  }
+  };
 
   resetMindMap = (): void => {
     this.controls.mindMapId.setValue(this.mindMaps.length > 0 ? this.mindMaps[0].value : 0);
-  }
+  };
 }

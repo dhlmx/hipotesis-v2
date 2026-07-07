@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { MenuItem } from 'primeng/api';
 import { MenubarModule } from 'primeng/menubar';
 import { ButtonModule } from 'primeng/button';
@@ -10,10 +10,10 @@ import { MenuService } from '../../services/menu.service';
   imports: [ButtonModule, MenubarModule],
   providers: [MenuService],
   templateUrl: './header.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./header.component.scss']
 })
 export class HeaderComponent {
-
   menuItems: MenuItem[] = [];
 
   constructor(private readonly menuService: MenuService) {

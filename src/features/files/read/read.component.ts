@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { ConfirmationService, MessageService } from 'primeng/api';
 
@@ -21,11 +21,11 @@ import { SafeUrl } from '@angular/platform-browser';
   selector: 'app-read',
   templateUrl: './read.component.html',
   styleUrls: ['./read.component.scss'],
-  providers: [ConfirmationService,MessageService, AppService, FilesService],
+  providers: [ConfirmationService, MessageService, AppService, FilesService],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [CoreModule, PrimeNgModule]
 })
 export class ReadComponent implements OnInit {
-
   public fileId = 0;
 
   constructor(
@@ -42,7 +42,7 @@ export class ReadComponent implements OnInit {
     this.initialize();
   }
 
-  get image(): SafeUrl|null {
+  get image(): SafeUrl | null {
     return this.filesService.imageUrl;
   }
 
@@ -51,7 +51,8 @@ export class ReadComponent implements OnInit {
   }
 
   get imageType(): string {
-    return this.filesService.blobType;  }
+    return this.filesService.blobType;
+  }
 
   get isFileOk(): boolean {
     return this.filesService.isFileOk;
@@ -64,12 +65,16 @@ export class ReadComponent implements OnInit {
     this.filesService.postReadFile(this.fileId).subscribe({
       next: () => {
         if (!this.filesService.isFileOk) {
-          this.messageService.add({ severity: 'warn', summary: 'Confirmación', detail: 'File not found' });
+          this.messageService.add({
+            severity: 'warn',
+            summary: 'Confirmación',
+            detail: 'File not found'
+          });
         }
       },
       complete: () => {
         this.appService.process.stop();
-      }
+      },
     });
-  }
+  };
 }
