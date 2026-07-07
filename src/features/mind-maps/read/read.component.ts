@@ -19,8 +19,10 @@ import { CoreModule } from '../../../core/modules/core.module';
 import { APP_TITLE } from '../../../core/constants/general';
 import { DB } from '../../../core/constants/db';
 import { ISELECT_YES_NO } from '../../../core/constants/select';
+import { environment } from '../../../environments/environment.production';
 
-const { mindMaps } = DB;
+const { mindMaps } = DB,
+  { publicHtml } = environment;
 
 @Component({
   selector: 'app-read',
@@ -110,6 +112,10 @@ export class ReadComponent implements OnInit {
   get mindMap(): IMindMap {
     return this.mindMapsService.mindMap;
   }
+
+  getSvgUrl = (mindMap: IMindMap): string => {
+    return `/${publicHtml.base}/${publicHtml.mindMaps}/${mindMap.svg}`;
+  };
 
   private readonly initialize = (): void => {
     this.appService.process.start('Loading categories...');
