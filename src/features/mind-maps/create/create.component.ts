@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ConfirmationService, ConfirmEventType, MessageService } from 'primeng/api';
 import { environment } from '../../../environments/environment';
@@ -29,58 +29,34 @@ const { mindMaps } = DB,
   templateUrl: './create.component.html',
   styleUrls: ['./create.component.scss'],
   providers: [ConfirmationService, MessageService, AppService, MindMapsService],
-  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [CoreModule, PrimeNgModule]
 })
 export class CreateComponent implements OnInit {
+
   activeOptions = ISELECT_YES_NO;
-  file: File | null = null;
+  file: File|null = null;
   totalSize: number = 0;
   totalSizePercent: number = 0;
 
   controls: {
-    categoryId: FormControl;
-    title: FormControl;
-    subtitle: FormControl;
-    author: FormControl;
-    jpg: FormControl;
-    png: FormControl;
-    svg: FormControl;
-    pdf: FormControl;
-    isActive: FormControl;
+    categoryId: FormControl,
+    title: FormControl,
+    subtitle: FormControl,
+    author: FormControl,
+    jpg: FormControl,
+    png: FormControl,
+    svg: FormControl,
+    pdf: FormControl,
+    isActive: FormControl
   } = {
     categoryId: new FormControl(0, Validators.required),
-    title: new FormControl('', [
-      Validators.required,
-      Validators.minLength(mindMaps.title.minLength),
-      Validators.maxLength(mindMaps.title.maxLength),
-    ]),
-    subtitle: new FormControl('', [
-      Validators.required,
-      Validators.minLength(mindMaps.subtitle.minLength),
-      Validators.maxLength(mindMaps.subtitle.maxLength),
-    ]),
-    author: new FormControl('', [
-      Validators.required,
-      Validators.minLength(mindMaps.author.minLength),
-      Validators.maxLength(mindMaps.author.maxLength),
-    ]),
-    jpg: new FormControl('', [
-      Validators.minLength(mindMaps.jpg.minLength),
-      Validators.maxLength(mindMaps.jpg.maxLength),
-    ]),
-    png: new FormControl('', [
-      Validators.minLength(mindMaps.png.minLength),
-      Validators.maxLength(mindMaps.png.maxLength),
-    ]),
-    svg: new FormControl('', [
-      Validators.minLength(mindMaps.svg.minLength),
-      Validators.maxLength(mindMaps.svg.maxLength),
-    ]),
-    pdf: new FormControl('', [
-      Validators.minLength(mindMaps.pdf.minLength),
-      Validators.maxLength(mindMaps.pdf.maxLength),
-    ]),
+    title: new FormControl('', [Validators.required, Validators.minLength(mindMaps.title.minLength), Validators.maxLength(mindMaps.title.maxLength)]),
+    subtitle: new FormControl('', [Validators.required, Validators.minLength(mindMaps.subtitle.minLength), Validators.maxLength(mindMaps.subtitle.maxLength)]),
+    author: new FormControl('', [Validators.required, Validators.minLength(mindMaps.author.minLength), Validators.maxLength(mindMaps.author.maxLength)]),
+    jpg: new FormControl('', [Validators.minLength(mindMaps.jpg.minLength), Validators.maxLength(mindMaps.jpg.maxLength)]),
+    png: new FormControl('', [Validators.minLength(mindMaps.png.minLength), Validators.maxLength(mindMaps.png.maxLength)]),
+    svg: new FormControl('', [Validators.minLength(mindMaps.svg.minLength), Validators.maxLength(mindMaps.svg.maxLength)]),
+    pdf: new FormControl('', [Validators.minLength(mindMaps.pdf.minLength), Validators.maxLength(mindMaps.pdf.maxLength)]),
     isActive: new FormControl(false, Validators.required)
   };
 
@@ -114,11 +90,9 @@ export class CreateComponent implements OnInit {
   }
 
   get isValidSqlResponse(): boolean {
-    return (
-      this.mindMapsService.sqlResponse.lastIdentityId !== undefined &&
-      this.mindMapsService.sqlResponse.lastIdentityId > 0 &&
-      this.mindMapsService.sqlResponse.affectedRows === 1
-    );
+    return this.mindMapsService.sqlResponse.lastIdentityId !== undefined
+      && this.mindMapsService.sqlResponse.lastIdentityId > 0
+      && this.mindMapsService.sqlResponse.affectedRows === 1;
   }
 
   private readonly initialize = (): void => {
@@ -129,18 +103,14 @@ export class CreateComponent implements OnInit {
         if (this.mindMapsService.categoriesSelect.length > 0) {
           this.selectCategory();
         } else {
-          this.messageService.add({
-            severity: 'warn',
-            summary: 'Información',
-            detail: 'Categories not found'
-          });
+          this.messageService.add({ severity: 'warn', summary: 'Información', detail: 'Categories not found' });
         }
       },
       complete: () => {
         this.appService.process.stop();
       }
     });
-  };
+  }
 
   onClickSave = (): void => {
     this.confirmationService.confirm({
@@ -153,17 +123,9 @@ export class CreateComponent implements OnInit {
           next: () => {
             if (this.isValidSqlResponse) {
               this.resetForm();
-              this.messageService.add({
-                severity: 'success',
-                summary: 'Confirmación',
-                detail: 'MindMap saved'
-              });
+              this.messageService.add({ severity: 'success', summary: 'Confirmación', detail: 'MindMap saved' });
             } else {
-              this.messageService.add({
-                severity: 'warn',
-                summary: 'Confirmación',
-                detail: 'MindMap not saved'
-              });
+              this.messageService.add({ severity: 'warn', summary: 'Confirmación', detail: 'MindMap not saved' });
             }
           },
           error: (err: any) => {
@@ -177,23 +139,15 @@ export class CreateComponent implements OnInit {
       reject: (type: ConfirmEventType) => {
         switch (type) {
           case ConfirmEventType.REJECT:
-            this.messageService.add({
-              severity: 'warn',
-              summary: 'Información',
-              detail: 'Operación no realizada'
-            });
+            this.messageService.add({ severity: 'warn', summary: 'Información', detail: 'Operación no realizada'})
             break;
           case ConfirmEventType.CANCEL:
-            this.messageService.add({
-              severity: 'warn',
-              summary: 'Cancelación',
-              detail: 'Operación cancelada'
-            });
+            this.messageService.add({ severity: 'warn', summary: 'Cancelación', detail: 'Operación cancelada'})
             break;
         }
       }
     });
-  };
+  }
 
   public onFileSelected(event: Event): void {
     const input = event.target! as HTMLInputElement;
@@ -205,51 +159,33 @@ export class CreateComponent implements OnInit {
 
     this.appService.process.start('Upload file');
 
-    this.mindMapsService
-      .postUploadFile(this.mindMapsService.fileUpload.publicHtml, this.file.name, this.file)
-      .subscribe({
-        next: () => {
-          if (this.mindMapsService.httpResponse.isOK) {
-            this.messageService.add({
-              severity: 'success',
-              summary: 'Confirmación',
-              detail: 'File saved'
-            });
-          } else {
-            this.messageService.add({
-              severity: 'warn',
-              summary: 'Confirmación',
-              detail: 'File not saved'
-            });
-          }
-        },
-        complete: () => {
-          this.appService.process.stop();
-
-          this.appService.process.start('Upload SQL File');
-
-          this.mindMapsService.postCreateFile(this.file!, true).subscribe({
-            next: () => {
-              if (this.mindMapsService.httpResponse.isOK) {
-                this.messageService.add({
-                  severity: 'success',
-                  summary: 'Confirmación',
-                  detail: 'SQL File saved'
-                });
-              } else {
-                this.messageService.add({
-                  severity: 'warn',
-                  summary: 'Confirmación',
-                  detail: 'SQL File not saved'
-                });
-              }
-            },
-            complete: () => {
-              this.appService.process.stop();
-            },
-          });
+    this.mindMapsService.postUploadFile(this.mindMapsService.fileUpload.publicHtml, this.file.name, this.file).subscribe({
+      next: () => {
+        if (this.mindMapsService.httpResponse.isOK) {
+          this.messageService.add({ severity: 'success', summary: 'Confirmación', detail: 'File saved' });
+        } else {
+          this.messageService.add({ severity: 'warn', summary: 'Confirmación', detail: 'File not saved' });
         }
-      });
+      },
+      complete: () => {
+        this.appService.process.stop();
+
+        this.appService.process.start('Upload SQL File');
+
+        this.mindMapsService.postCreateFile(this.file!, true).subscribe({
+          next: () => {
+            if (this.mindMapsService.httpResponse.isOK) {
+              this.messageService.add({ severity: 'success', summary: 'Confirmación', detail: 'SQL File saved' });
+            } else {
+              this.messageService.add({ severity: 'warn', summary: 'Confirmación', detail: 'SQL File not saved' });
+            }
+          },
+          complete: () => {
+            this.appService.process.stop();
+          }
+        })
+      }
+    });
   }
 
   /*
@@ -307,13 +243,13 @@ export class CreateComponent implements OnInit {
     this.controls.svg.setValue('');
     this.controls.pdf.setValue('');
     this.controls.isActive.setValue(false);
-  };
+  }
 
   private readonly selectCategory = (): void => {
     if (this.mindMapsService.categoriesSelect.length > 0) {
       this.controls.categoryId.setValue(this.mindMapsService.categoriesSelect[0].value);
     }
-  };
+  }
 
   private readonly toIMindMap = (): IMindMap => {
     return {
@@ -328,5 +264,5 @@ export class CreateComponent implements OnInit {
       pdf: this.controls.pdf.value,
       isActive: this.controls.isActive.value
     } as IMindMap;
-  };
+  }
 }

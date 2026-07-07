@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ConfirmationService, ConfirmEventType, MessageService } from 'primeng/api';
 import { ActivatedRoute } from '@angular/router';
@@ -26,16 +26,19 @@ import { IDaily } from '../../../core/interfaces/daily/idaily';
   templateUrl: './update.component.html',
   styleUrls: ['./update.component.scss'],
   providers: [ConfirmationService, MessageService, DailyService],
-  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [CoreModule, PrimeNgModule]
 })
 export class UpdateComponent implements OnInit {
   public activeOptions = ISELECT_YES_NO;
 
-  controls = {
+  controls: {
+    dailyId: FormControl,
+    remark: FormControl,
+    isActive: FormControl,
+  } = {
     dailyId: new FormControl(0, Validators.required),
     remark: new FormControl('', Validators.required),
-    isActive: new FormControl(true, Validators.required)
+    isActive: new FormControl(true, Validators.required),
   };
 
   form = new FormGroup({
@@ -63,26 +66,20 @@ export class UpdateComponent implements OnInit {
   private readonly initialize = (): void => {
     this.appService.process.start('Loading data...');
 
-    this.controls.dailyId.setValue(
-      Number.parseInt(this.activatedRoute.snapshot.paramMap.get('id') || '0')
-    );
-    this.dailyService.getDaily(this.controls.dailyId.value || 0).subscribe({
+    this.controls.dailyId.setValue(Number.parseInt(this.activatedRoute.snapshot.paramMap.get('id') || '0'));
+    this.dailyService.getDaily(this.controls.dailyId.value).subscribe({
       next: () => {
         this.processDaily(this.dailyService.daily);
 
         if (this.dailyService.daily.dailyId <= 0) {
-          this.messageService.add({
-            severity: 'warn',
-            summary: 'Información',
-            detail: 'Daily not found'
-          });
+          this.messageService.add({ severity: 'warn', summary: 'Información', detail: 'Daily not found' });
         }
       },
       complete: () => {
         this.appService.process.stop();
       }
     });
-  };
+  }
 
   onClickSave = (): void => {
     this.confirmationService.confirm({
@@ -94,17 +91,9 @@ export class UpdateComponent implements OnInit {
         this.dailyService.updateDaily(this.getFormData()).subscribe({
           next: () => {
             if (this.dailyService.sqlResponse.isSuccessfulUpdate()) {
-              this.messageService.add({
-                severity: 'success',
-                summary: 'Confirmación',
-                detail: 'Remark saved'
-              });
+              this.messageService.add({ severity: 'success', summary: 'Confirmación', detail: 'Remark saved' });
             } else {
-              this.messageService.add({
-                severity: 'warn',
-                summary: 'Confirmación',
-                detail: 'Remark not saved'
-              });
+              this.messageService.add({ severity: 'warn', summary: 'Confirmación', detail: 'Remark not saved' });
             }
           },
           error: (err: any) => {
@@ -118,35 +107,27 @@ export class UpdateComponent implements OnInit {
       reject: (type: ConfirmEventType) => {
         switch (type) {
           case ConfirmEventType.REJECT:
-            this.messageService.add({
-              severity: 'warn',
-              summary: 'Información',
-              detail: 'Operación no realizada'
-            });
+            this.messageService.add({ severity: 'warn', summary: 'Información', detail: 'Operación no realizada'})
             break;
           case ConfirmEventType.CANCEL:
-            this.messageService.add({
-              severity: 'warn',
-              summary: 'Cancelación',
-              detail: 'Operación cancelada'
-            });
+            this.messageService.add({ severity: 'warn', summary: 'Cancelación', detail: 'Operación cancelada'})
             break;
         }
       }
     });
-  };
+  }
 
   // Private methods
   private readonly getFormData = (): IDaily => {
     return {
-      dailyId: this.controls.dailyId.value || 0,
-      remark: this.controls.remark.value || '',
+      dailyId: this.controls.dailyId.value,
+      remark: this.controls.remark.value,
       createdAt: {} as IPhpDateTime,
       updatedAt: {} as IPhpDateTime,
       deletedAt: {} as IPhpDateTime,
-      isActive: this.controls.isActive.value || false
+      isActive: this.controls.isActive.value
     };
-  };
+  }
 
   private readonly processDaily = (daily: Daily): void => {
     if (this.dailyService.daily.dailyId) {
@@ -154,17 +135,17 @@ export class UpdateComponent implements OnInit {
     } else {
       this.resetForm();
     }
-  };
+  }
 
   private readonly resetForm = (): void => {
     this.controls.dailyId.setValue(0);
     this.controls.remark.setValue('');
     this.controls.isActive.setValue(false);
-  };
+  }
 
   private readonly setForm = (daily: Daily): void => {
     this.controls.dailyId.setValue(daily.dailyId);
     this.controls.remark.setValue(daily.remark);
     this.controls.isActive.setValue(daily.isActive);
-  };
+  }
 }

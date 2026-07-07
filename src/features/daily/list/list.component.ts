@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { DatePipe } from '@angular/common';
 import { ConfirmationService, MessageService } from 'primeng/api';
@@ -23,10 +23,10 @@ import { APP_TITLE } from '../../../core/constants/general';
   templateUrl: './list.component.html',
   styleUrls: ['./list.component.scss'],
   providers: [ConfirmationService, MessageService, AppService, DailyService, DatePipe],
-  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [CoreModule, PrimeNgModule]
 })
 export class ListComponent implements OnInit {
+
   controls = {
     dailyId: new FormControl(),
     remark: new FormControl(),
@@ -34,7 +34,7 @@ export class ListComponent implements OnInit {
   };
 
   form = new FormGroup({
-    ...this.controls,
+    ...this.controls
   });
 
   constructor(
@@ -44,9 +44,7 @@ export class ListComponent implements OnInit {
     private readonly datePipe: DatePipe
   ) {
     this.appService.setTitle(APP_TITLE, 'Diario - Listado');
-    this.appService.setDescription(
-      'Diario de notas sobre el acontecer en México y el Mundo. Una mirada crítica y alternativa.'
-    );
+    this.appService.setDescription('Diario de notas sobre el acontecer en México y el Mundo. Una mirada crítica y alternativa.');
   }
 
   ngOnInit() {
@@ -81,38 +79,34 @@ export class ListComponent implements OnInit {
         this.processDaily(this.dailyService.daily);
 
         if (this.dailyService.daily.dailyId <= 0) {
-          this.messageService.add({
-            severity: 'warn',
-            summary: 'Información',
-            detail: 'Daily not found'
-          });
+          this.messageService.add({ severity: 'warn', summary: 'Información', detail: 'Daily not found' });
         }
       },
       complete: () => {
         this.appService.process.stop();
       }
     });
-  };
+  }
 
   public onClickFirst = (): void => {
     this.dailyService.goToFirst();
     this.processDaily(this.dailyService.daily);
-  };
+  }
 
   public onClickLast = (): void => {
     this.dailyService.goToLast();
     this.processDaily(this.dailyService.daily);
-  };
+  }
 
   public onClickNext = (): void => {
     this.dailyService.goToNext();
     this.processDaily(this.dailyService.daily);
-  };
+  }
 
   public onClickPrevious = (): void => {
     this.dailyService.goToPrevious();
     this.processDaily(this.dailyService.daily);
-  };
+  }
 
   private readonly processDaily = (daily: Daily): void => {
     if (this.dailyService.daily.dailyId) {
@@ -120,17 +114,17 @@ export class ListComponent implements OnInit {
     } else {
       this.resetForm();
     }
-  };
+  }
 
   private readonly resetForm = (): void => {
     this.controls.dailyId.setValue(0);
     this.controls.remark.setValue('');
     this.controls.createdAt.setValue(null);
-  };
+  }
 
   private readonly setForm = (daily: Daily): void => {
     this.controls.dailyId.setValue(daily.dailyId);
     this.controls.remark.setValue(daily.remark);
     this.controls.createdAt.setValue(daily.createdAt);
-  };
+  }
 }

@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ConfirmationService, ConfirmEventType, MessageService } from 'primeng/api';
 
@@ -23,16 +23,18 @@ import { ISELECT_YES_NO } from '../../../core/constants/select';
   templateUrl: './create.component.html',
   styleUrls: ['./create.component.scss'],
   providers: [ConfirmationService, MessageService, AppService, FilesService],
-  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [CoreModule, PrimeNgModule]
 })
 export class CreateComponent implements OnInit {
+
   activeOptions = ISELECT_YES_NO;
   file = new File([], '');
   totalSize: number = 0;
   totalSizePercent: number = 0;
 
-  controls = {
+  controls: {
+    isActive: FormControl
+  } = {
     isActive: new FormControl(true, Validators.required)
   };
 
@@ -68,7 +70,7 @@ export class CreateComponent implements OnInit {
   private readonly initialize = (): void => {
     this.appService.process.start('Loading data...');
     this.appService.process.stop();
-  };
+  }
 
   public onFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
@@ -84,20 +86,12 @@ export class CreateComponent implements OnInit {
       accept: () => {
         this.appService.process.start('Upload SQL File');
 
-        this.filesService.postCreateFile(this.file, this.controls.isActive.value || false).subscribe({
+        this.filesService.postCreateFile(this.file, this.controls.isActive.value).subscribe({
           next: () => {
             if (this.filesService.httpResponse.isOK) {
-              this.messageService.add({
-                severity: 'success',
-                summary: 'Confirmación',
-                detail: 'SQL File saved'
-              });
+              this.messageService.add({ severity: 'success', summary: 'Confirmación', detail: 'SQL File saved' });
             } else {
-              this.messageService.add({
-                severity: 'warn',
-                summary: 'Confirmación',
-                detail: 'SQL File not saved'
-              });
+              this.messageService.add({ severity: 'warn', summary: 'Confirmación', detail: 'SQL File not saved' });
             }
           },
           error: (err: any) => {
@@ -111,18 +105,10 @@ export class CreateComponent implements OnInit {
       reject: (type: ConfirmEventType) => {
         switch (type) {
           case ConfirmEventType.REJECT:
-            this.messageService.add({
-              severity: 'warn',
-              summary: 'Información',
-              detail: 'Operación no realizada'
-            });
+            this.messageService.add({ severity: 'warn', summary: 'Información', detail: 'Operación no realizada'})
             break;
           case ConfirmEventType.CANCEL:
-            this.messageService.add({
-              severity: 'warn',
-              summary: 'Cancelación',
-              detail: 'Operación cancelada'
-            });
+            this.messageService.add({ severity: 'warn', summary: 'Cancelación', detail: 'Operación cancelada'})
             break;
         }
       }

@@ -1,4 +1,4 @@
-import { Component, signal, ChangeDetectionStrategy } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { CoreModule } from '../core/modules/core.module';
 import { DailyModule } from '../features/daily/daily.module';
@@ -7,7 +7,6 @@ import { DailyModule } from '../features/daily/daily.module';
   selector: 'app-root',
   imports: [RouterOutlet, CoreModule, DailyModule],
   templateUrl: './app.html',
-  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './app.css'
 })
 export class App {

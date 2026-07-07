@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { Component } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ConfirmationService, ConfirmEventType, MessageService } from 'primeng/api';
 
@@ -24,19 +24,21 @@ import { ISELECT_YES_NO } from '../../../core/constants/select';
   templateUrl: './create.component.html',
   styleUrls: ['./create.component.scss'],
   providers: [ConfirmationService, MessageService, AppService, DailyService],
-  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [CoreModule, PrimeNgModule]
 })
 export class CreateComponent {
   activeOptions = ISELECT_YES_NO;
 
-  controls = {
+  controls: {
+    remark: FormControl,
+    isActive: FormControl,
+  } = {
     remark: new FormControl('', Validators.required),
-    isActive: new FormControl(true, Validators.required)
+    isActive: new FormControl(true, Validators.required),
   };
 
   form = new FormGroup({
-    ...this.controls,
+    ...this.controls
   });
 
   constructor(
@@ -60,17 +62,9 @@ export class CreateComponent {
           next: () => {
             if (this.dailyService.sqlResponse.isSuccessfulCreation()) {
               this.resetForm();
-              this.messageService.add({
-                severity: 'success',
-                summary: 'Confirmación',
-                detail: 'Remark saved'
-              });
+              this.messageService.add({ severity: 'success', summary: 'Confirmación', detail: 'Remark saved' });
             } else {
-              this.messageService.add({
-                severity: 'warn',
-                summary: 'Confirmación',
-                detail: 'Remark not saved'
-              });
+              this.messageService.add({ severity: 'warn', summary: 'Confirmación', detail: 'Remark not saved' });
             }
 
             this.appService.process.stop();
@@ -84,38 +78,30 @@ export class CreateComponent {
       reject: (type: ConfirmEventType) => {
         switch (type) {
           case ConfirmEventType.REJECT:
-            this.messageService.add({
-              severity: 'warn',
-              summary: 'Información',
-              detail: 'Operación no realizada'
-            });
+            this.messageService.add({ severity: 'warn', summary: 'Información', detail: 'Operación no realizada'})
             break;
           case ConfirmEventType.CANCEL:
-            this.messageService.add({
-              severity: 'warn',
-              summary: 'Cancelación',
-              detail: 'Operación cancelada'
-            });
+            this.messageService.add({ severity: 'warn', summary: 'Cancelación', detail: 'Operación cancelada'})
             break;
         }
-      },
+      }
     });
-  };
+  }
 
   // Private Methods
   private readonly getFormData = (): IDaily => {
     return {
       dailyId: 0,
-      remark: this.controls.remark.value || '',
+      remark: this.controls.remark.value,
       createdAt: {} as IPhpDateTime,
       updatedAt: {} as IPhpDateTime,
       deletedAt: {} as IPhpDateTime,
-      isActive: this.controls.isActive.value || false
+      isActive: this.controls.isActive.value
     };
-  };
+  }
 
   private readonly resetForm = (): void => {
     this.controls.remark.setValue('');
     this.controls.isActive.setValue(true);
-  };
+  }
 }
