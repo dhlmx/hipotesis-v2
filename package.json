@@ -18,6 +18,7 @@
     "@angular/platform-browser": "^21.2.15",
     "@angular/router": "^21.2.15",
     "@primeuix/themes": "^2.0.3",
+    "@tensorflow-models/mobilenet": "^2.1.1",
     "chart.js": "^4.5.1",
     "ngx-image-compress": "^18.1.7",
     "primeicons": "^7.0.0",

@@ -10,7 +10,10 @@
               </p>
             </div>
             <div>
-              <img [src]="[image]" loading="lazy" title="File" alt="File" class="w-full">
+              <img id="image" [src]="[image]" loading="lazy" title="File" alt="File" class="w-full">
+              <p class="text-sm text-gray-500 mt-2">
+                Predicctions: {{ predictions.length > 0 ? predictions[0].className + ' (' + (predictions[0].probability * 100).toFixed(2) + '%)' : 'No predictions yet' }}
+              </p>
             </div>
             <div>
               <p class="text-sm text-gray-500 mt-2">

@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { ConfirmationService, MessageService } from 'primeng/api';
+import * as mobilenet from '@tensorflow-models/mobilenet';
 
 // Modules
 import { PrimeNgModule } from '../../../core/modules/prime-ng.module';
@@ -27,6 +28,7 @@ import { SafeUrl } from '@angular/platform-browser';
 export class ReadComponent implements OnInit {
 
   public fileId = 0;
+  public predictions: { className: string, probability: number }[] = [];
 
   constructor(
     public readonly appService: AppService,
@@ -65,6 +67,16 @@ export class ReadComponent implements OnInit {
       next: () => {
         if (!this.filesService.isFileOk) {
           this.messageService.add({ severity: 'warn', summary: 'Confirmación', detail: 'File not found' });
+        } else {
+          const imageElement = document.getElementById('image') as HTMLImageElement;
+
+          if (imageElement) {
+            mobilenet.load().then(model => {
+              model.classify(imageElement).then(predictions => {
+                this.predictions = predictions;
+              });
+            });
+          }
         }
       },
       complete: () => {
