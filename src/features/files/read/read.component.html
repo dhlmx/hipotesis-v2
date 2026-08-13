@@ -11,9 +11,6 @@
             </div>
             <div>
               <img id="image" [src]="[image]" loading="lazy" title="File" alt="File" class="w-full">
-              <p class="text-sm text-gray-500 mt-2">
-                Predicctions: {{ predictions.length > 0 ? predictions[0].className + ' (' + (predictions[0].probability * 100).toFixed(2) + '%)' : 'No predictions yet' }}
-              </p>
             </div>
             <div>
               <p class="text-sm text-gray-500 mt-2">
@@ -24,6 +21,9 @@
                 download="{{imageType}}-{{fileId}}"
                 target="_blank"
                 rel="noopener noreferrer">Download</a>
+              <p class="text-sm text-gray-500 mt-2">
+                Predicctions: {{ predictions.length > 0 ? predictions[0].className + ' (' + (predictions[0].probability * 100).toFixed(2) + '%)' : 'No predictions yet' }}
+              </p>
             </div>
           </div>
         }

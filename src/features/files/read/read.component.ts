@@ -72,7 +72,9 @@ export class ReadComponent implements OnInit {
 
           if (imageElement) {
             mobilenet.load().then(model => {
+              console.log('Model loaded');
               model.classify(imageElement).then(predictions => {
+                console.log('Predictions:', predictions);
                 this.predictions = predictions;
               });
             });
