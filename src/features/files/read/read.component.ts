@@ -16,6 +16,7 @@ import { CoreModule } from '../../../core/modules/core.module';
 // Enums & Constants
 import { APP_TITLE } from '../../../core/constants/general';
 import { SafeUrl } from '@angular/platform-browser';
+import { timeout } from 'rxjs';
 
 @Component({
   standalone: true,
@@ -68,17 +69,24 @@ export class ReadComponent implements OnInit {
         if (!this.filesService.isFileOk) {
           this.messageService.add({ severity: 'warn', summary: 'Confirmación', detail: 'File not found' });
         } else {
-          const imageElement = document.getElementById('image') as HTMLImageElement;
+          setTimeout(() => {
+            const imageElement = document.getElementById('image') as HTMLImageElement;
 
-          if (imageElement) {
-            mobilenet.load().then(model => {
-              console.log('Model loaded');
-              model.classify(imageElement).then(predictions => {
-                console.log('Predictions:', predictions);
-                this.predictions = predictions;
+            if (!imageElement) {
+              this.messageService.add({ severity: 'warn', summary: 'Confirmación', detail: 'Image not found' });
+              return;
+            }
+
+            if (imageElement) {
+              mobilenet.load().then(model => {
+                console.log('Model loaded');
+                model.classify(imageElement).then(predictions => {
+                  console.log('Predictions:', predictions);
+                  this.predictions = predictions;
+                });
               });
-            });
-          }
+            }
+          }, 1000);
         }
       },
       complete: () => {
