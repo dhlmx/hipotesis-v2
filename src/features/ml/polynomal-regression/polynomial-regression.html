@@ -1,0 +1,120 @@
+<p-panel header="Machine Learning - Polynomial Regression">
+  <p-card>
+    <!-- Sin(x) versus Sin(x) + Noise -->
+    <div class="grid grid-cols-1 md:grid-cols-6 mb-1">
+      <div></div>
+      <div class="md:col-span-4">
+        <p class="text-2xl">Sin(x) versus Sin(x) + Noise</p>
+        <p-divider></p-divider>
+      </div>
+      <div></div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-6 mb-1">
+      <div></div>
+      <div class="md:col-span-4">
+        <canvas #versusCanvas></canvas>
+      </div>
+      <div></div>
+    </div>
+
+    <form [formGroup]="form">
+      <!-- Graph Setup -->
+      <div class="grid grid-cols-1 md:grid-cols-6 mb-1">
+        <div></div>
+        <div class="md:col-span-4">
+          <p-divider></p-divider>
+          <p class="text-2xl">Graph Setup</p>
+          <p-divider></p-divider>
+        </div>
+        <div></div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-6 mb-1">
+        <div></div>
+        <div>
+          <label pLabel for="tension">Tension</label><br />
+          <p-inputnumber [formControl]="controls.graphTension" mode="decimal" [showButtons]="true" inputId="tension" [min]="0.1" [max]="0.9" [step]="0.1" />
+        </div>
+        <div class="md:col-span-4"></div>
+      </div>
+
+      <!-- Model Training -->
+      <div class="grid grid-cols-1 md:grid-cols-6 mb-1">
+        <div></div>
+        <div class="md:col-span-4">
+          <p-divider></p-divider>
+          <p class="text-2xl">Model Training</p>
+          <p-divider></p-divider>
+        </div>
+        <div></div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-6 mb-1">
+        <div></div>
+        <div>
+          <label pLabel for="degree">Polynomial Degree</label><br />
+          <p-inputnumber [formControl]="controls.polynomialDegree" mode="decimal" [showButtons]="true" inputId="degree" [min]="0" [max]="19" [step]="1" />
+        </div>
+        <div>
+          <label pLabel for="rate">Learning Rate</label><br />
+          <p-inputnumber [formControl]="controls.learningRate" mode="decimal" [showButtons]="true" inputId="rate" [min]="0.1" [max]="0.9" [step]="0.1" />
+        </div>
+        <div>
+          <label pLabel for="tension">Training Iterations</label><br />
+          <p-inputnumber [formControl]="controls.trainingIterations" mode="decimal" [showButtons]="true" inputId="tension" [min]="100" [max]="1000" [step]="100" />
+        </div>
+        <div>
+          <br />
+          <button pButton type="button" label="Train Model" title="Train" [disabled]="form.invalid" (click)="onTrain()" class="p-button-outlined p-button-info w-full"></button>
+        </div>
+        <div></div>
+      </div>
+
+      <!-- Loss Function -->
+      <div class="grid grid-cols-1 md:grid-cols-6 mb-1">
+          <div></div>
+          <div class="md:col-span-4">
+            <p-divider></p-divider>
+            <p class="text-2xl">Loss Function</p>
+            <p-divider></p-divider>
+          </div>
+          <div></div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-6 mb-1">
+        <div></div>
+        <div class="md:col-span-4">
+          <canvas #lossCanvas></canvas>
+        </div>
+        <div></div>
+      </div>
+
+      <!-- Predictions -->
+      <div class="grid grid-cols-1 md:grid-cols-6 mb-1">
+        <div></div>
+        <div class="md:col-span-4">
+          <p-divider></p-divider>
+          <p class="text-2xl">Predictions</p>
+          <p-divider></p-divider>
+        </div>
+        <div></div>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-6 mb-1">
+        <div></div>
+        <div class="md:col-span-4">
+          <canvas #fxCanvas></canvas>
+        </div>
+        <div></div>
+      </div>
+    </form>
+
+    <p-confirmDialog [style]="{width: '50vw'}" [baseZIndex]="10000" rejectButtonStyleClass="p-button-text"></p-confirmDialog>
+    <p-toast></p-toast>
+  </p-card>
+</p-panel>
+
+<app-message-modal
+  [visible]="appService.process.isInProcess()"
+  [message]="appService.process.message()">
+</app-message-modal>

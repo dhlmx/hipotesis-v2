@@ -20,6 +20,7 @@ import { EditorModule } from 'primeng/editor';
 import { FileUpload } from 'primeng/fileupload';
 import { InputGroupModule } from 'primeng/inputgroup';
 import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
+import { InputNumber } from 'primeng/inputnumber';
 import { InputTextModule } from 'primeng/inputtext';
 import { ListboxModule } from 'primeng/listbox';
 import { MenubarModule } from 'primeng/menubar';
@@ -63,6 +64,7 @@ import { TreeModule } from 'primeng/tree';
     FileUpload,
     InputGroupModule,
     InputGroupAddonModule,
+    InputNumber,
     InputTextModule,
     ListboxModule,
     MenubarModule,
@@ -104,6 +106,7 @@ import { TreeModule } from 'primeng/tree';
     FileUpload,
     InputGroupModule,
     InputGroupAddonModule,
+    InputNumber,
     InputTextModule,
     ListboxModule,
     MenubarModule,

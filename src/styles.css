@@ -1,2 +1,6 @@
 @import 'tailwindcss';
 @import "tailwindcss-primeui";
+
+.text-italic {
+  font-style: italic;
+}

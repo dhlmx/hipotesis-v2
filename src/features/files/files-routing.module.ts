@@ -7,7 +7,7 @@ import { ReadComponent } from './read/read.component';
 const routes: Routes = [
   { path: '', component: ReadComponent },
   { path: 'c', component: CreateComponent },
-  { path: 'r/:id', component: ReadComponent }
+  { path: 'r/:id', component: ReadComponent },
 ];
 
 @NgModule({

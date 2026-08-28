@@ -1,1 +1,1 @@
-export const APP_TITLE = 'Files v2';
+export const APP_TITLE = 'DHL';

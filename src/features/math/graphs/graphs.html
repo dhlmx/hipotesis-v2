@@ -1,0 +1,270 @@
+<p-panel>
+  <ng-template pTemplate="header">
+    <div><span class="pi pi-bolt"></span>&nbsp;Math&nbsp;&mdash;&rsaquo;&nbsp;<span class="pi pi-chart-scatter"></span>&nbsp;Colors</div>
+  </ng-template>
+
+  <ng-template pTemplate="icons">
+    <div>
+      <button type="button" pButton (click)="onClickPrint()" title="Print" class="p-button-outlined p-button-success">
+        <em class="pi pi-print"></em>
+      </button>
+    </div>
+  </ng-template>
+
+  <ng-template  pTemplate="body">
+    <p-divider></p-divider>
+    <div id="htmlContent">
+      <!-- Problem -->
+      <div class="grid grid-cols-1 md:grid-cols-6">
+        <div></div>
+        <div class="md:col-span-4">
+          <p-card>
+            <ng-template pTemplate="header">
+              <p class="font-semibold text-2xl"><span class="pi pi-arrows-alt"></span>&nbsp;Problema</p>
+              <p-divider></p-divider>
+            </ng-template>
+
+            <ng-template pTemplate="body">
+              <p>Una condesa ha decidido invitar a todos sus familiares a su cumpleaños. Dado que sabe que entre algunos de ellos no se mantienen buenas relaciones, ha pedido a sus sirvientes que los acomoden en mesas separadas, procurando que no exista ningún tipo de hostilidad entre los comensales.</p>
+              <br />
+              <p>Otras consideraciones:<br />
+                <br />-Debe procurarse el menor número de mesas.
+                <br />-A cada mesa se le debe asignar un color distinto al de las demás mesas.
+              </p>
+            </ng-template>
+
+            <ng-template pTemplate="footer">
+              <p-divider></p-divider>
+            </ng-template>
+          </p-card>
+        </div>
+        <div></div>
+      </div>
+
+      <!-- Data -->
+      <div class="grid grid-cols-1 md:grid-cols-6">
+        <div></div>
+        <div class="md:col-span-4">
+          <p-card>
+            <ng-template pTemplate="header">
+              <p class="font-semibold text-2xl"><span class="pi pi-copy"></span>&nbsp;Datos</p>
+              <p-divider></p-divider>
+            </ng-template>
+
+            <ng-template pTemplate="body">
+              <div>
+                <p>La siguiente tabla muestra a cada uno de los invitados y su respectiva "lista negra", es decir, la lista de personas con las que no mantiene una buena relación.</p>
+                <br />
+                <p-table #dt
+                  [value]="graph.apexes"
+                  dataKey="id"
+                  [paginator]="false"
+                  [rows]="50"
+                  [showCurrentPageReport]="true"
+                  currentPageReportTemplate="Showing {first} to {last} of {totalRecords} guests"
+                  [rowsPerPageOptions]="[10, 25, 50, 100]"
+                  [filterDelay]="100"
+                  [globalFilterFields]="[]"
+                  class="p-datatable-gridlines p-datatable-striped">
+
+                  <ng-template pTemplate="caption">
+                    <p class="text-lg">&nbsp;Invitados</p>
+                  </ng-template>
+
+                  <ng-template pTemplate="header">
+                    <tr>
+                      <th id="order" pSortableColumn="id" class="width-20">
+                        <p-sortIcon field="id"></p-sortIcon>&nbsp;Orden
+                      </th>
+
+                      <th id="name" pSortableColumn="name" class="width-25">
+                        <p-sortIcon field="name"></p-sortIcon>&nbsp;Nombre&nbsp;
+                      </th>
+                      <th id="alias" pSortableColumn="alias" class="width-20">
+                        <p-sortIcon field="alias"></p-sortIcon>&nbsp;Alias
+                      </th>
+                      <th id="blackList" class="width-35 text-center">
+                        &nbsp;Lista negra
+                      </th>
+                    </tr>
+                  </ng-template>
+
+                  <ng-template pTemplate="body" let-item>
+                    <tr style="font-size: small; vertical-align: top;">
+                      <td>
+                        <p>{{item.id}}</p>
+                      </td>
+                      <td>
+                        <p>{{item.name}}</p>
+                      </td>
+                      <td class="text-center">
+                        <p>{{item.alias}}</p>
+                      </td>
+                      <td>
+                        <p>
+                          <!-- | set -->
+                          {{item.blackList}}
+                        </p>
+                      </td>
+                    </tr>
+                  </ng-template>
+
+                  <ng-template pTemplate="emptymessage">
+                    <tr>
+                        <td colspan="4">Guests not found!</td>
+                    </tr>
+                  </ng-template>
+                </p-table>
+              </div>
+            </ng-template>
+
+            <ng-template pTemplate="footer">
+              <p-divider></p-divider>
+            </ng-template>
+          </p-card>
+        </div>
+        <div></div>
+      </div>
+
+      <!-- Solution -->
+      <div class="grid grid-cols-1 md:grid-cols-6">
+        <div></div>
+        <div class="md:col-span-4">
+          <p-card>
+            <ng-template pTemplate="header">
+              <p class="font-semibold text-2xl"><span class="pi pi-check-circle"></span>&nbsp;Solución</p>
+              <p-divider></p-divider>
+            </ng-template>
+
+            <ng-template pTemplate="body">
+              <div>
+                <p>La solución, en estricto sentido matemático, resultaría muy compleja. Sin embargo, podemos practicar un proceso iterativo que determine soluciones adecuadas al problema.</p>
+                <br />
+                <p>En este sentido, nuestro algoritmo adquiere gran utilidad práctica al convertirse en un verdadero laboratorio experimental.</p>
+                <br />
+                <p>Si se observa la lista de invitados, podemos notar que incluye un orden específico. Tal orden corresponde al de la fuente original de la cual se tomó el problema.</p>
+                <br />
+                <p>Durante la fase de pruebas de nuestro algoritmo notamos que nuestros resultados no correspondían con los que aparecen en la fuente original. Luego de la consiguiente revisión y de la consistencia ofrecida por nuestro algoritmo, nos surgió la pregunta: ¿qué sucede si variamos el orden en que llegan los invitados? Los resultados obtenidos por el algoritmo fueron más que interesantes: el número de mesas varía.</p>
+                <br />
+                <p>De esta manera, decidimos crear dos escenarios de solución. El primero corresponde a uno en el que se respeta el orden en que llegan los invitados, según la fuente original del problema. El siguiente escenario es el aleatorio, es decir, el orden en que llegan los invitados variará y entonces el número de mesas variará en un momento dado. Este resultado es lo más interesante de nuestra solución, ya que por un lado sustenta la hipótesis de que el número de mesas variará según el orden en que lleguen los invitados, y por por otro lado, visualiza mejor el enorme grado de complejidad matemática del problema.</p>
+                <br />
+                <form form="form">
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+                    <button pButton type="button" label="Orden original de llegada de los invitados (1, 2, 3, ...18)" title="Orden original" [disabled]="form.invalid" (click)="onCalculate(false)" class="p-button-outlined p-button-info w-full"></button>
+                    <button pButton type="button" label="Orden aleatorio de llegada de los invitados" title="Orden aleatorio" [disabled]="form.invalid" (click)="onCalculate(true)" class="p-button-outlined p-button-info w-full"></button>
+                  </div>
+                </form>
+
+                <br />
+                @if (controls.isRandom.value) {
+                  <p-badge value="Orden aleatorio" severity="warn" />
+                } @else {
+                  <p-badge value="Orden original" severity="secondary" />
+                }
+                <br />
+
+                <app-d3-radial-tree [data]="graph.tree"></app-d3-radial-tree>
+                <br />
+
+                <p-table #dt2
+                  [value]="graph.colors"
+                  dataKey="id"
+                  [paginator]="false"
+                  [rows]="50"
+                  [showCurrentPageReport]="true"
+                  currentPageReportTemplate="Showing {first} to {last} of {totalRecords} tables"
+                  [rowsPerPageOptions]="[10, 25, 50, 100]"
+                  [filterDelay]="100"
+                  [globalFilterFields]="[]"
+                  class="p-datatable-gridlines p-datatable-striped">
+
+                  <ng-template pTemplate="caption">
+                    <p class="text-lg">&nbsp;Mesas</p>
+                  </ng-template>
+
+                  <ng-template pTemplate="header">
+                    <tr>
+                      <th id="number" pSortableColumn="id" class="width-20">
+                        <p-sortIcon field="id"></p-sortIcon>&nbsp;Número
+                      </th>
+                      <th id="color" pSortableColumn="name" class="width-20">
+                        <p-sortIcon field="name"></p-sortIcon>&nbsp;Mesa
+                      </th>
+                      <th id="guests" class="width-60">
+                        &nbsp;Invitados
+                      </th>
+                    </tr>
+                  </ng-template>
+
+                  <ng-template pTemplate="body" let-item>
+                    <tr style="font-size: small; vertical-align: top;">
+                      <td>
+                        <p>{{item.id}}</p>
+                      </td>
+                      <td>
+                        <p>{{item.name}}</p>
+                      </td>
+                      <td>
+                        <p>
+                          <!-- {{item.blackList | set}} -->
+                          {{ mapColorApex(item.id - 1) }}
+                        </p>
+                      </td>
+                    </tr>
+                  </ng-template>
+
+                  <ng-template pTemplate="emptymessage">
+                    <tr>
+                        <td colspan="4">Tables not found!</td>
+                    </tr>
+                  </ng-template>
+                </p-table>
+              </div>
+            </ng-template>
+
+            <ng-template pTemplate="footer">
+              <p-divider></p-divider>
+            </ng-template>
+          </p-card>
+        </div>
+        <div></div>
+      </div>
+    </div>
+  </ng-template>
+
+  <ng-template pTemplate="footer">
+    <div class="grid grid-cols-1 md:grid-cols-6">
+      <div></div>
+      <div class="md:col-span-4">
+        <p-card>
+          <ng-template pTemplate="header">
+            <p class="font-semibold text-2xl"><span class="pi pi-paperclip"></span>&nbsp;Referencias</p>
+            <p-divider></p-divider>
+          </ng-template>
+
+          <ng-template pTemplate="body">
+            <div>
+              <p><span class="text-italic">El cumpleaños de la Condesa.</span>
+                <br />Montejano, Amanda, <span class="text-italic">Matemáticas de colores.</span>
+                <br />Pps: 38-51. Fondo de Cultura Económica. 2022.
+              </p>
+            </div>
+          </ng-template>
+
+          <ng-template pTemplate="footer">
+            <p-divider></p-divider>
+          </ng-template>
+        </p-card>
+      </div>
+      <div></div>
+    </div>
+  </ng-template>
+
+  <p-confirmDialog [style]="{width: '50vw'}" [baseZIndex]="10000" rejectButtonStyleClass="p-button-text"></p-confirmDialog>
+  <p-toast></p-toast>
+</p-panel>
+
+<app-message-modal
+  [visible]="appService.process.isInProcess()"
+  [message]="appService.process.message()">
+</app-message-modal>

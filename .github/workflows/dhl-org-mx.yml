@@ -2,9 +2,9 @@ name: CI/CD
 
 on:
   push:
-    branches: [ "files" ]
+    branches: [ "machine-learning" ]
   pull_request:
-    branches: [ "files" ]
+    branches: [ "machine-learning" ]
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -36,9 +36,9 @@ jobs:
         if: github.event_name == 'push' && github.ref == 'refs/heads/files'
         uses: SamKirkland/FTP-Deploy-Action@v4.4.0
         with:
-          server: ${{secrets.FTP_SERVER_PROD}}
-          username: ${{secrets.FTP_USER_PROD}}
-          password: ${{secrets.FTP_PASSWORD_PROD}}
+          server: ${{secrets.FTP_DHL_ORG_MX_SERVER}}
+          username: ${{secrets.FTP_DHL_ORG_MX_USER}}
+          password: ${{secrets.FTP_DHL_ORG_MX_PASSWORD}}
           local-dir: ./dist/hipotesis-v2/browser/
-          server-dir: public_html/files/
+          server-dir: ${{secrets.FTP_DHL_ORG_MX_DIRECTORY}}
           dangerous-clean-slate: false

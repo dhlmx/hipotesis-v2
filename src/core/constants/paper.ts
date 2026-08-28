@@ -1,0 +1,2 @@
+export const LETTER_HEIGHT_MM = 278,
+LETTER_WIDTH_MM = 216;
