@@ -17,6 +17,7 @@ import { DialogModule } from 'primeng/dialog';
 import { DividerModule } from 'primeng/divider';
 import { DynamicDialogModule } from 'primeng/dynamicdialog';
 import { EditorModule } from 'primeng/editor';
+import { FieldsetModule } from 'primeng/fieldset';
 import { FileUpload } from 'primeng/fileupload';
 import { InputGroupModule } from 'primeng/inputgroup';
 import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
@@ -61,6 +62,7 @@ import { TreeModule } from 'primeng/tree';
     DividerModule,
     DynamicDialogModule,
     EditorModule,
+    FieldsetModule,
     FileUpload,
     InputGroupModule,
     InputGroupAddonModule,
@@ -103,6 +105,7 @@ import { TreeModule } from 'primeng/tree';
     DividerModule,
     DynamicDialogModule,
     EditorModule,
+    FieldsetModule,
     FileUpload,
     InputGroupModule,
     InputGroupAddonModule,

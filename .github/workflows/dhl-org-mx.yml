@@ -33,7 +33,7 @@ jobs:
         run: ng build
 
       - name: Web Deploy
-        if: github.event_name == 'push' && github.ref == 'refs/heads/files'
+        if: github.event_name == 'push' && github.ref == 'refs/heads/machine-learning'
         uses: SamKirkland/FTP-Deploy-Action@v4.4.0
         with:
           server: ${{secrets.FTP_DHL_ORG_MX_SERVER}}

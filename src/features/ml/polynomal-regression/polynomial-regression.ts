@@ -11,7 +11,7 @@ import { PrimeNgModule } from '../../../core/modules/prime-ng.module';
 
 // Services
 import { AppService } from '../../../core/services/app.service';
-import { FilesService } from '../../../core/services/files.service';
+import { PdfService } from '../../../core/services/pdf.service';
 
 // Interfaces & Models
 import { IChartData } from '../../../core/interfaces/charts/ichart-data';
@@ -24,7 +24,7 @@ import { XS, YS, ZS } from '../../../core/constants/polynomial-regression';
   selector: 'app-polynomial-regression',
   templateUrl: './polynomial-regression.html',
   styleUrl: './polynomial-regression.css',
-  providers: [ConfirmationService, MessageService, AppService, FilesService],
+  providers: [ConfirmationService, MessageService, AppService, PdfService],
   imports: [CoreModule, PrimeNgModule],
 })
 export class PolynomialRegression implements OnInit, AfterViewInit {
@@ -121,7 +121,8 @@ export class PolynomialRegression implements OnInit, AfterViewInit {
   constructor(
     public readonly appService: AppService,
     private readonly confirmationService: ConfirmationService,
-    private readonly messageService: MessageService
+    private readonly messageService: MessageService,
+    private readonly pdfService: PdfService
   ) {
     this.appService.setTitle(APP_TITLE, 'ML - Polynomial Regression');
 
@@ -179,6 +180,24 @@ export class PolynomialRegression implements OnInit, AfterViewInit {
     this.renderLossGraph();
     this.renderFxGraph();
   }
+
+  onPrint = (): void => {
+    this.appService.process.start('Printing...');
+
+    this.pdfService.exportPDF('htmlContent', 'resultados').subscribe({
+      next: (status) => {
+        console.info('exportPDF', status);
+      },
+      error: (e) => {
+        console.info('exportPDF:ERROR', e);
+      },
+      complete: () => {
+        this.appService.process.stop();
+      }
+    });
+  }
+
+
 
   public onSave(): void {
     this.confirmationService.confirm({

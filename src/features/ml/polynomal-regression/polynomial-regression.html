@@ -1,117 +1,177 @@
-<p-panel header="Machine Learning - Polynomial Regression">
-  <p-card>
-    <!-- Sin(x) versus Sin(x) + Noise -->
-    <div class="grid grid-cols-1 md:grid-cols-6 mb-1">
+<p-panel>
+  <ng-template pTemplate="header">
+    <div><span class="pi pi-microchip-ai"></span>&nbsp;Machine Learning&nbsp;&mdash;&rsaquo;&nbsp;<span class="pi pi-chart-line"></span>&nbsp;Polynomial Regression</div>
+  </ng-template>
+
+  <ng-template pTemplate="icons">
+    <div>
+      <button type="button" pButton (click)="onPrint()" title="Print" class="p-button-outlined p-button-success">
+        <em class="pi pi-print"></em>
+      </button>
+    </div>
+  </ng-template>
+
+  <ng-template  pTemplate="body">
+    <p-divider></p-divider>
+    <div id="htmlContent">
+      <!-- Problem -->
+      <div class="grid grid-cols-1 md:grid-cols-6">
+        <div></div>
+        <div class="md:col-span-4">
+          <p-card>
+            <ng-template pTemplate="header">
+              <p class="font-semibold text-2xl"><span class="pi pi-arrows-alt"></span>&nbsp;Problema</p>
+              <p-divider></p-divider>
+            </ng-template>
+
+            <ng-template pTemplate="body">
+              <p>En el contexto del aprendizaje supervisado, tenemos una función sin(x) y un conjunto de puntos de entrenamiento sin(x) + random noise.</p>
+              <br />
+              <p>La tarea es encontrar la función que se ajuste mejor a la función sin(x), es decir, nuestros puntos de referencia para aprendizaje.</p>
+            </ng-template>
+
+            <ng-template pTemplate="footer">
+              <p-divider></p-divider>
+            </ng-template>
+          </p-card>
+        </div>
+        <div></div>
+      </div>
+
+      <!-- Data -->
+      <div class="grid grid-cols-1 md:grid-cols-6">
+        <div></div>
+        <div class="md:col-span-4">
+          <p-card>
+            <ng-template pTemplate="header">
+              <p class="font-semibold text-2xl"><span class="pi pi-copy"></span>&nbsp;Datos</p>
+              <p-divider></p-divider>
+            </ng-template>
+
+            <ng-template pTemplate="body">
+              <div>
+                <p>El siguiente gráfico muestra los datos de referencia y de entrenamiento para nuestro modelo de regresión polinomial.</p>
+                <br />
+                <p class="text-lg">Sin(x) versus Sin(x) + Noise</p>
+                <p-divider></p-divider>
+                <canvas #versusCanvas></canvas>
+              </div>
+            </ng-template>
+
+            <ng-template pTemplate="footer">
+              <p-divider></p-divider>
+            </ng-template>
+          </p-card>
+        </div>
+        <div></div>
+      </div>
+
+      <!-- Solution -->
+      <div class="grid grid-cols-1 md:grid-cols-6">
+        <div></div>
+        <div class="md:col-span-4">
+          <p-card>
+            <ng-template pTemplate="header">
+              <p class="font-semibold text-2xl"><span class="pi pi-check-circle"></span>&nbsp;Solución</p>
+              <p-divider></p-divider>
+            </ng-template>
+
+            <ng-template pTemplate="body">
+              <form [formGroup]="form">
+                <p-fieldset legend="Graph Setup">
+                  <div class="grid grid-cols-1 md:grid-cols-4">
+                    <div>
+                      <label pLabel for="tension">Tension</label><br />
+                      <p-inputnumber [formControl]="controls.graphTension" mode="decimal" [showButtons]="true" inputId="tension" [min]="0.1" [max]="0.9" [step]="0.1" />
+                    </div>
+                    <div class="md:col-span-3"></div>
+                  </div>
+                </p-fieldset>
+                <br />
+                <p-fieldset legend="Model Training">
+                  <div class="grid grid-cols-1 md:grid-cols-4">
+                    <div>
+                      <label pLabel for="degree">Polynomial Degree</label><br />
+                      <p-inputnumber [formControl]="controls.polynomialDegree" mode="decimal" [showButtons]="true" inputId="degree" [min]="0" [max]="19" [step]="1" />
+                    </div>
+                    <div>
+                      <label pLabel for="rate">Learning Rate</label><br />
+                      <p-inputnumber [formControl]="controls.learningRate" mode="decimal" [showButtons]="true" inputId="rate" [min]="0.1" [max]="0.9" [step]="0.1" />
+                    </div>
+                    <div>
+                      <label pLabel for="tension">Training Iterations</label><br />
+                      <p-inputnumber [formControl]="controls.trainingIterations" mode="decimal" [showButtons]="true" inputId="tension" [min]="100" [max]="1000" [step]="100" />
+                    </div>
+                    <div>
+                      <br />
+                      <button pButton type="button" label="Train Model" title="Train" [disabled]="form.invalid" (click)="onTrain()" class="p-button-outlined p-button-info w-full"></button>
+                    </div>
+                  </div>
+                </p-fieldset>
+              </form>
+
+              <!-- Loss Function -->
+              <br />
+              <div>
+                <p class="text-lg">Loss Function</p>
+                <p-divider></p-divider>
+              </div>
+              <div>
+                <canvas #lossCanvas></canvas>
+                <p-divider></p-divider>
+              </div>
+
+              <!-- Predictions -->
+              <br />
+              <div>
+                <p class="text-lg">Predictions</p>
+                <p-divider></p-divider>
+              </div>
+              <div>
+                <canvas #fxCanvas></canvas>
+              </div>
+            </ng-template>
+
+            <ng-template pTemplate="footer">
+              <p-divider></p-divider>
+            </ng-template>
+          </p-card>
+        </div>
+        <div></div>
+      </div>
+    </div>
+  </ng-template>
+
+  <ng-template pTemplate="footer">
+    <div class="grid grid-cols-1 md:grid-cols-6">
       <div></div>
       <div class="md:col-span-4">
-        <p class="text-2xl">Sin(x) versus Sin(x) + Noise</p>
-        <p-divider></p-divider>
+        <p-card>
+          <ng-template pTemplate="header">
+            <p class="font-semibold text-2xl"><span class="pi pi-paperclip"></span>&nbsp;Referencias</p>
+            <p-divider></p-divider>
+          </ng-template>
+
+          <ng-template pTemplate="body">
+            <div>
+              <p><span class="text-italic">El cumpleaños de la Condesa.</span>
+                <br />Montejano, Amanda, <span class="text-italic">Matemáticas de colores.</span>
+                <br />Pps: 38-51. Fondo de Cultura Económica. 2022.
+              </p>
+            </div>
+          </ng-template>
+
+          <ng-template pTemplate="footer">
+            <p-divider></p-divider>
+          </ng-template>
+        </p-card>
       </div>
       <div></div>
     </div>
+  </ng-template>
 
-    <div class="grid grid-cols-1 md:grid-cols-6 mb-1">
-      <div></div>
-      <div class="md:col-span-4">
-        <canvas #versusCanvas></canvas>
-      </div>
-      <div></div>
-    </div>
-
-    <form [formGroup]="form">
-      <!-- Graph Setup -->
-      <div class="grid grid-cols-1 md:grid-cols-6 mb-1">
-        <div></div>
-        <div class="md:col-span-4">
-          <p-divider></p-divider>
-          <p class="text-2xl">Graph Setup</p>
-          <p-divider></p-divider>
-        </div>
-        <div></div>
-      </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-6 mb-1">
-        <div></div>
-        <div>
-          <label pLabel for="tension">Tension</label><br />
-          <p-inputnumber [formControl]="controls.graphTension" mode="decimal" [showButtons]="true" inputId="tension" [min]="0.1" [max]="0.9" [step]="0.1" />
-        </div>
-        <div class="md:col-span-4"></div>
-      </div>
-
-      <!-- Model Training -->
-      <div class="grid grid-cols-1 md:grid-cols-6 mb-1">
-        <div></div>
-        <div class="md:col-span-4">
-          <p-divider></p-divider>
-          <p class="text-2xl">Model Training</p>
-          <p-divider></p-divider>
-        </div>
-        <div></div>
-      </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-6 mb-1">
-        <div></div>
-        <div>
-          <label pLabel for="degree">Polynomial Degree</label><br />
-          <p-inputnumber [formControl]="controls.polynomialDegree" mode="decimal" [showButtons]="true" inputId="degree" [min]="0" [max]="19" [step]="1" />
-        </div>
-        <div>
-          <label pLabel for="rate">Learning Rate</label><br />
-          <p-inputnumber [formControl]="controls.learningRate" mode="decimal" [showButtons]="true" inputId="rate" [min]="0.1" [max]="0.9" [step]="0.1" />
-        </div>
-        <div>
-          <label pLabel for="tension">Training Iterations</label><br />
-          <p-inputnumber [formControl]="controls.trainingIterations" mode="decimal" [showButtons]="true" inputId="tension" [min]="100" [max]="1000" [step]="100" />
-        </div>
-        <div>
-          <br />
-          <button pButton type="button" label="Train Model" title="Train" [disabled]="form.invalid" (click)="onTrain()" class="p-button-outlined p-button-info w-full"></button>
-        </div>
-        <div></div>
-      </div>
-
-      <!-- Loss Function -->
-      <div class="grid grid-cols-1 md:grid-cols-6 mb-1">
-          <div></div>
-          <div class="md:col-span-4">
-            <p-divider></p-divider>
-            <p class="text-2xl">Loss Function</p>
-            <p-divider></p-divider>
-          </div>
-          <div></div>
-      </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-6 mb-1">
-        <div></div>
-        <div class="md:col-span-4">
-          <canvas #lossCanvas></canvas>
-        </div>
-        <div></div>
-      </div>
-
-      <!-- Predictions -->
-      <div class="grid grid-cols-1 md:grid-cols-6 mb-1">
-        <div></div>
-        <div class="md:col-span-4">
-          <p-divider></p-divider>
-          <p class="text-2xl">Predictions</p>
-          <p-divider></p-divider>
-        </div>
-        <div></div>
-      </div>
-      <div class="grid grid-cols-1 md:grid-cols-6 mb-1">
-        <div></div>
-        <div class="md:col-span-4">
-          <canvas #fxCanvas></canvas>
-        </div>
-        <div></div>
-      </div>
-    </form>
-
-    <p-confirmDialog [style]="{width: '50vw'}" [baseZIndex]="10000" rejectButtonStyleClass="p-button-text"></p-confirmDialog>
-    <p-toast></p-toast>
-  </p-card>
+  <p-confirmDialog [style]="{width: '50vw'}" [baseZIndex]="10000" rejectButtonStyleClass="p-button-text"></p-confirmDialog>
+  <p-toast></p-toast>
 </p-panel>
 
 <app-message-modal

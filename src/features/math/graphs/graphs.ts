@@ -60,7 +60,7 @@ const APEXES: Apex[] = [
   selector: 'app-graphs',
   templateUrl: './graphs.html',
   styleUrls: ['./graphs.css'],
-  providers: [ConfirmationService, MessageService, AppService, SetPipe],
+  providers: [ConfirmationService, MessageService, AppService, PdfService, SetPipe],
   imports: [CoreModule, PrimeNgModule, D3RadialTreeComponent],
 })
 export class Graphs implements OnInit {
