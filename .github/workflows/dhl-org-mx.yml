@@ -29,6 +29,11 @@ jobs:
       - name: Dependencies installation
         run: npm install
 
+      - name: Buffer installation
+        run:  |
+          npm ci
+          npm install buffer --save-dev
+
       - name: Build
         run: ng build
 
