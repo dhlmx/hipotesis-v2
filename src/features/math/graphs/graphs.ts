@@ -185,7 +185,7 @@ export class Graphs implements OnInit {
     this.controls.isRandom.setValue(isRandom);
 
     setTimeout(() => {
-      if (!isRandom) {
+      if (isRandom) {
         this.getRandomApexes();
       } else {
         this.graph.apexes = APEXES;
@@ -198,7 +198,7 @@ export class Graphs implements OnInit {
     }, 1000);
   }
 
-  onClickPrint = (): void => {
+  onPrint = (): void => {
     this.appService.process.start('Printing...');
 
     this.pdfService.exportPDF('htmlContent', 'resultados').subscribe({

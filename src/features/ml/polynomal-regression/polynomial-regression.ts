@@ -137,8 +137,9 @@ export class PolynomialRegression implements OnInit, AfterViewInit {
     }
 
     this.chartOptions = {
-      maintainAspectRatio: false,
-      aspectRatio: 0.6,
+      responsive: true,
+      aspectRatio: 2,
+      maintainAspectRatio: true,
       plugins: {
         legend: {
           labels: {
@@ -169,6 +170,12 @@ export class PolynomialRegression implements OnInit, AfterViewInit {
     };
 
     this.optimizer = tf.train.adam(this.controls.learningRate.value);
+
+    window.addEventListener('resize', () => {
+      this.versusChart.resize();
+      this.lossChart.resize();
+      this.fxChart.resize();
+    });
   }
 
   ngOnInit(): void {
@@ -197,9 +204,7 @@ export class PolynomialRegression implements OnInit, AfterViewInit {
     });
   }
 
-
-
-  public onSave(): void {
+  onSave(): void {
     this.confirmationService.confirm({
       message: '¿Estás seguro de proceder?',
       header: 'Confirmación',
@@ -221,7 +226,7 @@ export class PolynomialRegression implements OnInit, AfterViewInit {
     });
   }
 
-  public onTrain(): void {
+  onTrain(): void {
     this.appService.process.start('Training model...');
 
     setTimeout(() => {
@@ -270,17 +275,17 @@ export class PolynomialRegression implements OnInit, AfterViewInit {
     return tfs.reduce((a, b) => a.add(b), tf.scalar(0));
   }
 
-  getSecureRandom = (): number => {
+  private getSecureRandom = (): number => {
     const randomValue = new Uint32Array(1);
     crypto.getRandomValues(randomValue);
     return randomValue[0] / 0x100000000;
   }
 
-  getWeights = (degree: number, variable: tf.Variable): Array<tf.Variable> => {
+  private getWeights = (degree: number, variable: tf.Variable): Array<tf.Variable> => {
     return Array.from({ length: degree + 1 }, () => variable);
   }
 
-  renderFxGraph = (): void => {
+  private renderFxGraph = (): void => {
     const fxContext = this.fxCanvas.nativeElement.getContext('2d');
 
     if (fxContext) {
@@ -292,7 +297,7 @@ export class PolynomialRegression implements OnInit, AfterViewInit {
     }
   }
 
-  renderLossGraph = (): void => {
+  private renderLossGraph = (): void => {
     const lossContext = this.lossCanvas.nativeElement.getContext('2d');
 
     if (lossContext) {
@@ -304,7 +309,7 @@ export class PolynomialRegression implements OnInit, AfterViewInit {
     }
   }
 
-  renderVersusGraph = (): void => {
+  private renderVersusGraph = (): void => {
     const versusContext = this.versusCanvas.nativeElement.getContext('2d');
 
     if (versusContext) {
@@ -316,7 +321,7 @@ export class PolynomialRegression implements OnInit, AfterViewInit {
     }
   }
 
-  train = (iterations: number) => {
+  private train = (iterations: number) => {
     this.losses = [];
     this.predictions = [];
 
@@ -324,20 +329,20 @@ export class PolynomialRegression implements OnInit, AfterViewInit {
 
     for (let i = 0; i < iterations; i++) {
       const lost = this.optimizer.minimize(() => {
-        const prediction = this.getPolynomialRegression(XS, weights);
+        const fx = this.getPolynomialRegression(XS, weights);
 
-        if (i === (iterations - 1)) {
-          this.predictions = Array.from(prediction.dataSync());
-        }
+        // if (i === (iterations - 1)) {
+        this.predictions = Array.from(fx.dataSync());
+        // }
 
-        return this.getLoss(prediction, YS)
+        return this.getLoss(fx, YS)
       }, true);
 
       this.losses.push(lost ? Array.from(lost.dataSync()) : []);
     }
   };
 
-  updateData = (): void => {
+  private updateData = (): void => {
     this.lossData.labels = [];
     this.lossData.datasets[0].data = [];
 
@@ -347,7 +352,7 @@ export class PolynomialRegression implements OnInit, AfterViewInit {
     });
 
     this.fxData.labels = this.data.labels;
-    this.fxData.datasets[0].data = this.data.datasets[0].data;
+    this.fxData.datasets[0].data = this.data.datasets[1].data;
     this.fxData.datasets[1].data = [];
 
     this.predictions.forEach((prediction) => {
