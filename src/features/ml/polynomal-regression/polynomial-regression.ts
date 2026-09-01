@@ -330,11 +330,7 @@ export class PolynomialRegression implements OnInit, AfterViewInit {
     for (let i = 0; i < iterations; i++) {
       const lost = this.optimizer.minimize(() => {
         const fx = this.getPolynomialRegression(XS, weights);
-
-        // if (i === (iterations - 1)) {
         this.predictions = Array.from(fx.dataSync());
-        // }
-
         return this.getLoss(fx, YS)
       }, true);
 
