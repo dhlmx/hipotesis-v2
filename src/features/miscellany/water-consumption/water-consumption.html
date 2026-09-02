@@ -1,0 +1,199 @@
+<p-panel>
+  <ng-template pTemplate="header">
+    <div><span class="pi pi-microchip-ai"></span>&nbsp;Machine Learning&nbsp;&mdash;&rsaquo;&nbsp;<span class="pi pi-chart-line"></span>&nbsp;Polynomial Regression</div>
+  </ng-template>
+
+  <ng-template pTemplate="icons">
+    <div>
+      <button type="button" pButton (click)="onPrint()" title="Print" class="p-button-outlined p-button-success">
+        <em class="pi pi-print"></em>
+      </button>
+    </div>
+  </ng-template>
+
+  <ng-template  pTemplate="body">
+    <p-divider></p-divider>
+    <div id="htmlContent">
+      <!-- Problem -->
+      <div class="grid grid-cols-1 md:grid-cols-6">
+        <div></div>
+        <div class="md:col-span-4">
+          <p-card>
+            <ng-template pTemplate="header">
+              <p class="font-semibold text-2xl"><span class="pi pi-arrows-alt"></span>&nbsp;Problema</p>
+              <p-divider></p-divider>
+            </ng-template>
+
+            <ng-template pTemplate="body">
+              <p>Debido a las recurrentes quejas de los habitantes de la Ciudad de México por los inexplicables montos que se paga cada bimestre por el consumo del agua potable, decidimos realizar unos cálculos básicos de verificación.</p>
+              <br />
+            </ng-template>
+
+            <ng-template pTemplate="footer">
+              <p-divider></p-divider>
+            </ng-template>
+          </p-card>
+        </div>
+        <div></div>
+      </div>
+
+      <!-- Data -->
+      <div class="grid grid-cols-1 md:grid-cols-6">
+        <div></div>
+        <div class="md:col-span-4">
+          <p-card>
+            <ng-template pTemplate="header">
+              <p class="font-semibold text-2xl"><span class="pi pi-copy"></span>&nbsp;Datos</p>
+              <p-divider></p-divider>
+            </ng-template>
+
+            <ng-template pTemplate="body">
+              <form [formGroup]="form">
+                <p-fieldset legtext-right="Recibo">
+                  <div class="grid grid-cols-1 md:grid-cols-4">
+                    <div>
+                      <label pLabel for="previousReading">Lectura Anterior m³</label>
+                      <p-inputnumber inputid="previousReading" [formControl]="controls.previousReading" mode="decimal" [minFractionDigits]="0" [maxFractionDigits]="0" />
+                    </div>
+                    <div>
+                      <label pLabel for="previousDate">Fecha Anterior</label><br />
+                      <p-datepicker inputId="previousDate" [formControl]="controls.previousDate" dateFormat="dd/mm/yy" placeholder="dd/mm/yyyy" pInputMask="dd/mm/yyyy" />
+                    </div>
+                    <div>
+                      <label pLabel for="currentReading">Lectura Actual m³</label>
+                      <p-inputnumber inputid="currentReading" [formControl]="controls.currentReading" mode="decimal" [minFractionDigits]="0" [maxFractionDigits]="0" />
+                    </div>
+                    <div>
+                      <label pLabel for="currentDate">Fecha Actual</label>
+                      <p-datepicker inputId="currentDate" [formControl]="controls.currentDate" dateFormat="dd/mm/yy" placeholder="dd/mm/yyyy" pInputMask="dd/mm/yyyy" />
+                    </div>
+                  </div>
+
+                  <div class="grid grid-cols-1 md:grid-cols-4">
+                    <div>
+                      <label pLabel for="days">Número de Días</label>
+                      <p-inputnumber inputid="days" [formControl]="controls.days" mode="decimal" [minFractionDigits]="0" [maxFractionDigits]="0" />
+                    </div>
+                    <div>
+                      <label pLabel for="dailyAverage">Promedio Diario m³</label>
+                      <p-inputnumber inputid="dailyAverage" [formControl]="controls.dailyAverage" mode="decimal" [minFractionDigits]="2" [maxFractionDigits]="2" />
+                    </div>
+                    <div>
+                      <label pLabel for="bimonthlyConsumption">Consumo del Bimestre m³</label>
+                      <p-inputnumber inputid="bimonthlyConsumption" [formControl]="controls.bimonthlyConsumption" mode="decimal" [minFractionDigits]="2" [maxFractionDigits]="2" />
+                    </div>
+                    <div>
+                    </div>
+                  </div>
+
+                  <div class="grid grid-cols-1">
+                    <div>
+                      <br />
+                      <button pButton type="button" label="Calcular" title="Calcular" [disabled]="form.invalid" (click)="onCalculate()" class="p-button-outlined p-button-info w-full"></button>
+                    </div>
+                  </div>
+                </p-fieldset>
+              </form>
+            </ng-template>
+
+            <ng-template pTemplate="footer">
+              <p-divider></p-divider>
+            </ng-template>
+          </p-card>
+        </div>
+        <div></div>
+      </div>
+
+      <!-- Solution -->
+      <div class="grid grid-cols-1 md:grid-cols-6">
+        <div></div>
+        <div class="md:col-span-4">
+          <p-card>
+            <ng-template pTemplate="header">
+              <p class="font-semibold text-2xl"><span class="pi pi-check-circle"></span>&nbsp;Solución</p>
+              <p-divider></p-divider>
+            </ng-template>
+
+            <ng-template pTemplate="body">
+              <div class="grid grid-cols-1">
+                <table>
+                  <thead>
+                    <tr>
+                      <th class="font-semibold text-lg width-40">Referencia</th>
+                      <th class="font-semibold text-lg width-20">Número de Días</th>
+                      <th class="font-semibold text-lg width-20">Promedio Diario m³</th>
+                      <th class="font-semibold text-lg width-20">Consumo del Bimestre m³</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>Recibo</td>
+                      <td class="text-right">{{ controls.days.value }}</td>
+                      <td class="text-right">{{ controls.dailyAverage.value }}</td>
+                      <td class="text-right">{{ controls.bimonthlyConsumption.value }}</td>
+                    </tr>
+                    <tr>
+                      <td>Cálculo</td>
+                      <td class="text-right">{{ days }}</td>
+                      <td class="text-right">{{ dailyAverage | number: '1.2-2' }}</td>
+                      <td class="text-right">{{ controls.bimonthlyConsumption.value | number: '1.2-2' }}</td>
+                    </tr>
+                    <tr>
+                      <td>Diferencia</td>
+                      <td class="text-right">{{ controls.days.value - days }}</td>
+                      <td class="text-right">{{ controls.dailyAverage.value - dailyAverage | number: '1.2-2' }}</td>
+                      <td class="text-right">{{ controls.bimonthlyConsumption.value - bimonthlyConsumption | number: '1.2-2' }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </ng-template>
+
+            <ng-template pTemplate="footer">
+              <p-divider></p-divider>
+            </ng-template>
+          </p-card>
+        </div>
+        <div></div>
+      </div>
+    </div>
+  </ng-template>
+
+  <ng-template pTemplate="footer">
+    <div class="grid grid-cols-1 md:grid-cols-6">
+      <div></div>
+      <div class="md:col-span-4">
+        <p-card>
+          <ng-template pTemplate="header">
+            <p class="font-semibold text-2xl"><span class="pi pi-paperclip"></span>&nbsp;Referencias</p>
+            <p-divider></p-divider>
+          </ng-template>
+
+          <ng-template pTemplate="body">
+            <div>
+              <!--
+              <p><span class="text-italic">Polynomial Regression.</span>
+                <br />Sasaki, Kai,&nbsp;<span class="text-italic">Hands-On Machine Learning with TensorFlow.js.</span>
+                <br />Pps: 76-94. Packt Publishing Ltd. UK. 2019.
+              </p>
+              -->
+            </div>
+          </ng-template>
+
+          <ng-template pTemplate="footer">
+            <p-divider></p-divider>
+          </ng-template>
+        </p-card>
+      </div>
+      <div></div>
+    </div>
+  </ng-template>
+
+  <p-confirmDialog [style]="{width: '50vw'}" [baseZIndex]="10000" rejectButtonStyleClass="p-button-text"></p-confirmDialog>
+  <p-toast></p-toast>
+</p-panel>
+
+<app-message-modal
+  [visible]="appService.process.isInProcess()"
+  [message]="appService.process.message()">
+</app-message-modal>

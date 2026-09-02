@@ -4,3 +4,11 @@
 .text-italic {
   font-style: italic;
 }
+
+.width-40 {
+  width: 40%;
+}
+
+.width-20 {
+  width: 20%;
+}
