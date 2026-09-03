@@ -24,7 +24,18 @@ export class MenuService {
         {
           icon: PrimeIcons.CHART_LINE,
           label: 'Polynomial Regression',
-          routerLink: '/ml/pr'
+          routerLink: '/machine-learning/polynomial-regression'
+        },
+      ]
+    },
+    {
+      icon: PrimeIcons.HAMMER,
+      label: 'Miscelánea',
+      items: [
+        {
+          icon: PrimeIcons.GAUGE,
+          label: 'Verificador de Consumo de Agua (México, CdMx)',
+          routerLink: '/miscellany/water-consumption'
         },
       ]
     }

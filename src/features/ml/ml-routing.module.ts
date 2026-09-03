@@ -5,7 +5,7 @@ import { PolynomialRegression } from './polynomal-regression/polynomial-regressi
 
 const routes: Routes = [
   { path: '', component: PolynomialRegression },
-  { path: 'pr', component: PolynomialRegression }
+  { path: 'polynomial-regression', component: PolynomialRegression }
 ];
 
 @NgModule({

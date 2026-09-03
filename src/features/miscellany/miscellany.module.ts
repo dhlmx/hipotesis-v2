@@ -5,7 +5,6 @@ import { MiscellanyRoutingModule } from './miscellany-routing.module';
 
 // Components
 import { WaterConsumption } from './water-consumption/water-consumption';
-
 @NgModule({
   declarations: [
   ],

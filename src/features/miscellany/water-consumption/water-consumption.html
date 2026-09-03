@@ -15,9 +15,9 @@
     <p-divider></p-divider>
     <div id="htmlContent">
       <!-- Problem -->
-      <div class="grid grid-cols-1 md:grid-cols-6">
+      <div class="grid grid-cols-1 md:grid-cols-10">
         <div></div>
-        <div class="md:col-span-4">
+        <div class="md:col-span-8">
           <p-card>
             <ng-template pTemplate="header">
               <p class="font-semibold text-2xl"><span class="pi pi-arrows-alt"></span>&nbsp;Problema</p>
@@ -25,8 +25,35 @@
             </ng-template>
 
             <ng-template pTemplate="body">
-              <p>Debido a las recurrentes quejas de los habitantes de la Ciudad de México por los inexplicables montos que se paga cada bimestre por el consumo del agua potable, decidimos realizar unos cálculos básicos de verificación.</p>
-              <br />
+              <p>
+                Debido a las recurrentes quejas de los habitantes de la Ciudad de México por los inexplicables montos que se paga cada bimestre por el consumo del agua potable, decidimos realizar unos cálculos básicos de verificación.<br />
+                <br />
+                Después de analizar diversos recibos de agua potable, podemos plantear como hipótesis que el gobierno local utiliza los siguientes pasos para calcular el monto a pagar por el consumo del agua potable:<br />
+                <br />
+                1) Se calcula el consumo del bimestre (cBimestre) como la diferencia entre la lectura actual (lAct) y la lectura anterior (lAnt).<br />
+                2) Se calcula el número de días (nDias) como la diferencia entre la fecha actual (fAct) y la fecha anterior (fAnt).<br />
+                3) Se calcula el promedio diario (pDiario) como el consumo del bimestre (cBimestre) dividido entre el número de días (nDias).<br />
+                <br />
+                De acuerdo a nuestros cálculos de verificación, el promedio diario del recibo es correcto.<br />
+                <br />
+                La importancia del promedio diario (pDiario) consiste en que a partir de este valor el gobierno local recalcula el consumo bimestral de agua que finalmente se cobra.<br />
+                <br />
+                De acuerdo a nuestros cálculos y análisis, el gobierno local realiza el cobro de agua potable final mediante la siguiente fórmula:<br />
+                <br />
+                cBimestre = pDiario * nDiasCobrados<br />
+                <br />
+                Donde nDiasCobrados tiende a 60.<br />
+                <br />
+                Esa consideración genera que nDiasCobrados se convierta realmente en un valor arbitrario cada bimestre, lo que genera que el monto a pagar por el consumo del agua potable no siempre guarde una correspondencia exacta con el consumo real del bimestre. Y esto, a su vez, genera confusión en el consumidor, y hasta se puede afirmar que los datos impresos pueden llegar a ser falsos, al corresponder ni a la realidad ni a los propios montos del mismo recibo. Es decir, el recibo puede llegar a tener cifras incoherentes.<br />
+                <br />
+                Es entendible el propósito de cobrar 60 días por mes, pero eso genera confusión y cobros inexactos, que pueden afectar las finanzas del consumidor y del propio gobierno local.<br />
+                <br />
+                Para el momento actual en el que se alardea de mucha "ciencia", "transparencia", "eficiencia", resulta absurdo que se presenten este tipo de anomalías. Debería cobrarse el consumo real, sin mayores consideraciones absurdas, como la de hacer tender el número de días cobrados a exactamente 60 días.<br />
+                <br />
+                Por nuestra parte, tenemos recibos que confirman nuestra hipótesis.<br />
+                <br />
+                Pero, es mejor que cada quien verifique su recibo, y que entonces saque sus propias conclusiones.
+              </p>
             </ng-template>
 
             <ng-template pTemplate="footer">
@@ -38,9 +65,9 @@
       </div>
 
       <!-- Data -->
-      <div class="grid grid-cols-1 md:grid-cols-6">
+      <div class="grid grid-cols-1 md:grid-cols-10">
         <div></div>
-        <div class="md:col-span-4">
+        <div class="md:col-span-8">
           <p-card>
             <ng-template pTemplate="header">
               <p class="font-semibold text-2xl"><span class="pi pi-copy"></span>&nbsp;Datos</p>
@@ -49,44 +76,39 @@
 
             <ng-template pTemplate="body">
               <form [formGroup]="form">
-                <p-fieldset legtext-right="Recibo">
-                  <div class="grid grid-cols-1 md:grid-cols-4">
+                <p-fieldset legend="Recibo">
+                  <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
                     <div>
-                      <label pLabel for="previousReading">Lectura Anterior m³</label>
-                      <p-inputnumber inputid="previousReading" [formControl]="controls.previousReading" mode="decimal" [minFractionDigits]="0" [maxFractionDigits]="0" />
+                      <label pLabel for="previousReading">Lectura Anterior m³ [lAnt]</label>
+                      <p-inputnumber inputid="previousReading" [formControl]="controls.previousReading" mode="decimal" [minFractionDigits]="0" [maxFractionDigits]="0" class="w-full" />
                     </div>
                     <div>
-                      <label pLabel for="previousDate">Fecha Anterior</label><br />
-                      <p-datepicker inputId="previousDate" [formControl]="controls.previousDate" dateFormat="dd/mm/yy" placeholder="dd/mm/yyyy" pInputMask="dd/mm/yyyy" />
+                      <label pLabel for="previousDate">Fecha Anterior [fAnt]</label>
+                      <p-datepicker inputId="previousDate" [formControl]="controls.previousDate" dateFormat="dd/mm/yy" placeholder="dd/mm/yyyy" pInputMask="dd/mm/yyyy" class="w-full" />
                     </div>
                     <div>
-                      <label pLabel for="currentReading">Lectura Actual m³</label>
-                      <p-inputnumber inputid="currentReading" [formControl]="controls.currentReading" mode="decimal" [minFractionDigits]="0" [maxFractionDigits]="0" />
+                      <label pLabel for="currentReading">Lectura Actual m³ [lAct]</label>
+                      <p-inputnumber inputid="currentReading" [formControl]="controls.currentReading" mode="decimal" [minFractionDigits]="0" [maxFractionDigits]="0" class="w-full" />
                     </div>
                     <div>
-                      <label pLabel for="currentDate">Fecha Actual</label>
-                      <p-datepicker inputId="currentDate" [formControl]="controls.currentDate" dateFormat="dd/mm/yy" placeholder="dd/mm/yyyy" pInputMask="dd/mm/yyyy" />
-                    </div>
-                  </div>
-
-                  <div class="grid grid-cols-1 md:grid-cols-4">
-                    <div>
-                      <label pLabel for="days">Número de Días</label>
-                      <p-inputnumber inputid="days" [formControl]="controls.days" mode="decimal" [minFractionDigits]="0" [maxFractionDigits]="0" />
-                    </div>
-                    <div>
-                      <label pLabel for="dailyAverage">Promedio Diario m³</label>
-                      <p-inputnumber inputid="dailyAverage" [formControl]="controls.dailyAverage" mode="decimal" [minFractionDigits]="2" [maxFractionDigits]="2" />
-                    </div>
-                    <div>
-                      <label pLabel for="bimonthlyConsumption">Consumo del Bimestre m³</label>
-                      <p-inputnumber inputid="bimonthlyConsumption" [formControl]="controls.bimonthlyConsumption" mode="decimal" [minFractionDigits]="2" [maxFractionDigits]="2" />
-                    </div>
-                    <div>
+                      <label pLabel for="currentDate">Fecha Actual [fAct]</label>
+                      <p-datepicker inputId="currentDate" [formControl]="controls.currentDate" dateFormat="dd/mm/yy" placeholder="dd/mm/yyyy" pInputMask="dd/mm/yyyy" class="w-full" />
                     </div>
                   </div>
 
-                  <div class="grid grid-cols-1">
+                  <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div>
+                      <label pLabel for="days">Número de Días [nDias]</label>
+                      <p-inputnumber inputid="days" [formControl]="controls.days" mode="decimal" [minFractionDigits]="0" [maxFractionDigits]="0" class="w-full" />
+                    </div>
+                    <div>
+                      <label pLabel for="dailyAverage">Promedio Diario m³ [pDiario]</label>
+                      <p-inputnumber inputid="dailyAverage" [formControl]="controls.dailyAverage" mode="decimal" [minFractionDigits]="2" [maxFractionDigits]="2" class="w-full" />
+                    </div>
+                    <div>
+                      <label pLabel for="bimonthlyConsumption">Consumo del Bimestre m³ [cBimestre]</label>
+                      <p-inputnumber inputid="bimonthlyConsumption" [formControl]="controls.bimonthlyConsumption" mode="decimal" [minFractionDigits]="2" [maxFractionDigits]="2" class="w-full" />
+                    </div>
                     <div>
                       <br />
                       <button pButton type="button" label="Calcular" title="Calcular" [disabled]="form.invalid" (click)="onCalculate()" class="p-button-outlined p-button-info w-full"></button>
@@ -105,9 +127,9 @@
       </div>
 
       <!-- Solution -->
-      <div class="grid grid-cols-1 md:grid-cols-6">
+      <div class="grid grid-cols-1 md:grid-cols-10">
         <div></div>
-        <div class="md:col-span-4">
+        <div class="md:col-span-8">
           <p-card>
             <ng-template pTemplate="header">
               <p class="font-semibold text-2xl"><span class="pi pi-check-circle"></span>&nbsp;Solución</p>
@@ -115,37 +137,159 @@
             </ng-template>
 
             <ng-template pTemplate="body">
+              <!-- Basic calculations -->
               <div class="grid grid-cols-1">
-                <table>
-                  <thead>
-                    <tr>
-                      <th class="font-semibold text-lg width-40">Referencia</th>
-                      <th class="font-semibold text-lg width-20">Número de Días</th>
-                      <th class="font-semibold text-lg width-20">Promedio Diario m³</th>
-                      <th class="font-semibold text-lg width-20">Consumo del Bimestre m³</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td>Recibo</td>
-                      <td class="text-right">{{ controls.days.value }}</td>
-                      <td class="text-right">{{ controls.dailyAverage.value }}</td>
-                      <td class="text-right">{{ controls.bimonthlyConsumption.value }}</td>
-                    </tr>
-                    <tr>
-                      <td>Cálculo</td>
-                      <td class="text-right">{{ days }}</td>
-                      <td class="text-right">{{ dailyAverage | number: '1.2-2' }}</td>
-                      <td class="text-right">{{ controls.bimonthlyConsumption.value | number: '1.2-2' }}</td>
-                    </tr>
-                    <tr>
-                      <td>Diferencia</td>
-                      <td class="text-right">{{ controls.days.value - days }}</td>
-                      <td class="text-right">{{ controls.dailyAverage.value - dailyAverage | number: '1.2-2' }}</td>
-                      <td class="text-right">{{ controls.bimonthlyConsumption.value - bimonthlyConsumption | number: '1.2-2' }}</td>
-                    </tr>
-                  </tbody>
-                </table>
+                @if (days !== 0 && dailyAverage !== 0 && bimonthlyConsumption !== 0) {
+                  <table>
+                    <thead>
+                      <tr>
+                        <th colspan="4" class="text-lg">
+                          Cálculos Básicos
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr class="text-center">
+                        <td class="width-10">Referencia</td>
+                        <td class="width-30">
+                          Consumo del Bimestre m³<br />
+                          <span class="text-xs">cBimestre = lAct - lAnt</span>
+                        </td>
+                        <td class="width-30">
+                          Número de Días<br />
+                          <span class="text-xs">nDias = fAct - fAnt</span>
+                        </td>
+                        <td class="width-30">
+                          Promedio Diario m³<br />
+                          <span class="text-xs">pDiario = cBimestre / nDias</span>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>Recibo</td>
+                        <td class="text-right">{{ controls.bimonthlyConsumption.value }}</td>
+                        <td class="text-right">{{ controls.days.value }}</td>
+                        <td class="text-right">{{ controls.dailyAverage.value }}</td>
+                      </tr>
+                      <tr>
+                        <td>Cálculo</td>
+                        <td class="text-right">{{ bimonthlyConsumption | number: '1.2-2' }}</td>
+                        <td class="text-right">{{ days }}</td>
+                        <td class="text-right">{{ dailyAverage | number: '1.2-2' }}</td>
+                      </tr>
+                      <tr>
+                        <td>Diferencia</td>
+                        <td class="text-right">
+                          <p [ngClass]="{'color-green': isBimonthlyConsumptionValid, 'color-red': !isBimonthlyConsumptionValid}">
+                            @if (isBimonthlyConsumptionValid) {
+                              <span class="pi pi-check-circle"></span>
+                            } @else {
+                              <span class="pi pi-times-circle"></span>
+                            }
+                            &nbsp;{{ controls.bimonthlyConsumption.value - bimonthlyConsumption | number: '1.2-2' }}
+                          </p>
+                        </td>
+                        <td class="text-right">
+                          <p [ngClass]="{'color-green': areDaysValid, 'color-red': !areDaysValid}">
+                            @if (areDaysValid) {
+                              <span class="pi pi-check-circle"></span>
+                            } @else {
+                              <span class="pi pi-times-circle"></span>
+                            }
+                            &nbsp;{{ controls.days.value - days }}
+                          </p>
+                        </td>
+                        <td class="text-right">
+                          <p [ngClass]="{'color-green': isDailyAverageValid, 'color-red': !isDailyAverageValid}">
+                            @if (isDailyAverageValid) {
+                              <span class="pi pi-check-circle"></span>
+                            } @else {
+                              <span class="pi pi-times-circle"></span>
+                            }
+                            &nbsp;{{ controls.dailyAverage.value - dailyAverage | number: '1.2-2' }}
+                          </p>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                }
+              </div>
+
+              <br />
+
+              <!-- Aclaration calculations -->
+              <div class="grid grid-cols-1">
+                @if (days !== 0 && dailyAverage !== 0 && bimonthlyConsumption !== 0 && (!isBimonthlyConsumptionValid || !areDaysValid || !isDailyAverageValid)) {
+                  <table>
+                    <thead>
+                      <tr>
+                        <th colspan="5" class="text-lg">Cálculos Aclaratorios (Recálculo)</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr class="text-lg text-center">
+                        <td colspan="3" class="width-60">Recibo</td>
+                        <td colspan="2" class="width-20">Recálculo</td>
+                      </tr>
+                      <tr class="text-center">
+                        <td class="width-20">
+                          Consumo del Bimestre m³<br />
+                          <span class="text-xs">cBimestre</span>
+                        </td>
+                        <td class="width-20">
+                          Promedio Diario m³<br />
+                          <span class="text-xs">pDiario</span>
+                        </td>
+                        <td class="width-20">
+                          Número de Días<br />
+                          <span class="text-xs">nDias</span>
+                        </td>
+                        <td class="width-20">
+                          Número de Días (Cobrado)<br />
+                          <span class="text-xs">nDiasCobrado = cBimestre / pDiario</span>
+                        </td>
+                        <td class="width-20">
+                          Diferencia de Días<br />
+                          <span class="text-xs">dDias = nDiasCobrado - nDias</span>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td class="text-right">{{ controls.bimonthlyConsumption.value }}</td>
+                        <td class="text-right">{{ controls.dailyAverage.value }}</td>
+                        <td class="text-right">{{ controls.days.value }}</td>
+                        <td class="text-right">
+                          <p [ngClass]="{'color-green': isBimonthlyConsumptionValid, 'color-red': !isBimonthlyConsumptionValid}">
+                            @if (areDaysChargedValid) {
+                              <span class="pi pi-check-circle"></span>
+                            } @else {
+                              <span class="pi pi-times-circle"></span>
+                            }
+                            &nbsp;{{ daysCharged }}
+                          </p>
+                        </td>
+                        <td class="text-right">
+                          <p [ngClass]="{'color-green': isBimonthlyConsumptionValid, 'color-red': !isBimonthlyConsumptionValid}">
+                            @if (areDaysChargedValid) {
+                              <span class="pi pi-check-circle"></span>
+                            } @else {
+                              <span class="pi pi-times-circle"></span>
+                            }
+                            &nbsp;{{ daysCharged - controls.days.value }}
+                          </p>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                }
+              </div>
+
+              <br />
+
+              <div class="grid grid-cols-1">
+                <p>
+                  <span class="font-semibold">Observaciones:</span><br />
+                  1) Las diferencias con valor a cero implican que el recibo es correcto, con cálculos exactos.<br />
+                  2) Las diferencias positivas implican cobros excesivos por parte del gobierno, mientras que las negativas conllevan cobros incompletos, menores a los cálculos correctos.
+                  </p>
               </div>
             </ng-template>
 
@@ -160,9 +304,9 @@
   </ng-template>
 
   <ng-template pTemplate="footer">
-    <div class="grid grid-cols-1 md:grid-cols-6">
+    <div class="grid grid-cols-1 md:grid-cols-10">
       <div></div>
-      <div class="md:col-span-4">
+      <div class="md:col-span-8">
         <p-card>
           <ng-template pTemplate="header">
             <p class="font-semibold text-2xl"><span class="pi pi-paperclip"></span>&nbsp;Referencias</p>
@@ -171,12 +315,10 @@
 
           <ng-template pTemplate="body">
             <div>
-              <!--
-              <p><span class="text-italic">Polynomial Regression.</span>
-                <br />Sasaki, Kai,&nbsp;<span class="text-italic">Hands-On Machine Learning with TensorFlow.js.</span>
-                <br />Pps: 76-94. Packt Publishing Ltd. UK. 2019.
+              <p>
+                Análisis pormenorizado de diversos recibos de agua potable en la Ciudad de México, con el objetivo de verificar la exactitud de los cálculos realizados por el gobierno local.<br />
+                México, Ciudad de México. 2026.
               </p>
-              -->
             </div>
           </ng-template>
 

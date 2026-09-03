@@ -5,7 +5,7 @@ import { WaterConsumption } from './water-consumption/water-consumption';
 
 const routes: Routes = [
   { path: '', component: WaterConsumption },
-  { path: 'wc', component: WaterConsumption }
+  { path: 'water-consumption', component: WaterConsumption }
 ];
 
 @NgModule({

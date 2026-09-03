@@ -28,6 +28,7 @@ export class WaterConsumption implements OnInit {
   days = 0;
   dailyAverage = 0;
   bimonthlyConsumption = 0;
+  daysCharged = 0;
 
   readonly controls: {
     previousReading: FormControl,
@@ -38,13 +39,13 @@ export class WaterConsumption implements OnInit {
     dailyAverage: FormControl,
     bimonthlyConsumption: FormControl
   } = {
-    previousReading: new FormControl(0, [Validators.required]),
+    previousReading: new FormControl(0, [Validators.required, Validators.min(0.01)]),
     previousDate: new FormControl(new Date(), [Validators.required]),
-    currentReading: new FormControl(0, [Validators.required]),
+    currentReading: new FormControl(0, [Validators.required, Validators.min(0.01)]),
     currentDate: new FormControl(new Date(), [Validators.required]),
-    days: new FormControl(0, [Validators.required]),
-    dailyAverage: new FormControl(0, [Validators.required]),
-    bimonthlyConsumption: new FormControl(0, [Validators.required])
+    days: new FormControl(0, [Validators.required, Validators.min(1)]),
+    dailyAverage: new FormControl(0, [Validators.required, Validators.min(0.01)]),
+    bimonthlyConsumption: new FormControl(0, [Validators.required, Validators.min(0.01)])
   };
 
   readonly form = new FormGroup({
@@ -63,6 +64,22 @@ export class WaterConsumption implements OnInit {
 
   ngOnInit(): void {
     this.initialize();
+  }
+
+  get areDaysChargedValid(): boolean {
+    return this.daysCharged - this.controls.days.value === 0;
+  }
+
+  get areDaysValid(): boolean {
+    return this.days - this.controls.days.value === 0;
+  }
+
+  get isDailyAverageValid(): boolean {
+    return Number(this.controls.dailyAverage.value).toFixed(2) === Number(this.dailyAverage).toFixed(2);
+  }
+
+  get isBimonthlyConsumptionValid(): boolean {
+    return Number(this.controls.bimonthlyConsumption.value).toFixed(2) === Number(this.bimonthlyConsumption).toFixed(2);
   }
 
   onPrint = (): void => {
@@ -85,8 +102,9 @@ export class WaterConsumption implements OnInit {
     this.appService.process.start('Calculating...');
 
     this.days = moment(this.controls.currentDate.value).diff(moment(this.controls.previousDate.value), 'days');
-    this.bimonthlyConsumption =  this.controls.currentReading.value - this.controls.previousReading.value;
-    this.dailyAverage = (this.bimonthlyConsumption) / this.days;
+    this.bimonthlyConsumption = Number(this.controls.currentReading.value) - Number(this.controls.previousReading.value);
+    this.dailyAverage = this.bimonthlyConsumption / this.days;
+    this.daysCharged = Math.round(Number(this.controls.bimonthlyConsumption.value) / this.dailyAverage);
 
     this.appService.process.stop();
   }
