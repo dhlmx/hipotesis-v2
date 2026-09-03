@@ -1,6 +1,6 @@
 <p-panel>
   <ng-template pTemplate="header">
-    <div><span class="pi pi-microchip-ai"></span>&nbsp;Machine Learning&nbsp;&mdash;&rsaquo;&nbsp;<span class="pi pi-chart-line"></span>&nbsp;Polynomial Regression</div>
+    <div><span class="pi pi-hammer"></span>&nbsp;Miscelánea&nbsp;&mdash;&rsaquo;&nbsp;<span class="pi pi-gauge"></span>&nbsp;Verificador de Consumo de Agua (México, CdMx)</div>
   </ng-template>
 
   <ng-template pTemplate="icons">
@@ -44,7 +44,9 @@
                 <br />
                 Donde nDiasCobrados tiende a 60 días.<br />
                 <br />
-                Si nDias es mayor o menor a 60 días, entonces el gobierno realizará un "ajuste" para alcanzar nDiasCobrados = 60 días.<br />
+                Si nDias es menor a 60 días, entonces el gobierno realiza un "ajuste" para alcanzar nDiasCobrados = 60 días.<br />
+                <br />
+                Si nDias es mayor a 60 días, entonces el gobierno no realiza ningún tipo de "ajuste" para sujetarse a nDiasCobrados = 60 días.<br />
                 <br />
                 Esa consideración genera que nDiasCobrados se convierta realmente en un valor arbitrario cada bimestre, lo que genera que el monto a pagar por el consumo del agua potable no siempre guarde una correspondencia exacta con el consumo real del bimestre. Y esto, a su vez, genera confusión en el consumidor, y hasta se puede afirmar que los datos impresos pueden llegar a ser falsos, al no corresponder ni a la realidad ni a los propios montos del mismo recibo. Es decir, el recibo puede llegar a tener cifras incoherentes.<br />
                 <br />
@@ -224,7 +226,7 @@
                   <table>
                     <thead>
                       <tr>
-                        <th colspan="5" class="text-lg">Cálculos Aclaratorios (Recálculo)</th>
+                        <th colspan="5" class="text-lg">Recálculo de Consumo Bimestral Cobrado</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -287,11 +289,13 @@
               <br />
 
               <div class="grid grid-cols-1">
-                <p>
-                  <span class="font-semibold">Observaciones:</span><br />
-                  1) Las diferencias con valor a cero implican que el recibo es correcto, con cálculos exactos.<br />
-                  2) Las diferencias positivas implican cobros excesivos por parte del gobierno, mientras que las negativas conllevan cobros incompletos, menores a los cálculos correctos.
+                @if (days !== 0 && dailyAverage !== 0 && bimonthlyConsumption !== 0) {
+                  <p>
+                    <span class="font-semibold">Observaciones:</span><br /><br />
+                    1) Las diferencias con valor a cero implican que el recibo es correcto, con cálculos exactos.<br />
+                    2) Las diferencias positivas implican cobros excesivos por parte del gobierno, mientras que las negativas conllevan cobros incompletos, menores a los cálculos correctos.
                   </p>
+                }
               </div>
             </ng-template>
 
