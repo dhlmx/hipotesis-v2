@@ -7,6 +7,9 @@ import moment from 'moment';
 import { CoreModule } from '../../../core/modules/core.module';
 import { PrimeNgModule } from '../../../core/modules/prime-ng.module';
 
+// Components & Directives
+import { TextSub } from '../../../core/directives/text-sub';
+
 // Services
 import { AppService } from '../../../core/services/app.service';
 import { PdfService } from '../../../core/services/pdf.service';
@@ -21,7 +24,7 @@ import { APP_TITLE } from '../../../core/constants/general';
   templateUrl: './water-consumption.html',
   styleUrl: './water-consumption.css',
   providers: [ConfirmationService, MessageService, AppService, PdfService],
-  imports: [CoreModule, PrimeNgModule],
+  imports: [CoreModule, PrimeNgModule, TextSub],
 })
 export class WaterConsumption implements OnInit {
 

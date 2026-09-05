@@ -24,39 +24,52 @@
               <p-divider></p-divider>
             </ng-template>
 
+            <!--
+            consumo<span AppSuperText>Bimestre</span>
+            número<span AppAppSubText>Días</span>
+            número<span AppAppSubText>DíasCobrado</span>
+            -->
+
             <ng-template pTemplate="body">
               <p>
                 Debido a las recurrentes quejas de los habitantes de la Ciudad de México por los inexplicables montos que se pagan cada bimestre por el consumo del agua potable, decidimos realizar unos cálculos básicos de verificación.<br />
                 <br />
-                Después de analizar diversos recibos de agua potable, podemos plantear como hipótesis que el gobierno local utiliza los siguientes pasos para calcular el monto a pagar por el consumo del agua potable:<br />
+                Después de analizar diversos recibos de agua potable, podemos plantear como hipótesis que el gobierno utiliza los siguientes pasos para calcular el monto a pagar por el consumo del agua potable:<br />
                 <br />
-                1) Se calcula el consumo del bimestre (cBimestre) como la diferencia entre la lectura actual (lAct) y la lectura anterior (lAnt).<br />
-                2) Se calcula el número de días (nDias) como la diferencia entre la fecha actual (fAct) y la fecha anterior (fAnt).<br />
-                3) Se calcula el promedio diario (pDiario) como el consumo del bimestre (cBimestre) dividido entre el número de días (nDias).<br />
+                1) Se calcula el consumo del bimestre como la diferencia entre las lecturas actual y anterior.<br />
+                <br />consumo<span textSub>Bimestre</span> = lectura<span textSub>Actual</span> - lectura<span textSub>Anterior</span><br />
                 <br />
-                De acuerdo a nuestros cálculos de verificación, el promedio diario del recibo es correcto.<br />
+                2) Se calcula el número de días de consumo como la diferencia entre las fechas actual y anterior.<br />
+                <br />número<span textSub>Días</span> = fecha<span textSub>Actual</span> - fecha<span textSub>Anterior</span><br />
                 <br />
-                La importancia del promedio diario (pDiario) consiste en que a partir de este valor el gobierno local realiza un nuevo cálculo del consumo bimestral de agua que se cobrará finalmente.<br />
+                3) Se calcula el promedio diario de consumo como el consumo del bimestre entre el número de días de consumo.<br />
+                <br />promedio<span textSub>Diario</span> = consumo<span textSub>Bimestre</span> / número<span textSub>Días</span><br />
                 <br />
-                De acuerdo a nuestros cálculos y análisis, el gobierno local realiza edicho cobro de agua potable final mediante la siguiente fórmula:<br />
+                De acuerdo a nuestros cálculos de verificación, el promedio diario y el número de días de consumo son datos obtenidos correctamente.<br />
                 <br />
-                cBimestre = pDiario * nDiasCobrados<br />
+                Sin embargo, ese no siempre es el caso para el consumo del bimestre. ¿Por qué? Porque el gobierno hace un recálculo de dicho concepto, como lo veremos más adelante.<br />
                 <br />
-                Donde nDiasCobrados tiende a 60 días.<br />
+                El promedio diario tiene gran importancia porque a partir de este valor el gobierno realizará el recálculo del consumo bimestral de agua que será el que finalmente se cobrará y aparecerá impreso en el recibo.<br />
                 <br />
-                Si nDias es menor a 60 días, entonces el gobierno realiza un "ajuste" para alcanzar nDiasCobrados = 60 días.<br />
+                De acuerdo a nuestros cálculos y análisis, el gobierno realiza dicho recálculo mediante la siguiente fórmula:<br />
                 <br />
-                Si nDias es mayor a 60 días, entonces el gobierno no realiza ningún tipo de "ajuste" para sujetarse a nDiasCobrados = 60 días.<br />
+                consumo<span textSub>Bimestre</span> = promedio<span textSub>Diario</span> * número<span textSub>Días por Cobrar</span><br />
                 <br />
-                Esa consideración genera que nDiasCobrados se convierta realmente en un valor arbitrario cada bimestre, lo que genera que el monto a pagar por el consumo del agua potable no siempre guarde una correspondencia exacta con el consumo real del bimestre. Y esto, a su vez, genera confusión en el consumidor, y hasta se puede afirmar que los datos impresos pueden llegar a ser falsos, al no corresponder ni a la realidad ni a los propios montos del mismo recibo. Es decir, el recibo puede llegar a tener cifras incoherentes.<br />
+                Donde número<span textSub>Días por Cobrar</span> tiende a tener un valor de 60 días.<br />
                 <br />
-                Es entendible el propósito de cobrar 60 días por bimestre, pero eso genera confusión y cobros inexactos, que pueden afectar las finanzas del consumidor y del propio gobierno local.<br />
+                Si número<span textSub>Días</span> es menor a 60 días, entonces el gobierno realiza un "ajuste" para alcanzar número<span textSub>DíasPorCobrar</span> = 60 días.<br />
+                <br />
+                Si número<span textSub>Días</span> es mayor a 60 días, entonces el gobierno no realiza ningún tipo de "ajuste" para sujetarse a número<span textSub>DíasPorCobrar</span> = 60 días.<br />
+                <br />
+                Esa consideración genera que el número de días cobrados por el gobierno se convierta realmente en un valor arbitrario cada bimestre, porque provoca que el monto a pagar por el consumo del agua potable no siempre guarde una correspondencia exacta con el consumo real del bimestre. Y esto, a su vez, genera confusión en el consumidor, y hasta se puede afirmar que los datos impresos pueden llegar a ser falsos, al no corresponder ni a la realidad ni a los propios montos del mismo recibo. Es decir, el recibo puede llegar a tener cifras incoherentes.<br />
+                <br />
+                Es entendible el propósito de cobrar 60 días por bimestre, pero eso genera confusión y cobros inexactos, que pueden afectar las finanzas del consumidor y del propio gobierno.<br />
                 <br />
                 Para el momento actual en el que se alardea de mucha "ciencia", "transparencia", "eficiencia", resulta absurdo que se presenten este tipo de anomalías. Debería cobrarse el consumo real, sin mayores consideraciones absurdas, como la de hacer tender el número de días cobrados a exactamente 60 días.<br />
                 <br />
                 Por nuestra parte, tenemos a la mano muchos recibos del agua que confirman nuestra hipótesis.<br />
                 <br />
-                Pero, es mejor que cada quien verifique su recibo, y que entonces saque sus propias conclusiones.
+                Pero es mejor que cada quien verifique su recibo y que entonces saque sus propias conclusiones.
               </p>
             </ng-template>
 
@@ -83,34 +96,34 @@
                 <p-fieldset legend="Recibo">
                   <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
                     <div>
-                      <label pLabel for="previousReading">Lectura Anterior m³ [lAnt]</label>
+                      <label pLabel for="previousReading">Lectura Anterior m³</label>
                       <p-inputnumber inputid="previousReading" [formControl]="controls.previousReading" mode="decimal" [minFractionDigits]="0" [maxFractionDigits]="0" class="w-full" />
                     </div>
                     <div>
-                      <label pLabel for="previousDate">Fecha Anterior [fAnt]</label>
+                      <label pLabel for="previousDate">Fecha Anterior</label>
                       <p-datepicker inputId="previousDate" [formControl]="controls.previousDate" dateFormat="dd/mm/yy" placeholder="dd/mm/yyyy" pInputMask="dd/mm/yyyy" class="w-full" />
                     </div>
                     <div>
-                      <label pLabel for="currentReading">Lectura Actual m³ [lAct]</label>
+                      <label pLabel for="currentReading">Lectura Actual m³</label>
                       <p-inputnumber inputid="currentReading" [formControl]="controls.currentReading" mode="decimal" [minFractionDigits]="0" [maxFractionDigits]="0" class="w-full" />
                     </div>
                     <div>
-                      <label pLabel for="currentDate">Fecha Actual [fAct]</label>
+                      <label pLabel for="currentDate">Fecha Actual</label>
                       <p-datepicker inputId="currentDate" [formControl]="controls.currentDate" dateFormat="dd/mm/yy" placeholder="dd/mm/yyyy" pInputMask="dd/mm/yyyy" class="w-full" />
                     </div>
                   </div>
 
                   <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
                     <div>
-                      <label pLabel for="days">Número de Días [nDias]</label>
+                      <label pLabel for="days">Número de Días</label>
                       <p-inputnumber inputid="days" [formControl]="controls.days" mode="decimal" [minFractionDigits]="0" [maxFractionDigits]="0" class="w-full" />
                     </div>
                     <div>
-                      <label pLabel for="dailyAverage">Promedio Diario m³ [pDiario]</label>
+                      <label pLabel for="dailyAverage">Promedio Diario m³</label>
                       <p-inputnumber inputid="dailyAverage" [formControl]="controls.dailyAverage" mode="decimal" [minFractionDigits]="2" [maxFractionDigits]="2" class="w-full" />
                     </div>
                     <div>
-                      <label pLabel for="bimonthlyConsumption">Consumo del Bimestre m³ [cBimestre]</label>
+                      <label pLabel for="bimonthlyConsumption">Consumo del Bimestre m³</label>
                       <p-inputnumber inputid="bimonthlyConsumption" [formControl]="controls.bimonthlyConsumption" mode="decimal" [minFractionDigits]="2" [maxFractionDigits]="2" class="w-full" />
                     </div>
                     <div>
@@ -157,15 +170,21 @@
                         <td class="width-10">Referencia</td>
                         <td class="width-30">
                           Consumo del Bimestre m³<br />
-                          <span class="text-xs">cBimestre = lAct - lAnt</span>
+                          <span class="text-xs">
+                            consumo<span textSub>Bimestre</span> = lectura<span textSub>Actual</span> - lectura<span textSub>Anterior</span>
+                          </span>
                         </td>
                         <td class="width-30">
                           Número de Días<br />
-                          <span class="text-xs">nDias = fAct - fAnt</span>
+                          <span class="text-xs">
+                            número<span textSub>Días</span> = fecha<span textSub>Actual</span> - fecha<span textSub>Anterior</span>
+                          </span>
                         </td>
                         <td class="width-30">
                           Promedio Diario m³<br />
-                          <span class="text-xs">pDiario = cBimestre / nDias</span>
+                          <span class="text-xs">
+                            promedio<span textSub>Diario</span> = consumo<span textSub>Bimestre</span> / número<span textSub>Días</span>
+                          </span>
                         </td>
                       </tr>
                       <tr>
@@ -226,7 +245,7 @@
                   <table>
                     <thead>
                       <tr>
-                        <th colspan="5" class="text-lg">Recálculo de Consumo Bimestral Cobrado</th>
+                        <th colspan="5" class="text-lg">Recálculo de Consumo Bimestral</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -237,23 +256,35 @@
                       <tr class="text-center">
                         <td class="width-20">
                           Consumo del Bimestre m³<br />
-                          <span class="text-xs">cBimestre</span>
+                          <span class="text-xs">
+                            consumo<span textSub>Bimestre</span>
+                          </span>
                         </td>
                         <td class="width-20">
                           Promedio Diario m³<br />
-                          <span class="text-xs">pDiario</span>
+                          <span class="text-xs">
+                            promedio<span textSub>Diario</span>
+                          </span>
                         </td>
                         <td class="width-20">
                           Número de Días<br />
-                          <span class="text-xs">nDias</span>
+                          <span class="text-xs">
+                            número<span textSub>Días</span>
+                          </span>
                         </td>
                         <td class="width-20">
-                          Número de Días (Cobrado)<br />
-                          <span class="text-xs">nDiasCobrado = cBimestre / pDiario</span>
+                          Número de Días por Cobrar<br />
+                          <span class="text-xs">
+                            número<span textSub>Días por Cobrar</span> = <br />
+                            consumo<span textSub>Bimestre</span> / promedio<span textSub>Diario</span>
+                          </span>
                         </td>
                         <td class="width-20">
                           Diferencia de Días<br />
-                          <span class="text-xs">dDias = nDiasCobrado - nDias</span>
+                          <span class="text-xs">
+                            diferencia<span textSub>Días</span> = <br />
+                            número<span textSub>Días por Cobrar</span> - número<span textSub>Días</span>
+                          </span>
                         </td>
                       </tr>
                       <tr>
@@ -322,7 +353,7 @@
           <ng-template pTemplate="body">
             <div>
               <p>
-                Análisis pormenorizado de diversos recibos de agua potable en la Ciudad de México, con el objetivo de verificar la exactitud de los cálculos realizados por el gobierno local.<br />
+                Análisis pormenorizado de diversos recibos de agua potable en la Ciudad de México, con el objetivo de verificar la exactitud de los cálculos realizados por el gobierno.<br />
                 México, Ciudad de México. 2026.
               </p>
             </div>
