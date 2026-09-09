@@ -11,6 +11,11 @@ export class MenuService {
       label: 'Math',
       items: [
         {
+          icon: PrimeIcons.BOX,
+          label: 'Combinatory Analysis',
+          routerLink: '/math/graphs'
+        },
+        {
           icon: PrimeIcons.CHART_SCATTER,
           label: 'Graphs',
           routerLink: '/math/graphs'
@@ -19,13 +24,41 @@ export class MenuService {
     },
     {
       icon: PrimeIcons.MICROCHIP_AI,
-      label: 'Machine Learning',
+      label: 'Preprocessing',
       items: [
         {
           icon: PrimeIcons.CHART_LINE,
           label: 'Polynomial Regression',
-          routerLink: '/machine-learning/polynomial-regression'
+          routerLink: '/ml/pr'
         },
+      ]
+    },
+    {
+      icon: PrimeIcons.MICROCHIP_AI,
+      label: 'Machine Learning',
+      items: [
+        {
+          icon: PrimeIcons.EYE_SLASH,
+          label: 'Unsupervised',
+          items: [
+            {
+              icon: PrimeIcons.CHART_LINE,
+              label: 'Polynomial Regression',
+              routerLink: '/ml/pr'
+            }
+          ]
+        },
+        {
+          icon: PrimeIcons.EYE,
+          label: 'Supervised',
+          items: [
+            {
+              icon: PrimeIcons.CHART_LINE,
+              label: 'Polynomial Regression',
+              routerLink: '/ml/pr'
+            }
+          ]
+        }
       ]
     },
     {
@@ -35,7 +68,7 @@ export class MenuService {
         {
           icon: PrimeIcons.GAUGE,
           label: 'Verificador de Consumo de Agua (México, CdMx)',
-          routerLink: '/miscellany/water-consumption'
+          routerLink: '/misc/wc'
         },
       ]
     }

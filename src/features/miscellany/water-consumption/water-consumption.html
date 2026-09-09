@@ -93,7 +93,7 @@
 
             <ng-template pTemplate="body">
               <form [formGroup]="form">
-                <p-fieldset legend="Recibo">
+                <p-fieldset legend="Recibo - Consumo">
                   <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
                     <div>
                       <label pLabel for="previousReading">Lectura Anterior m³</label>
@@ -123,15 +123,60 @@
                       <p-inputnumber inputid="dailyAverage" [formControl]="controls.dailyAverage" mode="decimal" [minFractionDigits]="2" [maxFractionDigits]="2" class="w-full" />
                     </div>
                     <div>
-                      <label pLabel for="bimonthlyConsumption">Consumo del Bimestre m³</label>
-                      <p-inputnumber inputid="bimonthlyConsumption" [formControl]="controls.bimonthlyConsumption" mode="decimal" [minFractionDigits]="2" [maxFractionDigits]="2" class="w-full" />
+                      <label pLabel for="consumption">Consumo del Bimestre m³</label>
+                      <p-inputnumber inputid="consumption" [formControl]="controls.consumption" mode="decimal" [minFractionDigits]="2" [maxFractionDigits]="2" class="w-full" />
                     </div>
-                    <div>
-                      <br />
-                      <button pButton type="button" label="Calcular" title="Calcular" [disabled]="form.invalid" (click)="onCalculate()" class="p-button-outlined p-button-info w-full"></button>
-                    </div>
+                    <div></div>
                   </div>
                 </p-fieldset>
+
+                <p-fieldset legend="Recibo - Costos">
+                  <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div>
+                      <label pLabel for="housings">Número de Viviendas</label>
+                      <p-inputnumber inputid="housings" [formControl]="controls.housings" mode="decimal" [minFractionDigits]="0" [maxFractionDigits]="0" class="w-full" />
+                    </div>
+                    <div>
+                      <label pLabel for="initialConsumptionLevel">Nivel de Consumo m³ (Inferior)</label>
+                      <p-inputnumber inputid="initialConsumptionLevel" [formControl]="controls.initialConsumptionLevel" mode="decimal" [minFractionDigits]="2" [maxFractionDigits]="2" class="w-full" />
+                    </div>
+                    <div>
+                      <label pLabel for="finalConsumptionLevel">Nivel de Consumo m³ (Superior)</label>
+                      <p-inputnumber inputid="finalConsumptionLevel" [formControl]="controls.finalConsumptionLevel" mode="decimal" [minFractionDigits]="2" [maxFractionDigits]="2" class="w-full" />
+                    </div>
+                    <div>
+                      <label pLabel for="baseConsumptionCharge">Cargo Inicial por Nivel de Consumo $</label>
+                      <p-inputnumber inputid="baseConsumptionCharge" [formControl]="controls.baseConsumptionCharge" mode="decimal" [minFractionDigits]="2" [maxFractionDigits]="2" class="w-full" />
+                    </div>
+                  </div>
+
+                  <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div>
+                      <label pLabel for="additionalConsumption">m³ Adicionales</label>
+                      <p-inputnumber inputid="additionalConsumption" [formControl]="controls.additionalConsumption" mode="decimal" [minFractionDigits]="2" [maxFractionDigits]="2" class="w-full" />
+                    </div>
+                    <div>
+                      <label pLabel for="additionalConsumptionCharge">Cargo por m³ Adicionales $</label>
+                      <p-inputnumber inputid="additionalConsumptionCharge" [formControl]="controls.additionalCharge" mode="decimal" [minFractionDigits]="2" [maxFractionDigits]="2" class="w-full" />
+                    </div>
+                    <div>
+                      <label pLabel for="chargeByHousing">Cargo Bimestral por Vivienda $</label>
+                      <p-inputnumber inputid="chargeByHousing" [formControl]="controls.chargeByHousing" mode="decimal" [minFractionDigits]="2" [maxFractionDigits]="2" class="w-full" />
+                    </div>
+                    <div>
+                      <label pLabel for="totalCharge">Cargo Doméstico $</label>
+                      <p-inputnumber inputid="totalCharge" [formControl]="controls.totalCharge" mode="decimal" [minFractionDigits]="2" [maxFractionDigits]="2" class="w-full" />
+                    </div>
+                    <div></div>
+                  </div>
+                </p-fieldset>
+
+                <div class="grid grid-cols-1">
+                  <div>
+                    <br />
+                    <button pButton type="button" label="Calcular" title="Calcular" [disabled]="form.invalid" (click)="onCalculate()" class="p-button-outlined p-button-info w-full"></button>
+                  </div>
+                </div>
               </form>
             </ng-template>
 
@@ -156,12 +201,12 @@
             <ng-template pTemplate="body">
               <!-- Basic calculations -->
               <div class="grid grid-cols-1">
-                @if (days !== 0 && dailyAverage !== 0 && bimonthlyConsumption !== 0) {
+                @if (days !== 0 && dailyAverage !== 0 && consumption !== 0) {
                   <table>
                     <thead>
                       <tr>
                         <th colspan="4" class="text-lg">
-                          Cálculos Básicos
+                          Cálculo Básico
                         </th>
                       </tr>
                     </thead>
@@ -189,26 +234,26 @@
                       </tr>
                       <tr>
                         <td>Recibo</td>
-                        <td class="text-right">{{ controls.bimonthlyConsumption.value }}</td>
+                        <td class="text-right">{{ controls.consumption.value }}</td>
                         <td class="text-right">{{ controls.days.value }}</td>
                         <td class="text-right">{{ controls.dailyAverage.value }}</td>
                       </tr>
                       <tr>
                         <td>Cálculo</td>
-                        <td class="text-right">{{ bimonthlyConsumption | number: '1.2-2' }}</td>
+                        <td class="text-right">{{ consumption | number: '1.2-2' }}</td>
                         <td class="text-right">{{ days }}</td>
                         <td class="text-right">{{ dailyAverage | number: '1.2-2' }}</td>
                       </tr>
                       <tr>
                         <td>Diferencia</td>
                         <td class="text-right">
-                          <p [ngClass]="{'color-green': isBimonthlyConsumptionValid, 'color-red': !isBimonthlyConsumptionValid}">
-                            @if (isBimonthlyConsumptionValid) {
+                          <p [ngClass]="{'color-green': isConsumptionValid, 'color-red': !isConsumptionValid}">
+                            @if (isConsumptionValid) {
                               <span class="pi pi-check-circle"></span>
                             } @else {
                               <span class="pi pi-times-circle"></span>
                             }
-                            &nbsp;{{ controls.bimonthlyConsumption.value - bimonthlyConsumption | number: '1.2-2' }}
+                            &nbsp;{{ controls.consumption.value - consumption | number: '1.2-2' }}
                           </p>
                         </td>
                         <td class="text-right">
@@ -241,7 +286,7 @@
 
               <!-- Aclaration calculations -->
               <div class="grid grid-cols-1">
-                @if (days !== 0 && dailyAverage !== 0 && bimonthlyConsumption !== 0 && (!isBimonthlyConsumptionValid || !areDaysValid || !isDailyAverageValid)) {
+                @if (days !== 0 && dailyAverage !== 0 && consumption !== 0 && (!isConsumptionValid || !areDaysValid || !isDailyAverageValid)) {
                   <table>
                     <thead>
                       <tr>
@@ -288,11 +333,11 @@
                         </td>
                       </tr>
                       <tr>
-                        <td class="text-right">{{ controls.bimonthlyConsumption.value }}</td>
+                        <td class="text-right">{{ controls.consumption.value }}</td>
                         <td class="text-right">{{ controls.dailyAverage.value }}</td>
                         <td class="text-right">{{ controls.days.value }}</td>
                         <td class="text-right">
-                          <p [ngClass]="{'color-green': isBimonthlyConsumptionValid, 'color-red': !isBimonthlyConsumptionValid}">
+                          <p [ngClass]="{'color-green': isConsumptionValid, 'color-red': !isConsumptionValid}">
                             @if (areDaysChargedValid) {
                               <span class="pi pi-check-circle"></span>
                             } @else {
@@ -302,7 +347,7 @@
                           </p>
                         </td>
                         <td class="text-right">
-                          <p [ngClass]="{'color-green': isBimonthlyConsumptionValid, 'color-red': !isBimonthlyConsumptionValid}">
+                          <p [ngClass]="{'color-green': isConsumptionValid, 'color-red': !isConsumptionValid}">
                             @if (areDaysChargedValid) {
                               <span class="pi pi-check-circle"></span>
                             } @else {
@@ -319,8 +364,104 @@
 
               <br />
 
+              <!-- Costs -->
               <div class="grid grid-cols-1">
-                @if (days !== 0 && dailyAverage !== 0 && bimonthlyConsumption !== 0) {
+                @if (consumptionByHousing !== 0) {
+                  <table>
+                    <thead>
+                      <tr>
+                        <th colspan="11" class="text-lg">
+                          Cálculo de Costos
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr class="text-center">
+                        <td>
+                          Referencia
+                        </td>
+                        <td>
+                          Número de Viviendas
+                        </td>
+                        <td colspan="2">
+                          Nivel de Consumo m³
+                        </td>
+                        <td>
+                          Consumo Base m³
+                        </td>
+                        <td>
+                          Cargo Inicial por Nivel de Consumo $
+                        </td>
+                        <td>
+                          m³ Adicionales
+                        </td>
+                        <td>
+                          Cargo por m³ Adicional $
+                        </td>
+                        <td>
+                          Cargo por m³ Adicionales $
+                        </td>
+                        <td>
+                          Cargo Bimestral por Vivienda $
+                        </td>
+                        <td>
+                          Cargo Doméstico $
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>Recibo</td>
+                        <td rowspan="2" class="text-center">{{ controls.housings.value }}</td>
+                        <td class="text-right">{{ controls.initialConsumptionLevel.value | number: '1.2-2' }}</td>
+                        <td class="text-right">{{ controls.finalConsumptionLevel.value | number: '1.2-2' }}</td>
+                        <td class="text-right"></td>
+                        <td rowspan="2" class="text-center">{{ controls.baseConsumptionCharge.value | number: '1.2-2' }}</td>
+                        <td class="text-right">{{ controls.additionalConsumption.value | number: '1.2-2' }}</td>
+                        <td rowspan="2" class="text-center">{{ additionalChargeByMeter3 | number: '1.2-2' }}</td>
+                        <td class="text-right">{{ controls.additionalCharge.value | number: '1.2-2' }}</td>
+                        <td class="text-right">{{ controls.chargeByHousing.value | number: '1.2-2' }}</td>
+                        <td class="text-right">{{ controls.totalCharge.value | number: '1.2-2' }}</td>
+                      </tr>
+                      <tr>
+                        <td>Cálculo</td>
+                        <td colspan="2" class="text-center">{{ consumptionByHousing | number: '1.2-2' }}</td>
+                        <td class="text-right">{{ baseConsumption | number: '1.2-2' }}</td>
+                        <td class="text-right">{{ additionalConsumption | number: '1.2-2' }}</td>
+                        <td class="text-right">{{ additionalChargeByHousing | number: '1.2-2' }}</td>
+                        <td class="text-right">{{ chargeByHousing | number: '1.2-2' }}</td>
+                        <td class="text-right">{{ totalCharge | number: '1.2-2' }}</td>
+                      </tr>
+                      <tr>
+                        <td colspan="9">Diferencia</td>
+                        <td class="text-right">
+                          <p [ngClass]="{'color-green': isChargeByHousingValid, 'color-red': !isChargeByHousingValid}">
+                            @if (isChargeByHousingValid) {
+                              <span class="pi pi-check-circle"></span>
+                            } @else {
+                              <span class="pi pi-times-circle"></span>
+                            }
+                            &nbsp;{{ controls.chargeByHousing.value - chargeByHousing | number: '1.2-2' }}
+                          </p>
+                        </td>
+                        <td class="text-right">
+                          <p [ngClass]="{'color-green': isTotalChargeValid, 'color-red': !isTotalChargeValid}">
+                            @if (isTotalChargeValid) {
+                              <span class="pi pi-check-circle"></span>
+                            } @else {
+                              <span class="pi pi-times-circle"></span>
+                            }
+                            &nbsp;{{ controls.totalCharge.value - totalCharge | number: '1.2-2' }}
+                          </p>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                }
+              </div>
+
+              <br />
+
+              <div class="grid grid-cols-1">
+                @if (days !== 0 && dailyAverage !== 0 && consumption !== 0) {
                   <p>
                     <span class="font-semibold">Observaciones:</span><br /><br />
                     1) Las diferencias con valor a cero implican que el recibo es correcto, con cálculos exactos.<br />

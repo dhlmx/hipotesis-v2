@@ -28,10 +28,20 @@ import { APP_TITLE } from '../../../core/constants/general';
 })
 export class WaterConsumption implements OnInit {
 
+  // Consumption
   days = 0;
   dailyAverage = 0;
-  bimonthlyConsumption = 0;
+  consumption = 0;
   daysCharged = 0;
+
+  // Cost
+  baseConsumption = 0;
+  additionalConsumption = 0;
+  additionalChargeByMeter3 = 0;
+  consumptionByHousing = 0;
+  chargeByHousing = 0;
+  additionalChargeByHousing = 0;
+  totalCharge = 0;
 
   readonly controls: {
     previousReading: FormControl,
@@ -40,7 +50,15 @@ export class WaterConsumption implements OnInit {
     currentDate: FormControl,
     days: FormControl,
     dailyAverage: FormControl,
-    bimonthlyConsumption: FormControl
+    consumption: FormControl,
+    housings: FormControl,
+    initialConsumptionLevel: FormControl,
+    finalConsumptionLevel: FormControl,
+    baseConsumptionCharge: FormControl,
+    additionalConsumption: FormControl,
+    additionalCharge: FormControl
+    chargeByHousing: FormControl,
+    totalCharge: FormControl
   } = {
     previousReading: new FormControl(0, [Validators.required, Validators.min(0.01)]),
     previousDate: new FormControl(new Date(), [Validators.required]),
@@ -48,13 +66,20 @@ export class WaterConsumption implements OnInit {
     currentDate: new FormControl(new Date(), [Validators.required]),
     days: new FormControl(0, [Validators.required, Validators.min(1)]),
     dailyAverage: new FormControl(0, [Validators.required, Validators.min(0.01)]),
-    bimonthlyConsumption: new FormControl(0, [Validators.required, Validators.min(0.01)])
+    consumption: new FormControl(0, [Validators.required, Validators.min(0.01)]),
+    housings: new FormControl(0, [Validators.min(1)]),
+    initialConsumptionLevel: new FormControl(20.01, [Validators.min(0.01)]),
+    finalConsumptionLevel: new FormControl(30.00, [Validators.min(0.01)]),
+    baseConsumptionCharge: new FormControl(0, [Validators.min(0.01)]),
+    additionalConsumption: new FormControl(0, [Validators.min(0.01)]),
+    additionalCharge: new FormControl(0, [Validators.min(0.01)]),
+    chargeByHousing: new FormControl(0, [Validators.min(0.01)]),
+    totalCharge: new FormControl(0, [Validators.min(0.01)])
   };
 
   readonly form = new FormGroup({
     ...this.controls
   });
-
 
   constructor(
     public readonly appService: AppService,
@@ -81,8 +106,16 @@ export class WaterConsumption implements OnInit {
     return Number(this.controls.dailyAverage.value).toFixed(2) === Number(this.dailyAverage).toFixed(2);
   }
 
-  get isBimonthlyConsumptionValid(): boolean {
-    return Number(this.controls.bimonthlyConsumption.value).toFixed(2) === Number(this.bimonthlyConsumption).toFixed(2);
+  get isConsumptionValid(): boolean {
+    return Number(this.controls.consumption.value).toFixed(2) === Number(this.consumption).toFixed(2);
+  }
+
+  get isChargeByHousingValid(): boolean {
+    return Number(this.controls.chargeByHousing?.value || '0') === this.chargeByHousing;
+  }
+
+  get isTotalChargeValid(): boolean {
+    return Number(this.controls.totalCharge?.value || '0') === this.totalCharge;
   }
 
   onPrint = (): void => {
@@ -104,10 +137,22 @@ export class WaterConsumption implements OnInit {
   onCalculate(): void {
     this.appService.process.start('Calculating...');
 
+    // Consumption
     this.days = moment(this.controls.currentDate.value).diff(moment(this.controls.previousDate.value), 'days');
-    this.bimonthlyConsumption = Number(this.controls.currentReading.value) - Number(this.controls.previousReading.value);
-    this.dailyAverage = this.bimonthlyConsumption / this.days;
-    this.daysCharged = Math.round(Number(this.controls.bimonthlyConsumption.value) / this.dailyAverage);
+    this.consumption = Number(this.controls.currentReading.value) - Number(this.controls.previousReading.value);
+    this.dailyAverage = this.consumption / this.days;
+    this.daysCharged = Math.round(Number(this.controls.consumption.value) / this.dailyAverage);
+
+    // Cost
+    this.consumptionByHousing = this.consumption / Number(this.controls.housings.value);
+    this.baseConsumption = Math.round(Number(this.controls.initialConsumptionLevel.value));
+
+    this.additionalConsumption = this.consumptionByHousing - this.baseConsumption;
+    this.additionalChargeByMeter3 = Number(this.controls.additionalCharge.value) / Number(this.controls.additionalConsumption.value);
+    this.additionalChargeByHousing = this.additionalChargeByMeter3 * this.additionalConsumption;
+
+    this.chargeByHousing = Number(this.controls.baseConsumptionCharge.value) + this.additionalChargeByHousing;
+    this.totalCharge = Number(this.controls.housings.value) * this.chargeByHousing;
 
     this.appService.process.stop();
   }

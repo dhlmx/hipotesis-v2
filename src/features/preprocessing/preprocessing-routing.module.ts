@@ -1,15 +1,15 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
-import { WaterConsumption } from './water-consumption/water-consumption';
+import { NoiseHandling } from './noise-handling/noise-handling';
 
 const routes: Routes = [
-  { path: '', component: WaterConsumption },
-  { path: 'wc', component: WaterConsumption }
+  { path: '', component: NoiseHandling },
+  { path: 'nh', component: NoiseHandling }
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule]
 })
-export class MiscellanyRoutingModule { }
+export class PreprocessingRoutingModule { }
