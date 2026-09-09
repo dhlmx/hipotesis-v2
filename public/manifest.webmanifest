@@ -1,6 +1,6 @@
 {
-  "name": "Hipótesis 2.0",
-  "short_name": "Hipótesis",
+  "name": "DHL v2.0",
+  "short_name": "DHL v2.0",
   "display": "standalone",
   "scope": "./",
   "start_url": "./",
