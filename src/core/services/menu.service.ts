@@ -42,6 +42,11 @@ export class MenuService {
           label: 'Unsupervised',
           items: [
             {
+              icon: PrimeIcons.CHART_SCATTER,
+              label: 'K-Means',
+              routerLink: '/ml/km'
+            },
+            {
               icon: PrimeIcons.CHART_LINE,
               label: 'Polynomial Regression',
               routerLink: '/ml/pr'

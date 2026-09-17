@@ -4,7 +4,7 @@ import { map, Observable } from 'rxjs';
 
 // Services
 import { RepositoryService } from './repository.service';
-import { toSqlResponse } from '../utilities/http.utils';
+import { toSqlResponse } from '../utilities/http';
 
 // Interfaces & Models
 import { HttpResponse } from '../models/http/http-response';

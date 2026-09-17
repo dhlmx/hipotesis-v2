@@ -2,6 +2,8 @@ import { IChild } from '../../interfaces/math/ichild';
 import { ITecnology } from '../../interfaces/itecnology';
 import { ISelect } from '../../interfaces/iselect';
 
+export const AXES = ['x', 'y', 'z'];
+
 export const ADELA = 'Adela',
   ADELA_ID = 'Ad',
   ADELA_COUPLE = 'Pareja de Adela',

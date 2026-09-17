@@ -1,7 +1,7 @@
 import { HttpErrorResponse } from '@angular/common/http';
 
 // Services & Utilities
-import { isIPhpError, isIPhpJsonSintaxError } from './http.utils';
+import { isIPhpError, isIPhpJsonSintaxError } from './http';
 
 // Interfaces, Models & Types
 import { ErrorType } from '../types/general';

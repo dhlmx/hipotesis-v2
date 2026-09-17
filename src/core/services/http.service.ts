@@ -5,8 +5,8 @@ import { map, catchError } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 
 // Services & Utilities
-import { isIHttpResponse, isIHttpResponseExtended, isIPhpResponse, toIHttpResponse } from '../utilities/http.utils';
-import { handleError } from '../utilities/error.utils';
+import { isIHttpResponse, isIHttpResponseExtended, isIPhpResponse, toIHttpResponse } from '../utilities/http';
+import { handleError } from '../utilities/error';
 
 // Interfaces & Models
 import { HttpResponse } from '../models/http/http-response';

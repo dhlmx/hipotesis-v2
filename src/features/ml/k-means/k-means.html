@@ -1,0 +1,206 @@
+<p-panel>
+  <ng-template pTemplate="header">
+    <div><span class="pi pi-microchip-ai"></span>&nbsp;Machine Learning&nbsp;&mdash;&rsaquo;&nbsp;<span class="pi pi-chart-scatter"></span>&nbsp;K-Means</div>
+  </ng-template>
+
+  <ng-template pTemplate="icons">
+    <div>
+      <button type="button" pButton (click)="onPrint()" title="Print" class="p-button-outlined p-button-success">
+        <em class="pi pi-print"></em>
+      </button>
+    </div>
+  </ng-template>
+
+  <ng-template  pTemplate="body">
+    <p-divider></p-divider>
+    <div id="htmlContent">
+      <!-- Problem -->
+      <div class="grid grid-cols-1 md:grid-cols-6">
+        <div></div>
+        <div class="md:col-span-4">
+          <p-card>
+            <ng-template pTemplate="header">
+              <p class="font-semibold text-2xl"><span class="pi pi-arrows-alt"></span>&nbsp;Problema</p>
+              <p-divider></p-divider>
+            </ng-template>
+
+            <ng-template pTemplate="body">
+              <p>El algoritmo K-Means suele utilizarse para agrupar datos en torno a un centroide de referencia. Por lo tanto, se trata de un método de agrupamiento de datos (clustering) en el aprendizaje no supervisado.</p>
+              <br />
+            </ng-template>
+
+            <ng-template pTemplate="footer">
+              <p-divider></p-divider>
+            </ng-template>
+          </p-card>
+        </div>
+        <div></div>
+      </div>
+
+      <!-- Data -->
+      <div class="grid grid-cols-1 md:grid-cols-6">
+        <div></div>
+        <div class="md:col-span-4">
+          <p-card>
+            <ng-template pTemplate="header">
+              <p class="font-semibold text-2xl"><span class="pi pi-copy"></span>&nbsp;Datos</p>
+              <p-divider></p-divider>
+            </ng-template>
+
+            <ng-template pTemplate="body">
+              <div>
+                <p>La aplicación provee un generador de datos aleatorios que nos permite crear un conjunto de puntos (coordenadas irrepetibles de enteros positivos) para el entrenamiento. Recomendamos utilizar unos 40 puntos para hacer más evidentes los resultados, desde un punto de vista gráfico o visual.<br />
+                  <br />Se aceptan de 2 a 3 dimensiones, cada una determinada por un rango.<br />
+                  <br />Posteriormente, en la sección de solución se puede aplicar el algoritmo K-Means.</p>
+                <br />
+              </div>
+
+              <form [formGroup]="dataForm">
+                <p-fieldset legend="Random Data Generator">
+                  <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <p-fieldset legend="Dataset">
+                      <div>
+                        <label pLabel for="points">Points</label><br />
+                        <p-inputnumber inputId="points" [formControl]="dataControls.points" mode="decimal" [showButtons]="true"
+                          [min]="dPoints.min" [max]="dPoints.max" [step]="dPoints.step" />
+                      </div>
+                      <div>
+                        <label pLabel for="dimensions">Dimensions</label><br />
+                        <p-inputnumber inputId="dimensions" [formControl]="dataControls.dimensions"
+                          mode="decimal" [showButtons]="true"
+                          [min]="dDimension.min" [max]="dDimension.max" [step]="dDimension.step" />
+                      </div>
+                    </p-fieldset>
+                    <!-- Ranges -->
+                    <ng-container formArrayName="ranges">
+                      @for (subFormGroup of rangesForms.controls; track $index) {
+                        <form [formGroupName]="$index">
+                          <p-fieldset legend="{{ $index + 1 }}D Range [{{getAxes($index)}}]">
+                            <div>
+                              <label pLabel for="minRange{{$index+1}}">Min</label><br />
+                              <p-inputnumber   inputId="minRange{{$index+1}}" [formControl]="rangesControls[$index].min" mode="decimal" [showButtons]="true"
+                                [min]="dMin.min" [max]="dMin.max" [step]="dMin.step" />
+                            </div>
+                            <div>
+                              <label pLabel for="maxRange{{$index+1}}">Max</label><br />
+                              <p-inputnumber inputId="maxRange{{$index+1}}" [formControl]="rangesControls[$index].max" mode="decimal" [showButtons]="true"
+                                [min]="dMax.min" [max]="dMax.max" [step]="dMax.step" />
+                            </div>
+                          </p-fieldset>
+                        </form>
+                      }
+                    </ng-container>
+                  </div>
+
+                  <div class="grid grid-cols-1">
+                    <div>
+                      <br />
+                      <button pButton type="button" label="Generate Data" title="Generate Data" [disabled]="dataForm.invalid" (click)="onGenerateData()" class="p-button-outlined p-button-info w-full"></button>
+                    </div>
+                    <div></div>
+                  </div>
+                </p-fieldset>
+              </form>
+
+              <div>
+                <p>Datos aleatorios de referecia para ser agrupados a través del algoritmo K-Means.</p>
+                <br />
+                <p class="text-lg">Points + Centroids</p>
+                <p-divider></p-divider>
+                <canvas #kMeansCanvas></canvas>
+              </div>
+            </ng-template>
+
+            <ng-template pTemplate="footer">
+              <p-divider></p-divider>
+            </ng-template>
+          </p-card>
+        </div>
+        <div></div>
+      </div>
+
+      <!-- Solution -->
+      <div class="grid grid-cols-1 md:grid-cols-6">
+        <div></div>
+        <div class="md:col-span-4">
+          <p-card>
+            <ng-template pTemplate="header">
+              <p class="font-semibold text-2xl"><span class="pi pi-check-circle"></span>&nbsp;Solución</p>
+              <p-divider></p-divider>
+            </ng-template>
+
+            <ng-template pTemplate="body">
+              <form [formGroup]="modelForm">
+                <p-fieldset legend="K-Means">
+                  <div class="grid grid-cols-1 md:grid-cols-4">
+                    <div>
+                      <label pLabel for="k">K (Clusters)</label><br />
+                      <p-inputnumber [formControl]="modelControls.k" mode="decimal" [showButtons]="true" inputId="degree" [min]="2" [max]="100" [step]="1" />
+                    </div>
+                    <div>
+                      <label pLabel for="maxOfIterations">Maximum of Iterations</label><br />
+                      <p-inputnumber [formControl]="modelControls.maxOfIterations" mode="decimal" [showButtons]="true" inputId="rate" [min]="1000" [max]="2000" [step]="1" />
+                    </div>
+                    <div>
+                      <br />
+                      <button pButton type="button" label="Train Model" title="Train" [disabled]="modelForm.invalid" (click)="onCalculate()" class="p-button-outlined p-button-info w-full"></button>
+                    </div>
+                    <div></div>
+                  </div>
+                </p-fieldset>
+              </form>
+            </ng-template>
+
+            <ng-template pTemplate="footer">
+              <p-divider></p-divider>
+            </ng-template>
+          </p-card>
+        </div>
+        <div></div>
+      </div>
+    </div>
+  </ng-template>
+
+  <ng-template pTemplate="footer">
+    <div class="grid grid-cols-1 md:grid-cols-6">
+      <div></div>
+      <div class="md:col-span-4">
+        <p-card>
+          <ng-template pTemplate="header">
+            <p class="font-semibold text-2xl"><span class="pi pi-paperclip"></span>&nbsp;Referencias</p>
+            <p-divider></p-divider>
+          </ng-template>
+
+          <ng-template pTemplate="body">
+            <div>
+              <p><span class="text-italic">Grouping with Clustering Algorithms.</span>
+                <br />Kaber, Burak,&nbsp;<span class="text-italic">Hands-On Machine Learning with JavaScript.</span>
+                <br />Pps: 84-120. Packt Publishing Ltd. Birmingham, UK. 2018.
+              </p>
+            </div>
+            <br />
+            <div>
+              <p><span class="text-italic">Learning how K-means works.</span>
+                <br />Sasaki, Kai,&nbsp;<span class="text-italic">Hands-On Machine Learning with TensorFlow.js.</span>
+                <br />Pps: 117-132. Packt Publishing Ltd. Birmingham, UK. 2019.
+              </p>
+            </div>
+          </ng-template>
+
+          <ng-template pTemplate="footer">
+            <p-divider></p-divider>
+          </ng-template>
+        </p-card>
+      </div>
+      <div></div>
+    </div>
+  </ng-template>
+
+  <p-confirmDialog [style]="{width: '50vw'}" [baseZIndex]="10000" rejectButtonStyleClass="p-button-text"></p-confirmDialog>
+  <p-toast></p-toast>
+</p-panel>
+
+<app-message-modal
+  [visible]="appService.process.isInProcess()"
+  [message]="appService.process.message()">
+</app-message-modal>

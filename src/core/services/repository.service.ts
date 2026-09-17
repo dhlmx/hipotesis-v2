@@ -6,7 +6,7 @@ import { environment } from '../../environments/environment';
 
 // Services & Utilities
 import { HttpService } from './http.service';
-import { handleError } from '../utilities/error.utils';
+import { handleError } from '../utilities/error';
 
 // Interfaces & Models
 import { HttpResponse } from '../models/http/http-response';
