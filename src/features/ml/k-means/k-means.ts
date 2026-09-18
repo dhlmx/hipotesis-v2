@@ -22,22 +22,7 @@ import { KMeansAlgorithm } from '../../../core/models/ml/k-means-algorithm';
 // Enums & Constants
 import { APP_TITLE } from '../../../core/constants/general';
 import { AXES } from '../../../core/constants/math/math';
-
-interface IFormControl {
-  value: number;
-  min: number;
-  max: number;
-  minLength: number;
-  maxLength: number;
-  step: number;
-}
-
-const POINTS: IFormControl = { value: 100, min: 10, max: 200, minLength: 1, maxLength: 3, step: 1 },
-      DIMENSION: IFormControl = { value: 2, min: 2, max: 3, minLength: 1, maxLength: 1, step: 1 },
-      MIN: IFormControl = { value: 1, min: 1, max: 200, minLength: 1, maxLength: 3, step: 1 },
-      MAX: IFormControl = { value: 100, min: 1, max: 200, minLength: 1, maxLength: 3, step: 1 },
-      KMEANS: IFormControl = { value: 3, min: 2, max: 10, minLength: 1, maxLength: 2, step: 1 },
-      ITERATIONS: IFormControl = { value: 1000, min: 100, max: 2000, minLength: 3, maxLength: 4, step: 100 };
+import { DIMENSION, MAX, MIN, KMEANS, ITERATIONS, POINTS } from '../../../core/constants/ml/k-means/data';
 
 
 @Component({
