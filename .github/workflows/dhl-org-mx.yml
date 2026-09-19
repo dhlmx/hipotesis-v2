@@ -40,5 +40,5 @@ jobs:
           username: ${{secrets.FTP_DHL_ORG_MX_USER}}
           password: ${{secrets.FTP_DHL_ORG_MX_PASSWORD}}
           local-dir: ./dist/hipotesis-v2/browser/
-          server-dir: ${{secrets.FTP_DHL_ORG_MX_DIRECTORY}}
+          server-dir: ${{secrets.FTP_LAB_DHL_ORG_MX_DIRECTORY}}
           dangerous-clean-slate: false
