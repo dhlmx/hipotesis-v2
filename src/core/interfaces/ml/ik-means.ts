@@ -1,10 +1,16 @@
-import { IKMeansLog } from "./ik-means-log";
+import { IAllocation } from "./iallocation";
 import { IRange } from "./irange";
 
 export interface IKMeans {
   k: number;
-  maxOfIterations: number;
+  kMin: number;
+  kMax: number;
+  trials: number;
+  iterations: number;
   dimensionality: number;
   ranges: IRange[];
-  logs: IKMeansLog[];
+  previousCentroids: number[][];
+  centroids: number[][];
+  allocations: IAllocation[];
+  error: number;
 }

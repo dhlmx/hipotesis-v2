@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { ConfirmationService, MessageService } from 'primeng/api';
-import * as mobilenet from '@tensorflow-models/mobilenet';
+import { SafeUrl } from '@angular/platform-browser';
 
 // Modules
 import { PrimeNgModule } from '../../../core/modules/prime-ng.module';
@@ -15,8 +15,6 @@ import { CoreModule } from '../../../core/modules/core.module';
 
 // Enums & Constants
 import { APP_TITLE } from '../../../core/constants/general';
-import { SafeUrl } from '@angular/platform-browser';
-import { timeout } from 'rxjs';
 
 @Component({
   standalone: true,
@@ -27,9 +25,7 @@ import { timeout } from 'rxjs';
   imports: [CoreModule, PrimeNgModule]
 })
 export class ReadComponent implements OnInit {
-
   public fileId = 0;
-  public predictions: { className: string, probability: number }[] = [];
 
   constructor(
     public readonly appService: AppService,
@@ -68,25 +64,6 @@ export class ReadComponent implements OnInit {
       next: () => {
         if (!this.filesService.isFileOk) {
           this.messageService.add({ severity: 'warn', summary: 'Confirmación', detail: 'File not found' });
-        } else {
-          setTimeout(() => {
-            const imageElement = document.getElementById('image') as HTMLImageElement;
-
-            if (!imageElement) {
-              this.messageService.add({ severity: 'warn', summary: 'Confirmación', detail: 'Image not found' });
-              return;
-            }
-
-            if (imageElement) {
-              mobilenet.load().then(model => {
-                console.log('Model loaded');
-                model.classify(imageElement).then(predictions => {
-                  console.log('Predictions:', predictions);
-                  this.predictions = predictions;
-                });
-              });
-            }
-          }, 1000);
         }
       },
       complete: () => {

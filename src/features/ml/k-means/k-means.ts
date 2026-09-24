@@ -234,19 +234,34 @@ export class KMeans implements OnInit, AfterViewInit {
     this.appService.process.start('Training model...');
 
     this.kMeans = new KMeansAlgorithm();
+
     this.kMeans.init(
-      this.modelControls.k.value,
       this.points,
+      this.modelControls.k.value,
       this.modelControls.maxOfIterations.value
     );
+
     this.kMeans.getRandomCentroids();
-    this.kMeans.assignPointsToCentroids();
 
-    // this.data.datasets[0].data = this.kMeans.seriesXY;
-    this.data.datasets[1].data = this.kMeans.centroidsXY;
+    let iteration = 0;
 
+    while (iteration <= this.kMeans.iterations) {
+      this.kMeans.assignPointsToCentroids();
+      this.kMeans.updateCentroidLocations();
+      this.kMeans.calculateRMSE();
+
+      iteration++;
+      console.info('Iteration', iteration, this.kMeans.isStable, this.kMeans.info());
+
+      if (iteration >= 2 && this.kMeans.isStable) {
+        break;
+      }
+    }
+
+    this.data.datasets[1].data = this.kMeans.centroids2D;
     this.kMeansChart.update();
 
+    console.log('k-means', this.kMeans.info());
     this.appService.process.stop();
   }
 

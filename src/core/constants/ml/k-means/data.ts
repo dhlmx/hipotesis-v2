@@ -25,5 +25,4 @@ MIN: IFormControl = { value: 1, min: 1, max: 200, minLength: 1, maxLength: 3, st
 
 MAX: IFormControl = { value: 100, min: 1, max: 200, minLength: 1, maxLength: 3, step: 1 },
 
-POINTS: IFormControl = { value: 100, min: 10, max: 200, minLength: 1, maxLength: 3, step: 1 };
-
+POINTS: IFormControl = { value: 40, min: 10, max: 200, minLength: 1, maxLength: 3, step: 1 };

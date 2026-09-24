@@ -97,7 +97,7 @@
                   <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
                     <div>
                       <label pLabel for="previousReading">Lectura Anterior m³</label>
-                      <p-inputnumber inputid="previousReading" [formControl]="controls.previousReading" mode="decimal" [minFractionDigits]="0" [maxFractionDigits]="0" class="w-full" />
+                      <p-inputnumber inputid="previousReading" [formControl]="controls.previousReading" mode="decimal" [minFractionDigits]="2" [maxFractionDigits]="2" class="w-full" />
                     </div>
                     <div>
                       <label pLabel for="previousDate">Fecha Anterior</label>
@@ -105,7 +105,7 @@
                     </div>
                     <div>
                       <label pLabel for="currentReading">Lectura Actual m³</label>
-                      <p-inputnumber inputid="currentReading" [formControl]="controls.currentReading" mode="decimal" [minFractionDigits]="0" [maxFractionDigits]="0" class="w-full" />
+                      <p-inputnumber inputid="currentReading" [formControl]="controls.currentReading" mode="decimal" [minFractionDigits]="2" [maxFractionDigits]="2" class="w-full" />
                     </div>
                     <div>
                       <label pLabel for="currentDate">Fecha Actual</label>
@@ -387,13 +387,13 @@
                           Nivel de Consumo m³
                         </td>
                         <td>
-                          Consumo Base m³
+                          Consumo Inicial m³
+                        </td>
+                        <td>
+                          Consumo Adicional m³
                         </td>
                         <td>
                           Cargo Inicial por Nivel de Consumo $
-                        </td>
-                        <td>
-                          m³ Adicionales
                         </td>
                         <td>
                           Cargo por m³ Adicional $
@@ -410,22 +410,25 @@
                       </tr>
                       <tr>
                         <td>Recibo</td>
-                        <td rowspan="2" class="text-center">{{ controls.housings.value }}</td>
+                        <td class="text-center">{{ controls.housings.value }}</td>
                         <td class="text-right">{{ controls.initialConsumptionLevel.value | number: '1.2-2' }}</td>
                         <td class="text-right">{{ controls.finalConsumptionLevel.value | number: '1.2-2' }}</td>
                         <td class="text-right"></td>
-                        <td rowspan="2" class="text-center">{{ controls.baseConsumptionCharge.value | number: '1.2-2' }}</td>
                         <td class="text-right">{{ controls.additionalConsumption.value | number: '1.2-2' }}</td>
-                        <td rowspan="2" class="text-center">{{ additionalChargeByMeter3 | number: '1.2-2' }}</td>
+                        <td class="text-center">{{ controls.baseConsumptionCharge.value | number: '1.2-2' }}</td>
+                        <td class="text-center">{{ additionalChargeByMeter3 | number: '1.2-2' }}</td>
                         <td class="text-right">{{ controls.additionalCharge.value | number: '1.2-2' }}</td>
                         <td class="text-right">{{ controls.chargeByHousing.value | number: '1.2-2' }}</td>
                         <td class="text-right">{{ controls.totalCharge.value | number: '1.2-2' }}</td>
                       </tr>
                       <tr>
                         <td>Cálculo</td>
+                        <td></td>
                         <td colspan="2" class="text-center">{{ consumptionByHousing | number: '1.2-2' }}</td>
                         <td class="text-right">{{ baseConsumption | number: '1.2-2' }}</td>
                         <td class="text-right">{{ additionalConsumption | number: '1.2-2' }}</td>
+                        <td></td>
+                        <td></td>
                         <td class="text-right">{{ additionalChargeByHousing | number: '1.2-2' }}</td>
                         <td class="text-right">{{ chargeByHousing | number: '1.2-2' }}</td>
                         <td class="text-right">{{ totalCharge | number: '1.2-2' }}</td>
