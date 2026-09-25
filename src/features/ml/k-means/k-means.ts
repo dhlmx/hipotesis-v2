@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, ElementRef, inject, OnInit, PLATFORM_ID, ViewChild } from '@angular/core';
-import { isPlatformBrowser } from '@angular/common';
+import { isPlatformBrowser, JsonPipe } from '@angular/common';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ConfirmationService, ConfirmEventType, MessageService } from 'primeng/api';
 import { Chart } from 'chart.js';
@@ -24,12 +24,11 @@ import { APP_TITLE } from '../../../core/constants/general';
 import { AXES } from '../../../core/constants/math/math';
 import { DIMENSION, MAX, MIN, KMEANS, ITERATIONS, POINTS } from '../../../core/constants/ml/k-means/data';
 
-
 @Component({
   selector: 'app-k-means',
   templateUrl: './k-means.html',
   styleUrl: './k-means.css',
-  providers: [ConfirmationService, MessageService, AppService, PdfService, FormBuilder],
+  providers: [ConfirmationService, MessageService, AppService, PdfService, FormBuilder, JsonPipe],
   imports: [CoreModule, PrimeNgModule],
 })
 export class KMeans implements OnInit, AfterViewInit {
@@ -129,7 +128,8 @@ export class KMeans implements OnInit, AfterViewInit {
     private readonly confirmationService: ConfirmationService,
     private readonly messageService: MessageService,
     private readonly pdfService: PdfService,
-    private readonly fb: FormBuilder
+    private readonly fb: FormBuilder,
+    private readonly jsonPipe: JsonPipe
   ) {
     this.appService.setTitle(APP_TITLE, 'ML - K-Means');
 
@@ -145,7 +145,7 @@ export class KMeans implements OnInit, AfterViewInit {
 
     this.chartOptions = {
       responsive: true,
-      aspectRatio: 2,
+      aspectRatio: 3,
       maintainAspectRatio: true,
       plugins: {
         legend: {
@@ -163,16 +163,16 @@ export class KMeans implements OnInit, AfterViewInit {
               color: this.surfaceBorder,
               drawBorder: false
             }
+        },
+        y: {
+          ticks: {
+            color: this.textColorSecondary
           },
-          y: {
-            ticks: {
-              color: this.textColorSecondary
-            },
-            grid: {
-              color: this.surfaceBorder,
-              drawBorder: false
-            }
+          grid: {
+            color: this.surfaceBorder,
+            drawBorder: false
           }
+        }
       }
     };
 
@@ -189,11 +189,25 @@ export class KMeans implements OnInit, AfterViewInit {
     this.renderKMeansGraph();
   }
 
+  get fileURL(): string {
+    return this.appService.fileURL;
+  }
+
+  get fileSize(): string {
+    return this.appService.fileSize;
+  }
+
   get rangesForms(): FormArray {
     return getFormArray(this.dataForm, 'ranges') as FormArray;
   }
 
+
+
   getAxes = (dimension: number): string => dimension < 0 || dimension > 2 ? '' : `${AXES[dimension]}`;
+
+  onDownload = (): void => {
+    // this.createJsonInfo();
+  }
 
   onGenerateData = (): void => {
     const ranges: IRange[] = [];
@@ -262,6 +276,7 @@ export class KMeans implements OnInit, AfterViewInit {
     this.kMeansChart.update();
 
     console.log('k-means', this.kMeans.info());
+    this.appService.createDataJson(this.kMeans.info());
     this.appService.process.stop();
   }
 
@@ -302,6 +317,8 @@ export class KMeans implements OnInit, AfterViewInit {
       }
     });
   }
+
+  round = (value: number): number => Math.round(value);
 
   // Private Methods
   private buildRangesFormArray = (): void => {

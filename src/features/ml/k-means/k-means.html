@@ -5,6 +5,13 @@
 
   <ng-template pTemplate="icons">
     <div>
+      <button type="button" pButton (click)="onDownload()"
+        class="p-button-outlined p-button-success">
+        <em class="pi pi-download"></em>
+        <a [href]="fileURL" download="resultados.json" aria-label="Download results">
+          {{fileSize}}
+        </a>
+      </button>
       <button type="button" pButton (click)="onPrint()" title="Print" class="p-button-outlined p-button-success">
         <em class="pi pi-print"></em>
       </button>
@@ -102,8 +109,11 @@
                 </p-fieldset>
               </form>
 
+              <br />
+              <br />
+
               <div>
-                <p>Datos aleatorios de referecia para ser agrupados a través del algoritmo K-Means.</p>
+                <p>Datos aleatorios generados para ser agrupados por medio del algoritmo K-Means.</p>
                 <br />
                 <p class="text-lg">Points + Centroids</p>
                 <p-divider></p-divider>
