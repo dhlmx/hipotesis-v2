@@ -14,8 +14,6 @@ import { TextSub } from '../../../core/directives/text-sub';
 import { AppService } from '../../../core/services/app.service';
 import { PdfService } from '../../../core/services/pdf.service';
 
-// Interfaces & Models
-
 // Enums & Constants
 import { APP_TITLE } from '../../../core/constants/general';
 
@@ -23,7 +21,7 @@ import { APP_TITLE } from '../../../core/constants/general';
   selector: 'app-water-consumption',
   templateUrl: './water-consumption.html',
   styleUrl: './water-consumption.css',
-  providers: [ConfirmationService, MessageService, AppService, PdfService],
+  providers: [],
   imports: [CoreModule, PrimeNgModule, TextSub],
 })
 export class WaterConsumption implements OnInit {

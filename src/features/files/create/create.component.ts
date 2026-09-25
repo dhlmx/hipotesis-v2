@@ -3,6 +3,7 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ConfirmationService, ConfirmEventType, MessageService } from 'primeng/api';
 
 // Modules
+import { CoreModule } from '../../../core/modules/core.module';
 import { PrimeNgModule } from '../../../core/modules/prime-ng.module';
 
 // Services
@@ -10,7 +11,6 @@ import { AppService } from '../../../core/services/app.service';
 import { FilesService } from '../../../core/services/files.service';
 
 // Interfaces & Models
-import { CoreModule } from '../../../core/modules/core.module';
 import { SqlResponse } from '../../../core/models/http/sql-response';
 
 // Enums & Constants
@@ -22,7 +22,7 @@ import { ISELECT_YES_NO } from '../../../core/constants/select';
   selector: 'app-create',
   templateUrl: './create.component.html',
   styleUrls: ['./create.component.scss'],
-  providers: [ConfirmationService, MessageService, AppService, FilesService],
+  providers: [FilesService],
   imports: [CoreModule, PrimeNgModule]
 })
 export class CreateComponent implements OnInit {

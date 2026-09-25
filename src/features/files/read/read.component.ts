@@ -4,14 +4,12 @@ import { ConfirmationService, MessageService } from 'primeng/api';
 import { SafeUrl } from '@angular/platform-browser';
 
 // Modules
+import { CoreModule } from '../../../core/modules/core.module';
 import { PrimeNgModule } from '../../../core/modules/prime-ng.module';
 
 // Services
 import { AppService } from '../../../core/services/app.service';
 import { FilesService } from '../../../core/services/files.service';
-
-// Interfaces & Models
-import { CoreModule } from '../../../core/modules/core.module';
 
 // Enums & Constants
 import { APP_TITLE } from '../../../core/constants/general';
@@ -21,7 +19,7 @@ import { APP_TITLE } from '../../../core/constants/general';
   selector: 'app-read',
   templateUrl: './read.component.html',
   styleUrls: ['./read.component.scss'],
-  providers: [ConfirmationService,MessageService, AppService, FilesService],
+  providers: [FilesService],
   imports: [CoreModule, PrimeNgModule]
 })
 export class ReadComponent implements OnInit {

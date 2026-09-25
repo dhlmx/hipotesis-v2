@@ -28,7 +28,7 @@ import { DIMENSION, MAX, MIN, KMEANS, ITERATIONS, POINTS } from '../../../core/c
   selector: 'app-k-means',
   templateUrl: './k-means.html',
   styleUrl: './k-means.css',
-  providers: [ConfirmationService, MessageService, AppService, PdfService, FormBuilder, JsonPipe],
+  providers: [FormBuilder],
   imports: [CoreModule, PrimeNgModule],
 })
 export class KMeans implements OnInit, AfterViewInit {

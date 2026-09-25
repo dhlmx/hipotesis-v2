@@ -24,7 +24,7 @@ import { XS, YS, ZS } from '../../../core/constants/polynomial-regression';
   selector: 'app-polynomial-regression',
   templateUrl: './polynomial-regression.html',
   styleUrl: './polynomial-regression.css',
-  providers: [ConfirmationService, MessageService, AppService, PdfService],
+  providers: [],
   imports: [CoreModule, PrimeNgModule],
 })
 export class PolynomialRegression implements OnInit, AfterViewInit {

@@ -25,7 +25,7 @@ import { XS, YS, ZS } from '../../../core/constants/polynomial-regression';
   selector: 'app-noise-handling',
   templateUrl: './noise-handling.html',
   styleUrl: './noise-handling.css',
-  providers: [ConfirmationService, MessageService, AppService, PdfService],
+  providers: [],
   imports: [CoreModule, PrimeNgModule],
 })
 export class NoiseHandling implements OnInit, AfterViewInit {

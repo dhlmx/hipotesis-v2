@@ -1,6 +1,5 @@
 import { Component, ElementRef, inject, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
-import { ConfirmationService, MessageService } from 'primeng/api';
 
 // Modules
 import { CoreModule } from '../../../core/modules/core.module';
@@ -60,7 +59,7 @@ const APEXES: Apex[] = [
   selector: 'app-graphs',
   templateUrl: './graphs.html',
   styleUrls: ['./graphs.css'],
-  providers: [ConfirmationService, MessageService, AppService, PdfService, SetPipe],
+  providers: [SetPipe],
   imports: [CoreModule, PrimeNgModule, D3RadialTreeComponent],
 })
 export class Graphs implements OnInit {
