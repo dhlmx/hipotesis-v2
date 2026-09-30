@@ -88,7 +88,7 @@ CHART_RMSE_DATA: any = {
       data: [],
       fill: false,
       borderColor: '#66BB6A',
-      tension: 0.6
+      tension: 0.4
     }
   ]
 },

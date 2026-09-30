@@ -14,11 +14,10 @@ import { AppService } from '../../../core/services/app.service';
 import { PdfService } from '../../../core/services/pdf.service';
 
 // Interfaces & Models
-import { IChartData } from '../../../core/interfaces/charts/ichart-data';
 
 // Enums & Constants
 import { APP_TITLE } from '../../../core/constants/general';
-import { XS, YS, ZS } from '../../../core/constants/polynomial-regression';
+import { CHART_FX, CHART_LOSS, CHART_PROBLEM, XS, YS, ZS } from '../../../core/constants/ml/polynomail-regression/data';
 
 @Component({
   selector: 'app-polynomial-regression',
@@ -35,6 +34,11 @@ export class PolynomialRegression implements OnInit, AfterViewInit {
   versusChart!: Chart;
   lossChart!: Chart;
   fxChart!: Chart;
+
+  versusSetup: any = { ...CHART_PROBLEM };
+  lossSetup: any = { ...CHART_LOSS };
+  fxSetup: any = { ...CHART_FX };
+
   chartOptions: any = {};
 
   readonly platformId = inject(PLATFORM_ID);
@@ -65,59 +69,6 @@ export class PolynomialRegression implements OnInit, AfterViewInit {
     ...this.controls
   });
 
-  readonly data: IChartData = {
-    labels: [],
-    datasets: [
-      {
-        label: 'Sin(x)',
-        data: [],
-        fill: false,
-        borderColor: '#42A5F5',
-        tension: this.controls.graphTension.value
-      },
-      {
-        label: 'Sin(x) + Noise',
-        data: [],
-        fill: false,
-        borderColor: '#FFA726',
-        tension: this.controls.graphTension.value
-      }
-    ]
-  };
-
-  readonly lossData: IChartData = {
-    labels: [],
-    datasets: [
-      {
-        label: 'Loss',
-        data: [],
-        fill: true,
-        borderColor: '#66BB6A',
-        tension: this.controls.graphTension.value
-      }
-    ]
-  };
-
-  readonly fxData: IChartData = {
-    labels: [],
-    datasets: [
-      {
-        label: 'Sin(x)',
-        data: [],
-        fill: false,
-        borderColor: '#42A5F5',
-        tension: this.controls.graphTension.value
-      },
-      {
-        label: 'F(x)',
-        data: [],
-        fill: false,
-        borderColor: '#FFA726',
-        tension: this.controls.graphTension.value
-      }
-    ]
-  };
-
   constructor(
     public readonly appService: AppService,
     private readonly confirmationService: ConfirmationService,
@@ -137,38 +88,23 @@ export class PolynomialRegression implements OnInit, AfterViewInit {
       this.surfaceBorder = '#000000';
     }
 
-    this.chartOptions = {
-      responsive: true,
-      aspectRatio: 2,
-      maintainAspectRatio: true,
-      plugins: {
-        legend: {
-          labels: {
-            color: this.textColor
-          }
-        }
-      },
-      scales: {
-        x: {
-            ticks: {
-              color: this.textColorSecondary
-            },
-            grid: {
-              color: this.surfaceBorder,
-              drawBorder: false
-            }
-          },
-          y: {
-            ticks: {
-              color: this.textColorSecondary
-            },
-            grid: {
-              color: this.surfaceBorder,
-              drawBorder: false
-            }
-          }
-      }
-    };
+    this.versusSetup.options.plugins.legend.labels.color = this.textColor;
+    this.versusSetup.options.scales.x.ticks.color = this.textColorSecondary;
+    this.versusSetup.options.scales.x.grid.color = this.surfaceBorder;
+    this.versusSetup.options.scales.y.ticks.color = this.textColorSecondary;
+    this.versusSetup.options.scales.y.grid.color = this.surfaceBorder;
+
+    this.lossSetup.options.plugins.legend.labels.color = this.textColor;
+    this.lossSetup.options.scales.x.ticks.color = this.textColorSecondary;
+    this.lossSetup.options.scales.x.grid.color = this.surfaceBorder;
+    this.lossSetup.options.scales.y.ticks.color = this.textColorSecondary;
+    this.lossSetup.options.scales.y.grid.color = this.surfaceBorder;
+
+    this.fxSetup.options.plugins.legend.labels.color = this.textColor;
+    this.fxSetup.options.scales.x.ticks.color = this.textColorSecondary;
+    this.fxSetup.options.scales.x.grid.color = this.surfaceBorder;
+    this.fxSetup.options.scales.y.ticks.color = this.textColorSecondary;
+    this.fxSetup.options.scales.y.grid.color = this.surfaceBorder;
 
     this.optimizer = tf.train.adam(this.controls.learningRate.value);
 
@@ -246,15 +182,15 @@ export class PolynomialRegression implements OnInit, AfterViewInit {
     this.appService.process.start('Loading initial data...');
 
     XS.dataSync().forEach((value: number) => {
-      this.data.labels.push(value.toFixed(2));
+      this.versusSetup.data.labels.push(value.toFixed(2));
     });
 
     YS.dataSync().forEach((value: number) => {
-      this.data.datasets[0].data.push(value);
+      this.versusSetup.data.datasets[0].data.push(value);
     });
 
     ZS.dataSync().forEach((value: number) => {
-      this.data.datasets[1].data.push(value);
+      this.versusSetup.data.datasets[1].data.push(value);
     });
 
     this.appService.process.stop();
@@ -292,11 +228,7 @@ export class PolynomialRegression implements OnInit, AfterViewInit {
     const fxContext = this.fxCanvas.nativeElement.getContext('2d');
 
     if (fxContext) {
-      this.fxChart = new Chart(fxContext, {
-        type: 'line',
-        data: this.fxData,
-        options: this.chartOptions
-      });
+      this.fxChart = new Chart(fxContext, this.fxSetup);
     }
   }
 
@@ -304,11 +236,7 @@ export class PolynomialRegression implements OnInit, AfterViewInit {
     const lossContext = this.lossCanvas.nativeElement.getContext('2d');
 
     if (lossContext) {
-      this.lossChart = new Chart(lossContext, {
-        type: 'line',
-        data: this.lossData,
-        options: this.chartOptions
-      });
+      this.lossChart = new Chart(lossContext, this.lossSetup);
     }
   }
 
@@ -316,11 +244,7 @@ export class PolynomialRegression implements OnInit, AfterViewInit {
     const versusContext = this.versusCanvas.nativeElement.getContext('2d');
 
     if (versusContext) {
-      this.versusChart = new Chart(versusContext, {
-        type: 'line',
-        data: this.data,
-        options: this.chartOptions
-      });
+      this.versusChart = new Chart(versusContext, this.versusSetup);
     }
   }
 
@@ -342,20 +266,20 @@ export class PolynomialRegression implements OnInit, AfterViewInit {
   };
 
   private updateData = (): void => {
-    this.lossData.labels = [];
-    this.lossData.datasets[0].data = [];
+    this.lossSetup.data.labels = [];
+    this.lossSetup.data.datasets[0].data = [];
 
     this.losses.forEach((loss, index) => {
-      this.lossData.labels.push((index + 1).toString());
-      this.lossData.datasets[0].data.push(Number(loss));
+      this.lossSetup.data.labels.push((index + 1).toString());
+      this.lossSetup.data.datasets[0].data.push(Number(loss));
     });
 
-    this.fxData.labels = this.data.labels;
-    this.fxData.datasets[0].data = this.data.datasets[1].data;
-    this.fxData.datasets[1].data = [];
+    this.fxSetup.data.labels = this.versusSetup.data.labels;
+    this.fxSetup.data.datasets[0].data = this.versusSetup.data.datasets[1].data;
+    this.fxSetup.data.datasets[1].data = [];
 
     this.predictions.forEach((prediction) => {
-      this.fxData.datasets[1].data.push(Number(prediction));
+      this.fxSetup.data.datasets[1].data.push(Number(prediction));
     });
   }
 }
