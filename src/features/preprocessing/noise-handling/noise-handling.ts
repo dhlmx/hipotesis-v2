@@ -19,7 +19,7 @@ import { IDayValue } from '../../../core/interfaces/preprocessing/iday-value';
 
 // Enums & Constants
 import { APP_TITLE } from '../../../core/constants/general';
-import { XS, YS, ZS } from '../../../core/constants/polynomial-regression';
+import { XS, YS, ZS } from '../../../core/constants/ml/polynomail-regression/data';
 
 @Component({
   selector: 'app-noise-handling',
