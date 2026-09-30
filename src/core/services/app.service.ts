@@ -36,6 +36,12 @@ export class AppService {
     this.dataURL = window.URL.createObjectURL(this.dataBlob);
   }
 
+  resetFile = (): void => {
+    this.dataBlob = new Blob();
+    this.dataJson = '';
+    this.dataURL = '';
+  }
+
   setTitle = (title: string, subtitle: string): void => {
     this.title.setTitle(`${title} | ${subtitle}`)
   }

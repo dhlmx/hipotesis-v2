@@ -1,4 +1,5 @@
 import { IAllocation } from "./iallocation";
+import { IKMeansLog } from "./ik-means-log";
 import { IRange } from "./irange";
 
 export interface IKMeans {
@@ -13,4 +14,5 @@ export interface IKMeans {
   centroids: number[][];
   allocations: IAllocation[];
   error: number;
+  logs: IKMeansLog[];
 }

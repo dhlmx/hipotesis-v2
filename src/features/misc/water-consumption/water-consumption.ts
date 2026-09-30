@@ -85,7 +85,7 @@ export class WaterConsumption implements OnInit {
     private readonly messageService: MessageService,
     private readonly pdfService: PdfService
   ) {
-    this.appService.setTitle(APP_TITLE, 'ML - Polynomial Regression');
+    this.appService.setTitle(APP_TITLE, 'Verificador de Consumo de Agua');
   }
 
   ngOnInit(): void {

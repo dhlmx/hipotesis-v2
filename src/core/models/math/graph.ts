@@ -24,4 +24,13 @@ export class Graph {
       }
     });
   }
+
+  info = (): any => {
+    return {
+      apexes: this.apexes.length,
+      colors: this.colors.length,
+      edges: this.edges.length,
+      tree: this.tree
+    };
+  }
 }

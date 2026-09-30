@@ -29,6 +29,7 @@ import { ADELA, ADELA_COUPLE, ADELA_COUPLE_ID, ADELA_ID, ALONDRA, ALONDRA_COUPLE
   ENRIQUE_ID, ESTEBAN, ESTEBAN_COUPLE, ESTEBAN_COUPLE_ID, ESTEBAN_ID, NODES
 } from '../../../core/constants/math/math';
 import { D3RadialTreeComponent } from '../../../core/components/d3/radial/d3-radial-tree.component';
+import { APP_TITLE } from '../../../core/constants/general';
 
 const APEXES: Apex[] = [
   new Apex({ id: 1, alias: CONDESA_ID, name: CONDESA, blackList: [CONDE_MAYOR_ID, CONDE_MENOR_ID] }),
@@ -97,14 +98,17 @@ export class Graphs implements OnInit {
     public pdfService: PdfService,
     public elementRef: ElementRef
   ) {
+    this.appService.setTitle(APP_TITLE, 'Graphs');
+    this.appService.process.start('Loading...');
     this.htmlContent = elementRef.nativeElement;
+    this.appService.resetFile();
+    this.appService.process.stop();
   }
 
   ngOnInit(): void {
     this.appService.process.start('Loading...');
 
     this.graph.apexes = APEXES;
-
     this.getTables();
     this.updateTreeData();
 
@@ -115,6 +119,13 @@ export class Graphs implements OnInit {
     return EDGES ;
   }
 
+  get fileURL(): string {
+    return this.appService.fileURL;
+  }
+
+  get fileSize(): string {
+    return this.appService.fileSize;
+  }
   get nodes(): any[] {
     return NODES;
   }
@@ -192,6 +203,7 @@ export class Graphs implements OnInit {
 
       this.getTables();
       this.updateTreeData();
+      this.appService.createDataJson(this.graph.info());
 
       this.appService.process.stop();
     }, 1000);

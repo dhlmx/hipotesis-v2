@@ -1,5 +1,158 @@
 import { IFormControl } from '../../../interfaces/iform-control';
 
+// Chart.js
+export const CHART_K_MEANS_DATA: any = {
+  labels: ['1D', '2D'],
+  datasets: [
+    {
+      label: 'Points',
+      data: [],
+      backgroundColor: '#42A5F5',
+      borderColor: '#42A5F5',
+      pointRadius: 3,
+    },
+    {
+      label: 'Centroids',
+      data: [],
+      borderColor: '#FFA726',
+      pointRadius: 5,
+    }
+  ]
+},
+
+CHART_K_MEANS: any = {
+  type: 'scatter',
+  data: CHART_K_MEANS_DATA,
+  options: {
+    responsive: true,
+    aspectRatio: 2,
+    maintainAspectRatio: true,
+    plugins: {
+      legend: {
+        position: 'top',
+        labels: {
+          color: '#000000'
+        }
+      },
+      title: {
+        display: true,
+        text: 'K-Means Algorithm',
+        font: {
+          size: 24
+        }
+      }
+    },
+    legend: {
+      display: false
+    },
+    scales: {
+      x: {
+        type: 'linear',
+        position: 'bottom',
+        title: {
+          display: true,
+          text: '1D (x)'
+        },
+        ticks: {
+          color: '#000000'
+        },
+        grid: {
+          color: '#000000',
+          drawBorder: false
+        }
+      },
+      y: {
+        type: 'linear',
+        position: 'left',
+        title: {
+          display: true,
+          text: '2D (y)'
+        },
+        ticks: {
+          color: '#000000'
+        },
+        grid: {
+          color: '#000000',
+          drawBorder: false
+        }
+      }
+    }
+  }
+},
+
+CHART_RMSE_DATA: any = {
+  labels: ['Iterations', 'Root Mean Squared Error, RMSE'],
+  datasets: [
+    {
+      label: 'RMSE vs Iterations',
+      data: [],
+      fill: false,
+      borderColor: '#66BB6A',
+      tension: 0.6
+    }
+  ]
+},
+
+CHART_RMSE: any = {
+  type: 'line',
+  data: CHART_RMSE_DATA,
+  options: {
+    responsive: true,
+    aspectRatio: 2,
+    maintainAspectRatio: true,
+    plugins: {
+      legend: {
+        position: 'top',
+        labels: {
+          color: '#000000'
+        }
+      },
+      title: {
+        display: true,
+        text: 'Root Mean Squared Error, RMSE',
+        font: {
+          size: 24
+        }
+      }
+    },
+    legend: {
+      display: false
+    },
+    scales: {
+      x: {
+        type: 'linear',
+        position: 'bottom',
+        title: {
+          display: true,
+          text: 'Iterations'
+        },
+        ticks: {
+          color: '#000000'
+        },
+        grid: {
+          color: '#000000',
+          drawBorder: false
+        }
+      },
+      y: {
+        type: 'linear',
+        position: 'left',
+        title: {
+          display: true,
+          text: 'RMSE'
+        },
+        ticks: {
+          color: '#000000'
+        },
+        grid: {
+          color: '#000000',
+          drawBorder: false
+        }
+      }
+    }
+  }
+};
+
 export const SERIES_A: number[][] = [
     [1, 3],
     [5, 8],
@@ -26,3 +179,7 @@ MIN: IFormControl = { value: 1, min: 1, max: 200, minLength: 1, maxLength: 3, st
 MAX: IFormControl = { value: 100, min: 1, max: 200, minLength: 1, maxLength: 3, step: 1 },
 
 POINTS: IFormControl = { value: 40, min: 10, max: 200, minLength: 1, maxLength: 3, step: 1 };
+
+export const graph: any = {
+
+};

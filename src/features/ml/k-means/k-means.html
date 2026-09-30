@@ -1,11 +1,15 @@
 <p-panel>
   <ng-template pTemplate="header">
-    <div><span class="pi pi-microchip-ai"></span>&nbsp;Machine Learning&nbsp;&mdash;&rsaquo;&nbsp;<span class="pi pi-chart-scatter"></span>&nbsp;K-Means</div>
+    <div>
+      <span class="pi pi-home"></span>&nbsp;Inicio&nbsp;&mdash;&rsaquo;&nbsp;
+      <span class="pi pi-microchip-ai"></span>&nbsp;Machine Learning&nbsp;&mdash;&rsaquo;&nbsp;
+      <span class="pi pi-chart-scatter"></span>&nbsp;K-Means
+    </div>
   </ng-template>
 
   <ng-template pTemplate="icons">
     <div>
-      <button type="button" pButton (click)="onDownload()"
+      <button type="button" pButton title="Results"
         class="p-button-outlined p-button-success">
         <em class="pi pi-download"></em>
         <a [href]="fileURL" download="resultados.json" aria-label="Download results">
@@ -57,8 +61,10 @@
             <ng-template pTemplate="body">
               <div>
                 <p>La aplicación provee un generador de datos aleatorios que nos permite crear un conjunto de puntos (coordenadas irrepetibles de enteros positivos) para el entrenamiento. Recomendamos utilizar unos 40 puntos para hacer más evidentes los resultados, desde un punto de vista gráfico o visual.<br />
-                  <br />Se aceptan de 2 a 3 dimensiones, cada una determinada por un rango.<br />
-                  <br />Posteriormente, en la sección de solución se puede aplicar el algoritmo K-Means.</p>
+                  <br />Con el fin de facilitar los resultados gráficos, por ahora sólo se permiten 2 dimensiones. Pero la aplicación puede trabajar con "n" dimensiones. Cada dimensión está determinada por un rango (mínimo, máximo) de valores, definidos por el usuario.<br />
+                  <br />Posteriormente, en la sección de solución se puede aplicar el algoritmo K-Means.
+                </p>
+                <p>Asimismo, la aplicación puede trabajar con rangos de K-Means, para cuando no se conoce el número de clusters, y el algoritmo calcula un conjunto de K-Means, hasta alcanzar el más adecuado entre un rango determinado por el usuario. Esta característica aún no está implementada en la aplicación, pero en una versión posterior será incluida.</p>
                 <br />
               </div>
 
@@ -73,7 +79,7 @@
                       </div>
                       <div>
                         <label pLabel for="dimensions">Dimensions</label><br />
-                        <p-inputnumber inputId="dimensions" [formControl]="dataControls.dimensions"
+                        <p-inputnumber readonly="yes" inputId="dimensions" [formControl]="dataControls.dimensions"
                           mode="decimal" [showButtons]="true"
                           [min]="dDimension.min" [max]="dDimension.max" [step]="dDimension.step" />
                       </div>
@@ -159,6 +165,15 @@
                   </div>
                 </p-fieldset>
               </form>
+
+              <br />
+              <br />
+
+              <div>
+                <p class="text-lg">K-Means RMSE (Root Mean Squared Error)</p>
+                <p-divider></p-divider>
+                <canvas #rmseCanvas></canvas>
+              </div>
             </ng-template>
 
             <ng-template pTemplate="footer">

@@ -124,7 +124,8 @@ export class PolynomialRegression implements OnInit, AfterViewInit {
     private readonly messageService: MessageService,
     private readonly pdfService: PdfService
   ) {
-    this.appService.setTitle(APP_TITLE, 'ML - Polynomial Regression');
+    this.appService.setTitle(APP_TITLE, 'Polynomial Regression');
+    this.appService.process.start('Loading...');
 
     if (isPlatformBrowser(this.platformId)) {
       this.textColor = this.documentStyle.getPropertyValue('--p-text-color');
@@ -176,6 +177,8 @@ export class PolynomialRegression implements OnInit, AfterViewInit {
       this.lossChart.resize();
       this.fxChart.resize();
     });
+
+    this.appService.process.stop();
   }
 
   ngOnInit(): void {
