@@ -31,7 +31,7 @@ export class AppService {
   }
 
   createDataJson = (data: any): void => {
-    this.dataJson = this.jsonPipe.transform({ data });
+    this.dataJson = this.jsonPipe.transform({ ...data });
     this.dataBlob = new Blob([this.dataJson], { type: 'application/json' });
     this.dataURL = window.URL.createObjectURL(this.dataBlob);
   }

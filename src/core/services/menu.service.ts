@@ -23,7 +23,7 @@ export class MenuService {
       ]
     },
     {
-      icon: PrimeIcons.MICROCHIP_AI,
+      icon: PrimeIcons.COG,
       label: 'Preprocessing',
       items: [
         {
@@ -45,11 +45,6 @@ export class MenuService {
               icon: PrimeIcons.CHART_SCATTER,
               label: 'K-Means',
               routerLink: '/ml/km'
-            },
-            {
-              icon: PrimeIcons.CHART_LINE,
-              label: 'Polynomial Regression',
-              routerLink: '/ml/pr'
             }
           ]
         },
@@ -57,6 +52,11 @@ export class MenuService {
           icon: PrimeIcons.EYE,
           label: 'Supervised',
           items: [
+            {
+              icon: PrimeIcons.CHART_SCATTER,
+              label: 'k-Nearest Neighbor',
+              routerLink: '/ml/knn'
+            },
             {
               icon: PrimeIcons.CHART_LINE,
               label: 'Polynomial Regression',

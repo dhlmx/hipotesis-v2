@@ -1,0 +1,243 @@
+<p-panel>
+  <ng-template pTemplate="header">
+    <div>
+      <span class="pi pi-home"></span>&nbsp;Inicio&nbsp;&mdash;&rsaquo;&nbsp;
+      <span class="pi pi-microchip-ai"></span>&nbsp;Machine Learning&nbsp;&mdash;&rsaquo;&nbsp;
+      <span class="pi pi-chart-scatter"></span>&nbsp;K-Nearest Neighbor
+    </div>
+  </ng-template>
+
+  <ng-template pTemplate="icons">
+    <div>
+      <button type="button" pButton title="Results"
+        class="p-button-outlined p-button-success">
+        <em class="pi pi-download"></em>
+        <a [href]="fileURL" download="resultados.json" aria-label="Download results">
+          {{fileSize}}
+        </a>
+      </button>
+      <button type="button" pButton (click)="onPrint()" title="Print" class="p-button-outlined p-button-success">
+        <em class="pi pi-print"></em>
+      </button>
+    </div>
+  </ng-template>
+
+  <ng-template  pTemplate="body">
+    <p-divider></p-divider>
+    <div id="htmlContent">
+      <!-- Problem -->
+      <div class="grid grid-cols-1 md:grid-cols-6">
+        <div></div>
+        <div class="md:col-span-4">
+          <p-card>
+            <ng-template pTemplate="header">
+              <p class="font-semibold text-2xl"><span class="pi pi-arrows-alt"></span>&nbsp;Planteamiento</p>
+              <p-divider></p-divider>
+            </ng-template>
+
+            <ng-template pTemplate="body">
+              <p>El algoritmo K-Nearest Neighbor se utiliza para predecir o clasificar un dato determinado en base a un conjunto de datos ya clasificados. Por lo tanto, se trata de un método de clasificación o predicción de datos en el aprendizaje supervisado.</p>
+              <br />
+              <p>El funcionamiento del algoritmo K-Nearest Neighbor consiste en encontrar un número "k" de vecinos, los más cercanos, con respecto a un conjunto de datos aún no etiquetado o clasificado. Por consiguiente, se le asignará la etiqueta o clasificación que sea más común entre esos vecinos.</p>
+            </ng-template>
+
+            <ng-template pTemplate="footer">
+              <p-divider></p-divider>
+            </ng-template>
+          </p-card>
+        </div>
+        <div></div>
+      </div>
+
+      <!-- Data -->
+      <div class="grid grid-cols-1 md:grid-cols-6">
+        <div></div>
+        <div class="md:col-span-4">
+          <p-card>
+            <ng-template pTemplate="header">
+              <p class="font-semibold text-2xl"><span class="pi pi-copy"></span>&nbsp;Datos</p>
+              <p-divider></p-divider>
+            </ng-template>
+
+            <ng-template pTemplate="body">
+              <div>
+                <p>Los datos fueron obtenidos de nuestras fuente de estudio y referencia. Se trata de una colección de casi quinientos registros de personas, con datos de peso, altura y género.</p>
+                <br />
+                <p>El género es la variable de salida, mientras que el peso y la altura son las variables de entrada. El objetivo es predecir el género de una persona en base a su peso y altura.</p>
+              </div>
+              <br />
+              <div>
+                <canvas #kNNCanvas></canvas>
+              </div>
+            </ng-template>
+
+            <ng-template pTemplate="footer">
+              <p-divider></p-divider>
+            </ng-template>
+          </p-card>
+        </div>
+        <div></div>
+      </div>
+
+      <!-- Solution -->
+      <div class="grid grid-cols-1 md:grid-cols-6">
+        <div></div>
+        <div class="md:col-span-4">
+          <p-card>
+            <ng-template pTemplate="header">
+              <p class="font-semibold text-2xl"><span class="pi pi-check-circle"></span>&nbsp;Solución</p>
+              <p-divider></p-divider>
+            </ng-template>
+
+            <ng-template pTemplate="body">
+              <form [formGroup]="form">
+                <p-fieldset legend="K-Nearest Neighbor Algorithm">
+                  <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div>
+                      <label pLabel for="weight">Weight [pounds]</label><br />
+                      <p-inputnumber [formControl]="controls.weight" mode="decimal" [showButtons]="true" inputId="weight"
+                        [min]="weight.min" [max]="weight.max" [step]="weight.step"
+                        [minFractionDigits]="0" [maxFractionDigits]="2" fluid />
+                    </div>
+                    <div>
+                      <label pLabel for="height">Height [inches]</label><br />
+                      <p-inputnumber [formControl]="controls.height" mode="decimal" [showButtons]="true" inputId="height" [min]="height.min" [max]="height.max" [step]="height.step"
+                        [minFractionDigits]="0" [maxFractionDigits]="2" fluid />
+                    </div>
+                    <div>
+                      <label pLabel for="k">K-Nearest Neighbors</label><br />
+                      <p-inputnumber [formControl]="controls.k" mode="decimal" [showButtons]="true" inputId="k" [min]="k.min" [max]="k.max" [step]="k.step"
+                        [minFractionDigits]="0" [maxFractionDigits]="0" fluid />
+                    </div>
+                    <div>
+                      <br />
+                      <button pButton type="button" label="Predict" title="Predict" [disabled]="form.invalid" (click)="onPredict()" class="p-button-outlined p-button-info w-full"></button>
+                    </div>
+                  </div>
+                </p-fieldset>
+              </form>
+
+              <br />
+              <br />
+
+              @if (knn.neighbors.length > 0) {
+                <div class="grid grid-cols-1">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th colspan="6" class="text-lg">
+                          K-Nearest Neighbors
+                        </th>
+                      </tr>
+                      <tr class="text-center">
+                        <td class="width-15">
+                          K
+                        </td>
+                        <td class="width-15">
+                          Index
+                        </td>
+                        <td class="width-15">
+                          Weight [pounds]
+                        </td>
+                        <td class="width-15">
+                          Height [inches]
+                        </td>
+                        <td class="width-20">
+                          Distance
+                        </td>
+                        <td class="width-20">
+                          Label
+                        </td>
+                      </tr>
+                    </thead>
+                    <tbody>
+                     <!-- Neighbors -->
+                      @for (neighbor of knn.neighbors; track $index) {
+                        @let person = getPerson(neighbor.index);
+                        <tr class="text-center">
+                            <td>{{ $index + 1 }}</td>
+                            <td>{{ neighbor.index }}</td>
+                            <td class="text-right">{{ person.weight | number:'1.0-0' }}</td>
+                            <td class="text-right">{{ person.height | number:'1.0-0' }}</td>
+                            <td class="text-right">{{ neighbor.distance | number:'1.16-16' }}</td>
+                            <td>{{ neighbor.label }}</td>
+                        </tr>
+                      }
+
+                      <!-- Summary -->
+                      @let items = knn.summary.length > 0 ? knn.summary.length + 1 : 1;
+                      <tr class="text-center">
+                        <td colspan="3" [attr.rowspan]="items">Summary</td>
+                        <td>Order</td>
+                        <td>Label</td>
+                        <td>Count</td>
+                      </tr>
+                      @for (item of knn.summary; track $index) {
+                        <tr class="text-center">
+                          <td>{{ $index + 1 }}</td>
+                          <td>{{ item.label }}</td>
+                          <td class="text-right">{{ item.count | number:'1.0-0' }}</td>
+                        </tr>
+                      }
+                    </tbody>
+                    <tfoot>
+                      <tr class="text-center text-lg">
+                        <td colspan="5" class="text-right">
+                          Prediction&nbsp;
+                        </td>
+                        <td>
+                          {{knn.info().label}}
+                        </td>
+                      </tr>
+                    </tfoot>
+                  </table>
+                </div>
+              }
+            </ng-template>
+
+            <ng-template pTemplate="footer">
+              <p-divider></p-divider>
+            </ng-template>
+          </p-card>
+        </div>
+        <div></div>
+      </div>
+    </div>
+  </ng-template>
+
+  <ng-template pTemplate="footer">
+    <div class="grid grid-cols-1 md:grid-cols-6">
+      <div></div>
+      <div class="md:col-span-4">
+        <p-card>
+          <ng-template pTemplate="header">
+            <p class="font-semibold text-2xl"><span class="pi pi-paperclip"></span>&nbsp;Referencias</p>
+            <p-divider></p-divider>
+          </ng-template>
+
+          <ng-template pTemplate="body">
+            <div>
+              <p><span class="text-italic">k-Nearest Neighbor.</span>
+                <br />Kaber, Burak,&nbsp;<span class="text-italic">Hands-On Machine Learning with JavaScript.</span>
+                <br />Pps: 122-137. Packt Publishing Ltd. Birmingham, UK. 2018.
+              </p>
+            </div>
+          </ng-template>
+
+          <ng-template pTemplate="footer">
+            <p-divider></p-divider>
+          </ng-template>
+        </p-card>
+      </div>
+      <div></div>
+    </div>
+  </ng-template>
+
+  <p-confirmDialog [style]="{width: '50vw'}" [baseZIndex]="10000" rejectButtonStyleClass="p-button-text"></p-confirmDialog>
+  <p-toast></p-toast>
+</p-panel>
+
+<app-message-modal
+  [visible]="appService.process.isInProcess()"
+  [message]="appService.process.message()">
+</app-message-modal>
