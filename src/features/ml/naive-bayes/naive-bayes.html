@@ -1,0 +1,275 @@
+<p-panel>
+  <ng-template pTemplate="header">
+    <div>
+      <span class="pi pi-home"></span>&nbsp;Inicio&nbsp;&mdash;&rsaquo;&nbsp;
+      <span class="pi pi-microchip-ai"></span>&nbsp;Machine Learning&nbsp;&mdash;&rsaquo;&nbsp;
+      <span class="pi pi-filter"></span>&nbsp;Naive Bayes Classifier
+    </div>
+  </ng-template>
+
+  <ng-template pTemplate="icons">
+    <div>
+      <button type="button" pButton title="Results"
+        class="p-button-outlined p-button-success">
+        <em class="pi pi-download"></em>
+        <a [href]="fileURL" download="resultados.json" aria-label="Download results">
+          {{fileSize}}
+        </a>
+      </button>
+      <button type="button" pButton (click)="onPrint()" title="Print" class="p-button-outlined p-button-success">
+        <em class="pi pi-print"></em>
+      </button>
+    </div>
+  </ng-template>
+
+  <ng-template  pTemplate="body">
+    <p-divider></p-divider>
+    <div id="htmlContent">
+      <!-- Problem -->
+      <div class="grid grid-cols-1 md:grid-cols-6">
+        <div></div>
+        <div class="md:col-span-4">
+          <p-card>
+            <ng-template pTemplate="header">
+              <p class="font-semibold text-2xl"><span class="pi pi-arrows-alt"></span>&nbsp;Planteamiento</p>
+              <p-divider></p-divider>
+            </ng-template>
+
+            <ng-template pTemplate="body">
+              <p>El algoritmo Naive Bayes Classifier se utiliza para predecir o clasificar un dato determinado en base a un conjunto de datos ya clasificados. Por lo tanto, se trata de un método de clasificación o predicción de datos en el aprendizaje supervisado.</p>
+              <br />
+              <p>Sin embargo, se trata de un algoritmo complejo, en la medida en que hace uso de cálculos probabilísticos, fundamentalmente del Teorema de Bayes, para determinar la probabilidad de que un dato pertenezca a una clase.</p>
+              <br />
+              <p>Aunado a lo anterior se aplican una serie de constantes como epsilon, weight, etc., que se utilizan para optimizar los cálculos, es decir para reducir los márgenes de error.</p>
+            </ng-template>
+
+            <ng-template pTemplate="footer">
+              <p-divider></p-divider>
+            </ng-template>
+          </p-card>
+        </div>
+        <div></div>
+      </div>
+
+      <!-- Data -->
+      <div class="grid grid-cols-1 md:grid-cols-6">
+        <div></div>
+        <div class="md:col-span-4">
+          <p-card>
+            <ng-template pTemplate="header">
+              <p class="font-semibold text-2xl"><span class="pi pi-copy"></span>&nbsp;Datos</p>
+              <p-divider></p-divider>
+            </ng-template>
+
+            <ng-template pTemplate="body">
+              <div>
+                <p>Los datos fueron obtenidos de nuestras fuente de estudio y referencia. Se trata de una colección de cuatro archivos planos (txt) con aproximadamente cinco mil líneas cada uno, que representan el sentir de igual número de personas con respecto a determinadas películas de cine.</p>
+                <br />
+                <p>El dato de entrada es el sentir de cada persona, y la clasificación se basa en dos etiquetas: positivo y negativo.</p>
+                <br />
+                <p>El entrenamiento del modelo consiste de dos archivos, uno de percepciones negativas y otro de percepciones positivas.</p>
+                <br />
+                <p>Con ese entrenamiento como base, se procede a aplicar el algoritmo Naive Bayes Classifier para predecir los sentimientos que correspondan a otros dos archivos de percepciones, uno de sentimientos negativos y otro de sentimientos positivos respecto a determinadas películas de cine.</p>
+                <br />
+                <p>Como hemos mencionado antes, la predicción se basa en determinados cálculos probabilísticos compuestos, no simples.</p>
+                <br />
+                <p>Es muy importante mencionar que durante el procesamiento de los datos se utiliza la tokenización, es decir, la descomposición de las percepciones en palabras, o tokens. La tokenización es un subroceso aparte que a su vez conlleva la optimización de dicho subproceso, ya que los cálculos probabilísticos se realizarán en base a las etiquetas o categorías y los tokens resultantes de cada sentimiento literalmente analizado.</p>
+              </div>
+              <br />
+            </ng-template>
+
+            <ng-template pTemplate="footer">
+              <p-divider></p-divider>
+            </ng-template>
+          </p-card>
+        </div>
+        <div></div>
+      </div>
+
+      <!-- Solution -->
+      <div class="grid grid-cols-1 md:grid-cols-6">
+        <div></div>
+        <div class="md:col-span-4">
+          <p-card>
+            <ng-template pTemplate="header">
+              <p class="font-semibold text-2xl"><span class="pi pi-check-circle"></span>&nbsp;Solución</p>
+              <p-divider></p-divider>
+            </ng-template>
+
+            <ng-template pTemplate="body">
+              <form [formGroup]="form">
+                <p-fieldset legend="Naive Bayes Classifier">
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!--
+                    <div>
+                      <label pLabel for="weight">Weight [pounds]</label><br />
+                      <p-inputnumber [formControl]="controls.weight" mode="decimal" [showButtons]="true" inputId="weight"
+                        [min]="weight.min" [max]="weight.max" [step]="weight.step"
+                        [minFractionDigits]="0" [maxFractionDigits]="2" fluid />
+                    </div>
+                    <div>
+                      <label pLabel for="height">Height [inches]</label><br />
+                      <p-inputnumber [formControl]="controls.height" mode="decimal" [showButtons]="true" inputId="height" [min]="height.min" [max]="height.max" [step]="height.step"
+                        [minFractionDigits]="0" [maxFractionDigits]="2" fluid />
+                    </div>
+                    <div>
+                      <label pLabel for="k">K-Nearest Neighbors</label><br />
+                      <p-inputnumber [formControl]="controls.k" mode="decimal" [showButtons]="true" inputId="k" [min]="k.min" [max]="k.max" [step]="k.step"
+                        [minFractionDigits]="0" [maxFractionDigits]="0" fluid />
+                    </div>
+                    [disabled]="form.invalid"
+                    -->
+
+                    <div>
+                      <br />
+                      <button pButton type="button" label="Train" title="Train" [disabled]="form.invalid"  (click)="onTrain()" class="p-button-outlined p-button-info w-full"></button>
+                    </div>
+
+                    <div>
+                      <br />
+                      <button pButton type="button" label="Predict" title="Predict" [disabled]="form.invalid"  (click)="onPredict(false)" class="p-button-outlined p-button-info w-full"></button>
+                    </div>
+                  </div>
+                </p-fieldset>
+              </form>
+
+              <br />
+
+              <!-- Naive Bayes Classifier -->
+              @if (naiveBayes.trainings.length > 0) {
+                <div class="grid grid-cols-1">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th colspan="7" class="text-lg">
+                          Naive Bayes Classifier
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <!-- Trainings -->
+                      <tr class="text-center text-lg">
+                        <td colspan="7">
+                          Trainings
+                        </td>
+                      </tr>
+                      <tr class="text-center">
+                        <td class="width-10">
+                          Id
+                        </td>
+                        <td class="width-15">
+                          Filename
+                        </td>
+                        <td class="width-15">
+                          Label
+                        </td>
+                        <td colspan="2" class="width-30">
+                          Lines
+                        </td>
+                        <td class="width-15">
+                          Processed Tokens
+                        </td>
+                        <td class="width-15">
+                          Added Tokens
+                        </td>
+                      </tr>
+                      @for (training of naiveBayes.trainings; track $index) {
+                        <tr class="text-center">
+                          <td>{{ $index + 1 }}</td>
+                          <td>{{ training.filename }}</td>
+                          <td>{{ training.label }}</td>
+                          <td colspan="2" class="text-right">{{ training.lines | number:'1.0-0' }}</td>
+                          <td class="text-right">{{ training.processedTokens| number:'1.0-0' }}</td>
+                          <td class="text-right">{{ training.addedTokens | number:'1.0-0' }}</td>
+                        </tr>
+                      }
+                      <!-- Tests -->
+                      @if (naiveBayes.tests.length > 0) {
+                        <tr class="text-center text-lg">
+                          <td colspan="7">
+                            Tests
+                          </td>
+                        </tr>
+                        <tr class="text-center">
+                          <td>Id</td>
+                          <td>Filename</td>
+                          <td>Label</td>
+                          <td class="text-right">Total</td>
+                          <td class="text-right">Correct</td>
+                          <td class="text-right">Incorrect</td>
+                          <td class="text-right">Efficiency</td>
+                        </tr>
+                        @for (test of naiveBayes.tests; track $index) {
+                          @if (!$last) {
+                            <tr class="text-center">
+                              <td>{{ $index + 1 }}</td>
+                              <td>{{ test.filename }}</td>
+                              <td>{{ test.label }}</td>
+                              <td class="text-right">{{ test.total | number:'1.0-0' }}</td>
+                              <td class="text-right">{{ test.correct | number:'1.0-0' }}</td>
+                              <td class="text-right">{{ test.incorrect | number:'1.0-0' }}</td>
+                              <td class="text-right">{{ test.efficiency | number:'1.2-2' }}&nbsp;%</td>
+                            </tr>
+                          } @else {
+                            <tr class="text-center">
+                              <td colspan="3">Totals</td>
+                              <td class="text-right">{{ test.total | number:'1.0-0' }}</td>
+                              <td class="text-right">{{ test.correct | number:'1.0-0' }}</td>
+                              <td class="text-right">{{ test.incorrect | number:'1.0-0' }}</td>
+                              <td class="text-right">{{ test.efficiency | number:'1.2-2' }}&nbsp;%</td>
+                            </tr>
+                          }
+                        }
+                      }
+                    </tbody>
+                  </table>
+                </div>
+              }
+            </ng-template>
+
+            <ng-template pTemplate="footer">
+              <p-divider></p-divider>
+            </ng-template>
+          </p-card>
+        </div>
+        <div></div>
+      </div>
+    </div>
+  </ng-template>
+
+  <ng-template pTemplate="footer">
+    <div class="grid grid-cols-1 md:grid-cols-6">
+      <div></div>
+      <div class="md:col-span-4">
+        <p-card>
+          <ng-template pTemplate="header">
+            <p class="font-semibold text-2xl"><span class="pi pi-paperclip"></span>&nbsp;Referencias</p>
+            <p-divider></p-divider>
+          </ng-template>
+
+          <ng-template pTemplate="body">
+            <div>
+              <p><span class="text-italic">Naive Bayes Classifier.</span>
+                <br />Kaber, Burak,&nbsp;<span class="text-italic">Hands-On Machine Learning with JavaScript.</span>
+                <br />Pps: 137-155. Packt Publishing Ltd. Birmingham, UK. 2018.
+              </p>
+            </div>
+          </ng-template>
+
+          <ng-template pTemplate="footer">
+            <p-divider></p-divider>
+          </ng-template>
+        </p-card>
+      </div>
+      <div></div>
+    </div>
+  </ng-template>
+
+  <p-confirmDialog [style]="{width: '50vw'}" [baseZIndex]="10000" rejectButtonStyleClass="p-button-text"></p-confirmDialog>
+  <p-toast></p-toast>
+</p-panel>
+
+<app-message-modal
+  [visible]="appService.process.isInProcess()"
+  [message]="appService.process.message()">
+</app-message-modal>

@@ -15,6 +15,10 @@ export const hasSameElements = (series: any[], elements: any[]): boolean => {
   return sameElements;
 },
 
+multiply = (series: number[]): number => {
+  return series.reduce((product, value) => product * value, 1);
+},
+
 numericSeries = (start: number, end: number): number[] => {
   return new Array(end - start + 1).fill(start).map((value, index) => value + index);
 },

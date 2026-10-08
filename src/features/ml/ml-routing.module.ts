@@ -3,12 +3,14 @@ import { RouterModule, Routes } from '@angular/router';
 
 import { KMeans } from './k-means/k-means';
 import { KNearestNeighbor } from './k-nearest-neighbor/k-nearest-neighbor';
+import { NaiveBayes } from './naive-bayes/naive-bayes';
 import { PolynomialRegression } from './polynomal-regression/polynomial-regression';
 
 const routes: Routes = [
   { path: '', component: PolynomialRegression },
   { path: 'km', component: KMeans },
   { path: 'knn', component: KNearestNeighbor },
+  { path: 'nb', component: NaiveBayes },
   { path: 'pr', component: PolynomialRegression }
 ];
 

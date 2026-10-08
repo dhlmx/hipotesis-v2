@@ -23,7 +23,7 @@ export class MenuService {
       ]
     },
     {
-      icon: PrimeIcons.COG,
+      icon: PrimeIcons.MICROCHIP,
       label: 'Preprocessing',
       items: [
         {
@@ -58,6 +58,11 @@ export class MenuService {
               routerLink: '/ml/knn'
             },
             {
+              icon: PrimeIcons.FILTER,
+              label: 'Naive Bayes Classifier',
+              routerLink: '/ml/nb'
+            },
+            {
               icon: PrimeIcons.CHART_LINE,
               label: 'Polynomial Regression',
               routerLink: '/ml/pr'
@@ -67,7 +72,7 @@ export class MenuService {
       ]
     },
     {
-      icon: PrimeIcons.HAMMER,
+      icon: PrimeIcons.COG,
       label: 'Miscelánea',
       items: [
         {
