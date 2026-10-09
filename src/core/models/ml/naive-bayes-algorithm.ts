@@ -1,3 +1,4 @@
+import { AppService } from '../../services/app.service';
 import { lineByLine, simpleTokenizer } from '../../utilities/text';
 import { INAIVE_BAYES_LOG, INaiveBayesLog } from '../../interfaces/ml/inaive-bayes-log';
 import { INAIVE_BAYES_PROBABILITY, INaiveBayesProbability } from '../../interfaces/ml/inaive-bayes-probability';
@@ -13,12 +14,7 @@ const ACCURACY_BUMP = 87.8,
 
 export class NaiveBayesAlgorithm {
   private readonly tokenizer: (text: string) => string[];
-
-  private readonly store: INaiveBayesStore = {
-    labels: {},
-    tokens: {}
-  };
-
+  private readonly _store: INaiveBayesStore = { labels: {}, tokens: {} };
   private readonly _trainings: INaiveBayesTraining[] = [];
   private readonly _tests: INaiveBayesTest[] = [];
   private readonly _predictions: INaiveBayesPrediction[] = [];
@@ -30,7 +26,7 @@ export class NaiveBayesAlgorithm {
   }
 
   get labels(): string[] {
-    return Object.keys(this.store.labels);
+    return Object.keys(this._store.labels);
   }
 
   get lastLog(): INaiveBayesLog {
@@ -50,7 +46,7 @@ export class NaiveBayesAlgorithm {
   }
 
   get tokens(): string[] {
-    return Object.keys(this.store.tokens);
+    return Object.keys(this._store.tokens);
   }
 
   get trainings(): INaiveBayesTraining[] {
@@ -61,7 +57,7 @@ export class NaiveBayesAlgorithm {
     return {
       labels: this.labels.length,
       tokens: this.tokens.length,
-      store: this.store,
+      store: this._store,
       predictions: includeLogs ? this._predictions : [],
       trainings: this._trainings,
       tests: this._tests,
@@ -80,7 +76,7 @@ export class NaiveBayesAlgorithm {
             efficiency: 0
           };
 
-    lines.forEach(line => {
+    lines.forEach((line, index) => {
       const probabilities: INaiveBayesProbability[] = this.calculateProbabilities(line),
             prediction: INaiveBayesProbability = probabilities.length > 0 ? probabilities.at(0)! : INAIVE_BAYES_PROBABILITY;
 
@@ -103,8 +99,8 @@ export class NaiveBayesAlgorithm {
   };
 
   reset = (): void => {
-    this.store.labels = {};
-    this.store.tokens = {};
+    this._store.labels = {};
+    this._store.tokens = {};
   };
 
   train = (filename: string, label: string, text: string): void => {
@@ -134,6 +130,7 @@ export class NaiveBayesAlgorithm {
         processedTokens: tokens.length,
         addedTokens: this.tokens.length - actualTokens
       });
+
     });
 
     this._trainings.push(training);
@@ -159,15 +156,15 @@ export class NaiveBayesAlgorithm {
 
   private readonly labelFrequency = (label?: string): number => {
     return label
-      ? this.store.labels[label] || 0
-      : Object.values(this.store.labels).reduce((sum: number, count: number) => sum + count, 0);
+      ? this._store.labels[label] || 0
+      : Object.values(this._store.labels).reduce((sum: number, count: number) => sum + count, 0);
   };
 
   private readonly labelTokenFrequency = (token: string, label?: string): any => {
     if (label) {
-      return this.store.tokens?.[token]?.[label] || 0;
+      return this._store.tokens?.[token]?.[label] || 0;
     }
-    return Object.values(this.store.tokens[token] || {}).reduce((sum, count) => sum + count, 0);
+    return Object.values(this._store.tokens[token] || {}).reduce((sum, count) => sum + count, 0);
   };
 
   private readonly labelTokenScore = (label: string, token: string, weight: number = RARE_TOKEN_WEIGHT): number => {
@@ -200,13 +197,13 @@ export class NaiveBayesAlgorithm {
   };
 
   private readonly incrementLabelFrequency = (label: string): void => {
-    this.store.labels[label] = this.labelFrequency(label) + 1;
+    this._store.labels[label] = this.labelFrequency(label) + 1;
   };
 
   private readonly incrementLabelTokenFrequency = (token: string, label: string): void => {
-    if (Object(this.store.tokens).hasOwnProperty(token) === false) {
-      this.store.tokens[token] = {};
+    if (Object(this._store.tokens).hasOwnProperty(token) === false) {
+      this._store.tokens[token] = {};
     }
-    this.store.tokens[token][label] = this.labelTokenFrequency(token, label) + 1;
+    this._store.tokens[token][label] = this.labelTokenFrequency(token, label) + 1;
   };
 }

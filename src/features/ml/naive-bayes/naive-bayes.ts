@@ -96,9 +96,12 @@ export class NaiveBayes implements OnInit {
       return;
     }
 
-    this.appService.process.start('Predicting the tests data...');
+    if (this.naiveBayes.tests.length > 0) {
+      this.naiveBayes.tests.splice(0, this.naiveBayes.tests.length);
+    }
 
-    this.naiveBayes.tests.splice(0, this.naiveBayes.tests.length);
+    this.appService.process.setSteps(1, 2);
+    this.appService.process.start('Predicting the tests data...');
 
     if (isNeutral) {
       this.neutralTest().subscribe({
@@ -115,8 +118,9 @@ export class NaiveBayes implements OnInit {
     } else {
       this.test().subscribe({
         complete: () => {
-          this.appService.process.start('Creating download file (results)...');
           this.summaryTest();
+          this.appService.process.resetSteps();
+          this.appService.process.start('Creating download file (results)...');
 
           setTimeout(() => {
             this.appService.createDataJson(this.naiveBayes.info());
@@ -173,11 +177,12 @@ export class NaiveBayes implements OnInit {
 
     this.appService.process.start('Training model...');
     this.appService.resetFile();
+    this.appService.process.setSteps(1, 2);
 
     this.train().subscribe({
       complete: () => {
-        this.appService.process.start('Creating download file (results)...');
         this.naiveBayes.isTrained = true;
+        this.appService.process.resetSteps();
         this.appService.process.stop();
       }
     });
@@ -209,6 +214,9 @@ export class NaiveBayes implements OnInit {
   };
 
   private readonly negativeTest = (): Observable<INaiveBayesTest> => {
+    this.appService.process.setSteps(1);
+    this.appService.process.start('Testing negative viewpoints');
+
     return this.http.get('data/test_negative.txt', { responseType: 'text' }).pipe(
       map((fileContent: string) => {
         this.naiveBayes.predict('test_negative.txt', 'Negative', fileContent);
@@ -222,6 +230,9 @@ export class NaiveBayes implements OnInit {
   };
 
   private readonly negativeTraining = (): Observable<INaiveBayesLog> => {
+    this.appService.process.setSteps(1);
+    this.appService.process.start('Training negative viewpoints');
+
     return this.http.get('data/train_negative.txt', { responseType: 'text' }).pipe(
       map((fileContent: string) => {
         this.naiveBayes.train('train_negative.txt', 'Negative', fileContent);
@@ -235,6 +246,9 @@ export class NaiveBayes implements OnInit {
   };
 
   private readonly positiveTest = (): Observable<INaiveBayesTest> => {
+    this.appService.process.setSteps(2);
+    this.appService.process.start('Testing positive viewpoints');
+
     return this.http.get('data/test_positive.txt', { responseType: 'text' }).pipe(
       map((fileContent: string) => {
         this.naiveBayes.predict('test_positive.txt', 'Positive', fileContent);
@@ -248,6 +262,9 @@ export class NaiveBayes implements OnInit {
   };
 
   private readonly positiveTraining = (): Observable<INaiveBayesLog> => {
+    this.appService.process.setSteps(2);
+    this.appService.process.start('Training positive viewpoints');
+
     return this.http.get('data/train_positive.txt', { responseType: 'text' }).pipe(
       map((fileContent: string) => {
         this.naiveBayes.train('train_positive.txt', 'Positive', fileContent);

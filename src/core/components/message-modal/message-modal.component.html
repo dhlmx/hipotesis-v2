@@ -3,7 +3,12 @@
   [style]="{width: '40vw'}">
   <p class="message-modal-message">
     <span class="pi pi-spin pi-cog message-modal-icon"></span><br />
+    @if (steps) {
+      [{{steps}}]&nbsp;
+    }
     {{message}}
+    @if (advance) {
+      &nbsp;({{advance}})
+    }
   </p>
 </p-dialog>
-

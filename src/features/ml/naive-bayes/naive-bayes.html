@@ -271,5 +271,7 @@
 
 <app-message-modal
   [visible]="appService.process.isInProcess()"
-  [message]="appService.process.message()">
+  [message]="appService.process.message()"
+  [advance]="appService.process.advance()"
+  [steps]="appService.process.steps()">
 </app-message-modal>
