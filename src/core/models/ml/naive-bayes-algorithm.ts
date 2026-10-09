@@ -1,4 +1,3 @@
-import { AppService } from '../../services/app.service';
 import { lineByLine, simpleTokenizer } from '../../utilities/text';
 import { INAIVE_BAYES_LOG, INaiveBayesLog } from '../../interfaces/ml/inaive-bayes-log';
 import { INAIVE_BAYES_PROBABILITY, INaiveBayesProbability } from '../../interfaces/ml/inaive-bayes-probability';
@@ -6,11 +5,7 @@ import { INaiveBayesStore } from '../../interfaces/ml/inaive-bayes-store';
 import { INaiveBayesPrediction } from '../../interfaces/ml/inaive-bayes-prediction';
 import { INaiveBayesTraining } from '../../interfaces/ml/inaive-bayes-training';
 import { INAIVE_BAYES_TEST, INaiveBayesTest } from '../../interfaces/ml/inaive-bayes-test';
-
-const ACCURACY_BUMP = 87.8,
-      EPSILON = 0.15,
-      RARE_TOKEN_WEIGHT = 3,
-      RESPONSABILITY = 78.0;
+import { EPSILON, RARE_TOKEN_WEIGHT } from '../../constants/ml/naive-bayes/data';
 
 export class NaiveBayesAlgorithm {
   private readonly tokenizer: (text: string) => string[];
@@ -19,6 +14,9 @@ export class NaiveBayesAlgorithm {
   private readonly _tests: INaiveBayesTest[] = [];
   private readonly _predictions: INaiveBayesPrediction[] = [];
   private readonly _logs: INaiveBayesLog[] = [];
+
+  epsilon = EPSILON;
+  weight = RARE_TOKEN_WEIGHT;
   isTrained = false;
 
   constructor(tokenizer: (text: string) => string[] = simpleTokenizer) {
@@ -65,7 +63,7 @@ export class NaiveBayesAlgorithm {
     };
   };
 
-  predict = (filename: string, label: string, text: string): void => {
+  predict = (filename: string, label: string, text: string, epsilon: number = EPSILON, weight: number = RARE_TOKEN_WEIGHT): void => {
     const lines: string[] = lineByLine(text),
           test: INaiveBayesTest = {
             filename,
@@ -76,7 +74,10 @@ export class NaiveBayesAlgorithm {
             efficiency: 0
           };
 
-    lines.forEach((line, index) => {
+    this.epsilon = epsilon;
+    this.weight = weight;
+
+    lines.forEach(line => {
       const probabilities: INaiveBayesProbability[] = this.calculateProbabilities(line),
             prediction: INaiveBayesProbability = probabilities.length > 0 ? probabilities.at(0)! : INAIVE_BAYES_PROBABILITY;
 
@@ -103,7 +104,7 @@ export class NaiveBayesAlgorithm {
     this._store.tokens = {};
   };
 
-  train = (filename: string, label: string, text: string): void => {
+  train = (filename: string, label: string, text: string, epsilon: number = EPSILON, weight: number = RARE_TOKEN_WEIGHT): void => {
     const lines: string[] = lineByLine(text),
           training: INaiveBayesTraining = {
             filename,
@@ -112,6 +113,9 @@ export class NaiveBayesAlgorithm {
             processedTokens: 0,
             addedTokens: 0
           };
+
+    this.epsilon = epsilon;
+    this.weight = weight;
 
     this.incrementLabelFrequency(label);
 
@@ -145,10 +149,10 @@ export class NaiveBayesAlgorithm {
       .sort((a, b) => a.probability > b.probability ? -1 : 1);
   };
 
-  private readonly calculateProbability = (label: string, tokens: string[], epsilon: number = EPSILON): number => {
+  private readonly calculateProbability = (label: string, tokens: string[]): number => {
     const labelProbability = 1 / this.labels.length,
           labelTokenScores = tokens.map(token => this.labelTokenScore(label, token))
-            .filter(score => Math.abs(labelProbability - score) > epsilon);
+            .filter(score => Math.abs(labelProbability - score) > this.epsilon);
 
     const logarithmicSum = labelTokenScores.reduce((sum, score) => sum + (Math.log(1 - score) - Math.log(score)), 0);
     return 1 / (1 + Math.exp(logarithmicSum));
@@ -167,7 +171,7 @@ export class NaiveBayesAlgorithm {
     return Object.values(this._store.tokens[token] || {}).reduce((sum, count) => sum + count, 0);
   };
 
-  private readonly labelTokenScore = (label: string, token: string, weight: number = RARE_TOKEN_WEIGHT): number => {
+  private readonly labelTokenScore = (label: string, token: string): number => {
     // Notes:
     // 1.- Assuming equal probabilities gave us 1% accuracy bump over using the frequencies of each label
     // 2.- Adjust for rare tokens -- essentially weighted average
@@ -190,8 +194,8 @@ export class NaiveBayesAlgorithm {
           notLabelTokenSupport = notLabelTokenProbability * notLabelProbability;
 
     const rawScore = labelTokenSupport / (labelTokenSupport + notLabelTokenSupport),
-          adjustedTokenScore = ((weight * labelProbability) + (allLabelsTokenFrequency * (rawScore || labelProbability)))
-          / ( weight + allLabelsTokenFrequency);
+          adjustedTokenScore = ((this.weight * labelProbability) + (allLabelsTokenFrequency * (rawScore || labelProbability)))
+          / (this.weight + allLabelsTokenFrequency);
 
     return adjustedTokenScore;
   };

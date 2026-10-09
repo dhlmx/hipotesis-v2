@@ -73,7 +73,9 @@
                 <br />
                 <p>Como hemos mencionado antes, la predicción se basa en determinados cálculos probabilísticos compuestos, no simples.</p>
                 <br />
-                <p>Es muy importante mencionar que durante el procesamiento de los datos se utiliza la tokenización, es decir, la descomposición de las percepciones en palabras, o tokens. La tokenización es un subroceso aparte que a su vez conlleva la optimización de dicho subproceso, ya que los cálculos probabilísticos se realizarán en base a las etiquetas o categorías y los tokens resultantes de cada sentimiento literalmente analizado.</p>
+                <p>Es muy importante mencionar que durante el procesamiento de los datos se utiliza la tokenización, es decir, la descomposición de las percepciones en palabras, o tokens.</p>
+                <br />
+                <p>La tokenización es un subroceso aparte, lo que también conlleva su optimización, ya que los cálculos probabilísticos se realizarán en base a las etiquetas o categorías y los tokens resultantes de cada sentimiento analizado, literalmente; es decir, de cada sentiminento o percepción fragmentado a nivel partícula, o sea palabra o token. Pero, dicho subproceso podría llegar a descomponer dichas palabras a nivel gramatical, cuasi etimológico. De ahí que la tokenización sea un proceso de análisis en sí mismo.</p>
               </div>
               <br />
             </ng-template>
@@ -99,35 +101,24 @@
             <ng-template pTemplate="body">
               <form [formGroup]="form">
                 <p-fieldset legend="Naive Bayes Classifier">
-                  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <!--
+                  <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
                     <div>
-                      <label pLabel for="weight">Weight [pounds]</label><br />
+                      <label pLabel for="epsilon">Epsilon</label><br />
+                      <p-inputnumber [formControl]="controls.epsilon" mode="decimal" [showButtons]="true" inputId="epsilon"
+                        [min]="epsilon.min" [max]="epsilon.max" [step]="epsilon.step" [minFractionDigits]="2" [maxFractionDigits]="2" fluid />
+                    </div>
+                    <div>
+                      <label pLabel for="weight">Rare Token Weight</label><br />
                       <p-inputnumber [formControl]="controls.weight" mode="decimal" [showButtons]="true" inputId="weight"
-                        [min]="weight.min" [max]="weight.max" [step]="weight.step"
-                        [minFractionDigits]="0" [maxFractionDigits]="2" fluid />
+                        [min]="weight.min" [max]="weight.max" [step]="weight.step" [maxFractionDigits]="0" fluid />
                     </div>
-                    <div>
-                      <label pLabel for="height">Height [inches]</label><br />
-                      <p-inputnumber [formControl]="controls.height" mode="decimal" [showButtons]="true" inputId="height" [min]="height.min" [max]="height.max" [step]="height.step"
-                        [minFractionDigits]="0" [maxFractionDigits]="2" fluid />
-                    </div>
-                    <div>
-                      <label pLabel for="k">K-Nearest Neighbors</label><br />
-                      <p-inputnumber [formControl]="controls.k" mode="decimal" [showButtons]="true" inputId="k" [min]="k.min" [max]="k.max" [step]="k.step"
-                        [minFractionDigits]="0" [maxFractionDigits]="0" fluid />
-                    </div>
-                    [disabled]="form.invalid"
-                    -->
-
                     <div>
                       <br />
-                      <button pButton type="button" label="Train" title="Train" [disabled]="form.invalid"  (click)="onTrain()" class="p-button-outlined p-button-info w-full"></button>
+                      <button pButton type="button" label="Train" title="Train" [disabled]="form.invalid || naiveBayes.isTrained" (click)="onTrain()" class="p-button-outlined p-button-info w-full"></button>
                     </div>
-
                     <div>
                       <br />
-                      <button pButton type="button" label="Predict" title="Predict" [disabled]="form.invalid"  (click)="onPredict(false)" class="p-button-outlined p-button-info w-full"></button>
+                      <button pButton type="button" label="Predict" title="Predict" [disabled]="form.invalid || !naiveBayes.isTrained" (click)="onPredict(false)" class="p-button-outlined p-button-info w-full"></button>
                     </div>
                   </div>
                 </p-fieldset>

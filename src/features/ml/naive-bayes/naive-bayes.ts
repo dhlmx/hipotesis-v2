@@ -20,7 +20,7 @@ import { NaiveBayesAlgorithm } from '../../../core/models/ml/naive-bayes-algorit
 
 // Enums & Constants
 import { APP_TITLE } from '../../../core/constants/general';
-import { K, HEIGHT, WEIGHT } from '../../../core/constants/ml/k-nearest-neighbor/data';
+import { CONTROL_EPSILON as EPSILON, CONTROL_RARE_TOKEN_WEIGHT as WEIGHT } from '../../../core/constants/ml/naive-bayes/data';
 
 @Component({
   selector: 'app-naive-bayes',
@@ -37,24 +37,24 @@ export class NaiveBayes implements OnInit {
   private textColorSecondary = '';
   private surfaceBorder = '';
 
-  naiveBayes = new NaiveBayesAlgorithm();
+  epsilon = EPSILON;
+  weight = WEIGHT;
 
   controls: {
-    weight: FormControl,
-    height: FormControl,
-    k: FormControl
+    epsilon: FormControl,
+    weight: FormControl
   } = {
+    epsilon: new FormControl(EPSILON.value,
+      [Validators.required, Validators.min(EPSILON.min), Validators.max(EPSILON.max), Validators.minLength(EPSILON.minLength), Validators.maxLength(EPSILON.maxLength)]),
     weight: new FormControl(WEIGHT.value,
-      [Validators.required, Validators.min(WEIGHT.min), Validators.max(WEIGHT.max), Validators.minLength(WEIGHT.minLength), Validators.maxLength(WEIGHT.maxLength)]),
-    k: new FormControl(K.value,
-      [Validators.required, Validators.min(K.min), Validators.max(K.max), Validators.minLength(K.minLength), Validators.maxLength(K.maxLength)]),
-    height: new FormControl(HEIGHT.value,
-      [Validators.required, Validators.min(HEIGHT.min), Validators.max(HEIGHT.max), Validators.minLength(HEIGHT.minLength), Validators.maxLength(HEIGHT.maxLength)]),
+      [Validators.required, Validators.min(WEIGHT.min), Validators.max(WEIGHT.max), Validators.minLength(WEIGHT.minLength), Validators.maxLength(WEIGHT.maxLength)])
   };
 
   form = new FormGroup({
     ...this.controls
   });
+
+  naiveBayes = new NaiveBayesAlgorithm();
 
   constructor(
     public readonly appService: AppService,
@@ -203,7 +203,7 @@ export class NaiveBayes implements OnInit {
 
     return from(tests).pipe(
       map((test: { label: string, text: string }) => {
-        this.naiveBayes.predict('', test.label, test.text);
+        this.naiveBayes.predict('', test.label, test.text, this.controls.epsilon.value, this.controls.weight.value);
         return this.naiveBayes.lastTest;
       }),
       catchError((err: any) => {
@@ -219,7 +219,7 @@ export class NaiveBayes implements OnInit {
 
     return this.http.get('data/test_negative.txt', { responseType: 'text' }).pipe(
       map((fileContent: string) => {
-        this.naiveBayes.predict('test_negative.txt', 'Negative', fileContent);
+        this.naiveBayes.predict('test_negative.txt', 'Negative', fileContent, this.controls.epsilon.value, this.controls.weight.value);
         return this.naiveBayes.lastTest;
       }),
       catchError((err: any) => {
@@ -235,7 +235,7 @@ export class NaiveBayes implements OnInit {
 
     return this.http.get('data/train_negative.txt', { responseType: 'text' }).pipe(
       map((fileContent: string) => {
-        this.naiveBayes.train('train_negative.txt', 'Negative', fileContent);
+        this.naiveBayes.train('train_negative.txt', 'Negative', fileContent, this.controls.epsilon.value, this.controls.weight.value);
         return this.naiveBayes.lastLog;
       }),
       catchError((err: any) => {
@@ -251,7 +251,7 @@ export class NaiveBayes implements OnInit {
 
     return this.http.get('data/test_positive.txt', { responseType: 'text' }).pipe(
       map((fileContent: string) => {
-        this.naiveBayes.predict('test_positive.txt', 'Positive', fileContent);
+        this.naiveBayes.predict('test_positive.txt', 'Positive', fileContent, this.controls.epsilon.value, this.controls.weight.value);
         return this.naiveBayes.lastTest;
       }),
       catchError((err: any) => {
@@ -267,7 +267,7 @@ export class NaiveBayes implements OnInit {
 
     return this.http.get('data/train_positive.txt', { responseType: 'text' }).pipe(
       map((fileContent: string) => {
-        this.naiveBayes.train('train_positive.txt', 'Positive', fileContent);
+        this.naiveBayes.train('train_positive.txt', 'Positive', fileContent, this.controls.epsilon.value, this.controls.weight.value);
         return this.naiveBayes.lastLog;
       }),
       catchError((err: any) => {
