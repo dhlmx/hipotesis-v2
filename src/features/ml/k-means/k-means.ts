@@ -1,5 +1,4 @@
-import { AfterViewInit, Component, ElementRef, inject, OnInit, PLATFORM_ID, ViewChild } from '@angular/core';
-import { isPlatformBrowser, JsonPipe } from '@angular/common';
+import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ConfirmationService, ConfirmEventType, MessageService } from 'primeng/api';
 import { Chart } from 'chart.js';
@@ -10,57 +9,39 @@ import { PrimeNgModule } from '../../../core/modules/prime-ng.module';
 
 // Services & Utilities
 import { AppService } from '../../../core/services/app.service';
-import { getFormArray, getFormControl, getFormGroupFromFormArray } from '../../../core/utilities/form';
+import { ChartService } from '../../../core/services/chart.service';
+import { getColor } from '../../../core/constants/color';
+import { getFormArray, getRangesFromFormArray } from '../../../core/utilities/form';
 import { PdfService } from '../../../core/services/pdf.service';
-import { randomMultidimensionalSeries } from '../../../core/utilities/array';
+import { randomMultidimensionalSeries } from '../../../core/utilities/random';
 
 // Interfaces & Models
-import { IRange } from '../../../core/interfaces/ml/irange';
+import { ICHART_LINE_DEFAULT } from '../../../core/interfaces/charts/ichart-line';
 import { KMeansAlgorithm } from '../../../core/models/ml/k-means-algorithm';
 
 // Enums & Constants
 import { APP_TITLE } from '../../../core/constants/general';
 import { AXES } from '../../../core/constants/math/math';
-import { CHART_K_MEANS, CHART_RMSE, DIMENSION, MAX, MIN, KMEANS, ITERATIONS, POINTS } from '../../../core/constants/ml/k-means/data';
+import { CHART_K_MEANS, CHART_K_MEANS_SOLUTION, CHART_RMSE, DIMENSION, ITERATIONS, K, POINTS, RANGE_MIN, RANGE_MAX } from '../../../core/constants/ml/k-means/data';
 
 @Component({
   selector: 'app-k-means',
   templateUrl: './k-means.html',
   styleUrl: './k-means.css',
-  providers: [FormBuilder],
+  providers: [FormBuilder, ChartService],
   imports: [CoreModule, PrimeNgModule],
 })
 export class KMeans implements OnInit, AfterViewInit {
   @ViewChild('kMeansCanvas', { static: false }) kMeansCanvas!: ElementRef<HTMLCanvasElement>;
+  @ViewChild('kMeansSolutionCanvas', { static: false }) kMeansSolutionCanvas!: ElementRef<HTMLCanvasElement>;
   @ViewChild('rmseCanvas', { static: false }) rmseCanvas!: ElementRef<HTMLCanvasElement>;
 
-  private readonly platformId = inject(PLATFORM_ID);
-  private readonly documentStyle = getComputedStyle(document.documentElement);
-  private textColor = '';
-  private textColorSecondary = '';
-  private surfaceBorder = '';
-
-  private chartKMeans = { ...CHART_K_MEANS };
-  private chartRMSE = { ...CHART_RMSE };
-  dPoints = POINTS;
-  dDimension = DIMENSION;
-  dMin = MIN;
-  dMax = MAX;
-  dKMeans = KMEANS;
-  dIterations = ITERATIONS;
-
+  private kMeansSetup = { ...CHART_K_MEANS };
+  private kMeansSolutionSetup = { ...CHART_K_MEANS_SOLUTION };
+  private rmseSetup = { ...ICHART_LINE_DEFAULT, ...CHART_RMSE };
   private kMeansChart!: Chart;
+  private kMeansSolutionChart!: Chart;
   private rmseChart!: Chart;
-  points: number[][] = [];
-  kMeans: KMeansAlgorithm = new KMeansAlgorithm();
-
-  rangesControls: {
-     min: FormControl,
-    max: FormControl
-  }[] = [];
-
-  rangesForm = new FormGroup({
-  });
 
   dataControls: {
     points: FormControl,
@@ -80,11 +61,11 @@ export class KMeans implements OnInit, AfterViewInit {
 
   modelControls: {
     k: FormControl,
-    maxOfIterations: FormControl
+    iterations: FormControl
   } = {
-    k: new FormControl(KMEANS.value,
-      [Validators.required, Validators.min(KMEANS.min), Validators.max(KMEANS.max), Validators.minLength(KMEANS.minLength), Validators.maxLength(KMEANS.maxLength)]),
-    maxOfIterations: new FormControl(ITERATIONS.value,
+    k: new FormControl(K.value,
+      [Validators.required, Validators.min(K.min), Validators.max(K.max), Validators.minLength(K.minLength), Validators.maxLength(K.maxLength)]),
+    iterations: new FormControl(ITERATIONS.value,
       [Validators.required, Validators.min(ITERATIONS.min), Validators.max(ITERATIONS.max), Validators.minLength(ITERATIONS.minLength), Validators.maxLength(ITERATIONS.maxLength)])
   };
 
@@ -92,8 +73,28 @@ export class KMeans implements OnInit, AfterViewInit {
     ...this.modelControls
   });
 
+  dDimension = DIMENSION;
+  dIterations = ITERATIONS;
+  dK = K;
+  dPoints = POINTS;
+  dRangeMin = RANGE_MIN;
+  dRangeMax = RANGE_MAX;
+
+  points: number[][] = [];
+  kMeans: KMeansAlgorithm = new KMeansAlgorithm();
+
+  rangesControls: {
+    min: FormControl,
+    max: FormControl
+  }[] = [];
+
+  rangesForm = new FormGroup({
+  });
+
+
   constructor(
     public readonly appService: AppService,
+    private readonly chartService: ChartService,
     private readonly confirmationService: ConfirmationService,
     private readonly messageService: MessageService,
     private readonly pdfService: PdfService,
@@ -101,31 +102,11 @@ export class KMeans implements OnInit, AfterViewInit {
   ) {
     this.appService.setTitle(APP_TITLE, 'K-Means');
     this.appService.process.start('Loading...');
-
-    if (isPlatformBrowser(this.platformId)) {
-      this.textColor = this.documentStyle.getPropertyValue('--p-text-color');
-      this.textColorSecondary = this.documentStyle.getPropertyValue('--p-text-muted-color');
-      this.surfaceBorder = this.documentStyle.getPropertyValue('--p-content-border-color');
-    } else {
-      this.textColor = '#000000';
-      this.textColorSecondary = '#000000';
-      this.surfaceBorder = '#000000';
-    }
-
-    this.chartKMeans.options.scales.x.ticks.color = this.textColorSecondary;
-    this.chartKMeans.options.scales.x.grid.color = this.surfaceBorder;
-    this.chartKMeans.options.scales.y.ticks.color = this.textColorSecondary;
-    this.chartKMeans.options.scales.y.grid.color = this.surfaceBorder;
-    this.chartKMeans.options.plugins.legend.labels.color = this.textColor;
-
-    this.chartRMSE.options.scales.x.ticks.color = this.textColorSecondary;
-    this.chartRMSE.options.scales.x.grid.color = this.surfaceBorder;
-    this.chartRMSE.options.scales.y.ticks.color = this.textColorSecondary;
-    this.chartRMSE.options.scales.y.grid.color = this.surfaceBorder;
-    this.chartRMSE.options.plugins.legend.labels.color = this.textColor;
+    this.appService.resetFile();
 
     window.addEventListener('resize', () => {
       this.kMeansChart.resize();
+      this.kMeansSolutionChart.resize();
       this.rmseChart.resize();
     });
 
@@ -137,8 +118,9 @@ export class KMeans implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    this.renderKMeansGraph();
-    this.renderRMSEGraph();
+    this.kMeansChart = this.chartService.render2D(this.kMeansCanvas, this.kMeansSetup);
+    this.kMeansSolutionChart = this.chartService.render2D(this.kMeansSolutionCanvas, this.kMeansSolutionSetup);
+    this.rmseChart = this.chartService.render2D(this.rmseCanvas, this.rmseSetup);
   }
 
   get fileURL(): string {
@@ -155,46 +137,47 @@ export class KMeans implements OnInit, AfterViewInit {
 
   getAxes = (dimension: number): string => dimension < 0 || dimension > 2 ? '' : `${AXES[dimension]}`;
 
-  onGenerateData = (): void => {
-    this.appService.process.start('Generating data...');
-    this.kMeans.reset();
+  getCentroidColor = (index: number): string => {
+    let color = '';
 
-    const ranges: IRange[] = [];
-
-    for (let i = 0; i < this.dataControls.dimensions.value; i++) {
-      const formGroup = getFormGroupFromFormArray(this.rangesForms, i);
-
-      if (formGroup !== null && formGroup instanceof FormGroup) {
-        const min = getFormControl(formGroup, 'min');
-        const max = getFormControl(formGroup, 'max');
-
-        if (min !== null && max !== null) {
-          ranges.push({
-            min: min.value,
-            max: max.value
-          });
-        }
-      }
+    switch (index) {
+      case 0:
+        color = getColor('Aqua');
+        break;
+      case 1:
+        color = getColor('Fuchsia');
+        break;
+      case 2:
+        color = getColor('Green');
+        break;
+      case 3:
+        color = getColor('Lime');
+        break;
+      case 4:
+        color = getColor('Maroon');
+        break;
+      case 5:
+        color = getColor('Olive');
+        break;
+      case 6:
+        color = getColor('Orange');
+        break;
+      case 7:
+        color = getColor('Purple');
+        break;
+      case 8:
+        color = getColor('Silver');
+        break;
+      case 9:
+        color = getColor('Teal');
+        break;
+      default:
+        color = getColor('Yellow');
+        break;
     }
 
-    this.points = randomMultidimensionalSeries(
-      2,
-      this.dataControls.points.value,
-      ranges,
-      false,
-      true
-    );
-
-    this.chartKMeans.data.datasets[0].data = this.points.map(point => ({ x: point[0], y: point[1] }));
-    this.chartKMeans.data.datasets[1].data = this.kMeans.centroids2D;
-    this.kMeansChart.update();
-
-    this.chartRMSE.data.labels = this.kMeans.logIterations;
-    this.chartRMSE.data.datasets[0].data = this.kMeans.logRMSEs;
-    this.rmseChart.update();
-
-    this.appService.process.stop();
-  };
+    return color;
+  }
 
   onChangeDimensions = (): void => {
     // this.buildRangesFormArray();
@@ -204,19 +187,92 @@ export class KMeans implements OnInit, AfterViewInit {
     this.appService.process.start('Training model...');
 
     this.kMeans = new KMeansAlgorithm();
-    this.kMeans.init(this.points, this.modelControls.k.value, this.modelControls.maxOfIterations.value);
+    this.kMeans.init(this.points, this.modelControls.k.value, this.modelControls.iterations.value);
     this.kMeans.solve();
 
-    this.chartKMeans.data.datasets[1].data = this.kMeans.centroids2D;
-    this.kMeansChart.update();
+    // K-Means Chart
+    this.chartService.removeDataSets(this.kMeansSolutionChart);
 
-    this.chartRMSE.data.labels = this.kMeans.logIterations;
-    this.chartRMSE.data.datasets[0].data = this.kMeans.logRMSEs;
+    this.kMeans.centroids.forEach((centroid, centroidIndex) => {
+      let centroidColor = this.getCentroidColor(centroidIndex);
+
+      // Centroid
+      this.chartService.addDataSet(this.kMeansSolutionChart, {
+        label: `K${centroidIndex + 1}`,
+        data: [this.chartService.toPointXY(centroid)],
+        backgroundColor: centroidColor,
+        borderColor: centroidColor,
+        pointRadius: 8,
+      });
+
+      // Allocations
+      this.chartService.addDataSet(this.kMeansSolutionChart, {
+        label: `Points to K${centroidIndex + 1}`,
+        data: this.kMeans.allocations.filter(a => a.nearestCentroid === centroidIndex).map(s => this.chartService.toPointXY(s.point)),
+        backgroundColor: getColor('Black'),
+        borderColor: centroidColor,
+        pointRadius: 4,
+      });
+    });
+
+    this.kMeansSolutionChart.update();
+
+    // RMSE Chart
+    this.rmseChart.data.labels = this.kMeans.logIterations;
+
+    this.chartService.removeDataSets(this.rmseChart);
+    this.chartService.addDataSet(this.rmseChart, {
+      label: 'RMSE vs Iterations',
+      data: this.kMeans.logRMSEs,
+      fill: false,
+      borderColor: getColor('Lime'), // '#66BB6A',
+      tension: 0.4
+    });
+
     this.rmseChart.update();
 
     this.appService.createDataJson(this.kMeans.info());
     this.appService.process.stop();
   }
+
+  onGenerateData = (): void => {
+    this.appService.process.start('Generating data...');
+    this.kMeans.reset();
+
+    this.points = randomMultidimensionalSeries(
+      this.dataControls.dimensions.value,
+      this.dataControls.points.value,
+      getRangesFromFormArray(this.rangesForms, this.dataControls.dimensions.value),
+      false,
+      true
+    );
+
+    this.chartService.removeDataSets(this.kMeansChart);
+    this.chartService.addDataSet(this.kMeansChart, {
+      label: 'Points',
+      data: this.chartService.toPointsXY(this.points),
+      backgroundColor: getColor('Black'),
+      borderColor: '#42A5F5',
+      pointRadius: 4,
+    });
+
+    this.kMeansChart.update();
+
+    this.rmseChart.data.labels = this.kMeans.logIterations;
+
+    this.chartService.removeDataSets(this.rmseChart);
+    this.chartService.addDataSet(this.rmseChart, {
+      label: 'RMSE vs Iterations',
+      data: this.kMeans.logRMSEs,
+      fill: false,
+      borderColor: '#66BB6A',
+      tension: 0.4
+    });
+
+    this.rmseChart.update();
+
+    this.appService.process.stop();
+  };
 
   onPrint = (): void => {
     this.appService.process.start('Printing...');
@@ -265,10 +321,10 @@ export class KMeans implements OnInit, AfterViewInit {
 
     for (let i = 0; i < this.dataControls.dimensions.value; i++) {
       this.rangesControls.push({
-        min: new FormControl(MIN.value,
-          [Validators.required, Validators.min(MIN.min), Validators.max(MIN.max), Validators.minLength(MIN.minLength), Validators.maxLength(MIN.maxLength)]),
-        max: new FormControl(MAX.value,
-          [Validators.required, Validators.min(MAX.min), Validators.max(MAX.max), Validators.minLength(MAX.minLength), Validators.maxLength(MAX.maxLength)])
+        min: new FormControl(RANGE_MIN.value,
+          [Validators.required, Validators.min(RANGE_MIN.min), Validators.max(RANGE_MIN.max), Validators.minLength(RANGE_MIN.minLength), Validators.maxLength(RANGE_MIN.maxLength)]),
+        max: new FormControl(RANGE_MAX.value,
+          [Validators.required, Validators.min(RANGE_MAX.min), Validators.max(RANGE_MAX.max), Validators.minLength(RANGE_MAX.minLength), Validators.maxLength(RANGE_MAX.maxLength)])
       });
 
       this.dataControls.ranges.push(
@@ -293,21 +349,5 @@ export class KMeans implements OnInit, AfterViewInit {
     });
 
     this.appService.process.stop();
-  }
-
-  private renderKMeansGraph = (): void => {
-    const kMeansContext = this.kMeansCanvas.nativeElement.getContext('2d');
-
-    if (kMeansContext) {
-      this.kMeansChart = new Chart(kMeansContext, { ...this.chartKMeans });
-    }
-  }
-
-  private renderRMSEGraph = (): void => {
-    const rmseContext = this.rmseCanvas.nativeElement.getContext('2d');
-
-    if (rmseContext) {
-      this.rmseChart = new Chart(rmseContext, { ...this.chartRMSE });
-    }
   }
 }

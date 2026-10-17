@@ -9,6 +9,8 @@ import { EPSILON, RARE_TOKEN_WEIGHT } from '../../constants/ml/naive-bayes/data'
 
 export class NaiveBayesAlgorithm {
   private readonly tokenizer: (text: string) => string[];
+
+  private readonly _stopWords: string[];
   private readonly _store: INaiveBayesStore = { labels: {}, tokens: {} };
   private readonly _trainings: INaiveBayesTraining[] = [];
   private readonly _tests: INaiveBayesTest[] = [];
@@ -19,8 +21,12 @@ export class NaiveBayesAlgorithm {
   weight = RARE_TOKEN_WEIGHT;
   isTrained = false;
 
-  constructor(tokenizer: (text: string) => string[] = simpleTokenizer) {
+  constructor(
+    stopWords: string[] = [],
+    tokenizer: (text: string) => string[] = simpleTokenizer
+  ) {
     this.tokenizer = tokenizer;
+    this._stopWords = stopWords;
   }
 
   get labels(): string[] {
@@ -123,7 +129,11 @@ export class NaiveBayesAlgorithm {
       const actualTokens = this.tokens.length,
             tokens = this.tokenizer(line);
 
-      tokens.forEach(token => this.incrementLabelTokenFrequency(token, label));
+      tokens.forEach(token => {
+        if (!this._stopWords.includes(token)) {
+          this.incrementLabelTokenFrequency(token, label)
+        }
+      });
 
       training.processedTokens += tokens.length;
       training.addedTokens += this.tokens.length - actualTokens;

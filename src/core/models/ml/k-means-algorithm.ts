@@ -1,27 +1,23 @@
+import { inject } from '@angular/core';
+import { random } from '../../utilities/random';
 import { IAllocation } from '../../interfaces/ml/iallocation';
 import { IKMeans } from '../../interfaces/ml/ik-means';
 import { IKMeansLog } from '../../interfaces/ml/ik-means-log';
-import { IPoint2D } from '../../interfaces/ml/ipoint-2d';
-import { IPoint3D } from '../../interfaces/ml/ipoint-3d';
 import { IRange } from '../../interfaces/ml/irange';
-import { distance, mean, random } from '../../utilities/math';
+import { distance, mean } from '../../utilities/math';
 
 export class KMeansAlgorithm {
   private _points: number[][] = [];
   private _kMeans: IKMeans = {} as IKMeans;
   private _kMeansByRange: IKMeans|null = null;
 
+  get allocations(): IAllocation[] {
+    return this._kMeans.allocations;
+  }
+
   get centroids(): number[][] {
     return this._kMeans.centroids
   };
-
-  get centroids2D(): IPoint2D[] {
-    return this.centroids.map(centroid => ({ x: centroid[0], y: centroid[1] }));
-  }
-
-  get centroids3D(): IPoint3D[] {
-    return this.centroids.map(centroid => ({ x: centroid[0], y: centroid[1], z: centroid[2] }));
-  }
 
   get error(): number {
     return this._kMeans.error;
@@ -45,14 +41,6 @@ export class KMeansAlgorithm {
 
   get points(): number[][] {
     return this._points;
-  }
-
-  get points2D(): IPoint2D[] {
-    return this._points.map(point => ({ x: point[0], y: point[1] }));
-  }
-
-  get points3D(): IPoint3D[] {
-    return this._points.map(point => ({ x: point[0], y: point[1], z: point[1] }));
   }
 
   info = (): IKMeans => this._kMeans;

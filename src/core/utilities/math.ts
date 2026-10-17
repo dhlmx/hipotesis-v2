@@ -1,5 +1,3 @@
-import { CryptoObject } from "../models/crypto/crypto-object";
-
 export const distance = (a: number[], b: number[]) => {
   if (a.length <= 1 || b.length <= 1) {
     throw new Error('Points a and b must have dimension at least 2.');
@@ -32,11 +30,6 @@ factorial = (nFactorial: number): number => {
 median = (series: number[]): number => series[Math.floor(series.length / 2)],
 
 mean = (series: number[]): number => (series.length === 0) ? 0 : sum(series) / series.length,
-
-random = (min: number, max: number, applyRounding: boolean=false): number => {
-  const rawRandom = min + (new CryptoObject()).random * (max - min);
-  return applyRounding ? Math.round(rawRandom) : rawRandom;
-},
 
 sum = (numbers: number[]): number => {
   return numbers.reduce((sum, val) => sum + val, 0);

@@ -5,13 +5,15 @@ import { KMeans } from './k-means/k-means';
 import { KNearestNeighbor } from './k-nearest-neighbor/k-nearest-neighbor';
 import { NaiveBayes } from './naive-bayes/naive-bayes';
 import { PolynomialRegression } from './polynomal-regression/polynomial-regression';
+import { SupportVectorMachine } from './support-vector-machine/support-vector-machine';
 
 const routes: Routes = [
-  { path: '', component: PolynomialRegression },
+  { path: '', component: KMeans },
   { path: 'km', component: KMeans },
   { path: 'knn', component: KNearestNeighbor },
   { path: 'nb', component: NaiveBayes },
-  { path: 'pr', component: PolynomialRegression }
+  { path: 'pr', component: PolynomialRegression },
+  { path: 'svm', component: SupportVectorMachine }
 ];
 
 @NgModule({

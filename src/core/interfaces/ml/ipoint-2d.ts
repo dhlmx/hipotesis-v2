@@ -1,4 +1,3 @@
 export interface IPoint2D {
-  x: number;
-  y: number;
+  xy: [{ x: number} , { y: number }]
 }

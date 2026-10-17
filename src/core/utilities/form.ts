@@ -1,4 +1,5 @@
 import { AbstractControl, FormArray, FormControl, FormGroup } from "@angular/forms";
+import { IRange } from "../interfaces/ml/irange";
 
 export const getFormArray = (form: FormGroup, formArrayName: string): FormArray<any> => {
   if (form.contains(formArrayName)) {
@@ -53,6 +54,28 @@ getFormGroupFromFormArray = (formArray: FormArray, formGroupIndex: number): Form
     }
   }
   return null;
+},
+
+getRangesFromFormArray = (rangesForms: FormArray, dimension: number) => {
+  const ranges: IRange[] = [];
+
+  for (let i = 0; i < dimension; i++) {
+    const formGroup = getFormGroupFromFormArray(rangesForms, i);
+
+    if (formGroup !== null && formGroup instanceof FormGroup) {
+      const min = getFormControl(formGroup, 'min');
+      const max = getFormControl(formGroup, 'max');
+
+      if (min !== null && max !== null) {
+        ranges.push({
+          min: min.value,
+          max: max.value
+        });
+      }
+    }
+  }
+
+  return [...ranges];
 },
 
 isFormArray = (abstractControl: AbstractControl): boolean => abstractControl instanceof FormArray,

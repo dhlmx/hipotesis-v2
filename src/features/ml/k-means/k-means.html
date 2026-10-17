@@ -92,12 +92,12 @@
                             <div>
                               <label pLabel for="minRange{{$index+1}}">Min</label><br />
                               <p-inputnumber   inputId="minRange{{$index+1}}" [formControl]="rangesControls[$index].min" mode="decimal" [showButtons]="true"
-                                [min]="dMin.min" [max]="dMin.max" [step]="dMin.step" />
+                                [min]="dRangeMin.min" [max]="dRangeMin.max" [step]="dRangeMin.step" />
                             </div>
                             <div>
                               <label pLabel for="maxRange{{$index+1}}">Max</label><br />
                               <p-inputnumber inputId="maxRange{{$index+1}}" [formControl]="rangesControls[$index].max" mode="decimal" [showButtons]="true"
-                                [min]="dMax.min" [max]="dMax.max" [step]="dMax.step" />
+                                [min]="dRangeMax.min" [max]="dRangeMax.max" [step]="dRangeMax.step" />
                             </div>
                           </p-fieldset>
                         </form>
@@ -116,13 +116,8 @@
               </form>
 
               <br />
-              <br />
 
               <div>
-                <p>Datos aleatorios generados para ser agrupados por medio del algoritmo K-Means.</p>
-                <br />
-                <p class="text-lg">Points + Centroids</p>
-                <p-divider></p-divider>
                 <canvas #kMeansCanvas></canvas>
               </div>
             </ng-template>
@@ -151,11 +146,13 @@
                   <div class="grid grid-cols-1 md:grid-cols-4">
                     <div>
                       <label pLabel for="k">K (Clusters)</label><br />
-                      <p-inputnumber [formControl]="modelControls.k" mode="decimal" [showButtons]="true" inputId="degree" [min]="2" [max]="100" [step]="1" />
+                      <p-inputnumber [formControl]="modelControls.k" mode="decimal" [showButtons]="true" inputId="k"
+                        [min]="dK.min" [max]="dK.max" [step]="dK.step" />
                     </div>
                     <div>
-                      <label pLabel for="maxOfIterations">Maximum of Iterations</label><br />
-                      <p-inputnumber [formControl]="modelControls.maxOfIterations" mode="decimal" [showButtons]="true" inputId="rate" [min]="1000" [max]="2000" [step]="1" />
+                      <label pLabel for="iterations">Maximum of Iterations</label><br />
+                      <p-inputnumber [formControl]="modelControls.iterations" mode="decimal" [showButtons]="true" inputId="rate"
+                        [min]="dIterations.min" [max]="dIterations.max" [step]="dIterations.step" />
                     </div>
                     <div>
                       <br />
@@ -167,10 +164,11 @@
               </form>
 
               <br />
-              <br />
-
               <div>
-                <p class="text-lg">K-Means RMSE (Root Mean Squared Error)</p>
+                <canvas #kMeansSolutionCanvas></canvas>
+              </div>
+              <br />
+              <div>
                 <p-divider></p-divider>
                 <canvas #rmseCanvas></canvas>
               </div>

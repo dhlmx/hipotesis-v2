@@ -5,15 +5,21 @@ import { MLRoutingModule } from './ml-routing.module';
 
 // Components
 import { KMeans } from './k-means/k-means';
+import { KNearestNeighbor } from './k-nearest-neighbor/k-nearest-neighbor';
+import { NaiveBayes } from './naive-bayes/naive-bayes';
 import { PolynomialRegression } from './polynomal-regression/polynomial-regression';
+import { SupportVectorMachine } from './support-vector-machine/support-vector-machine';
 
 @NgModule({
   declarations: [
   ],
   imports: [
     KMeans,
-    PolynomialRegression,
+    KNearestNeighbor,
+    NaiveBayes,
     NgOptimizedImage,
+    PolynomialRegression,
+    SupportVectorMachine,
     MLRoutingModule,
   ],providers: [
     NgxImageCompressService

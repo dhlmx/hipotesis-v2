@@ -66,6 +66,11 @@ export class MenuService {
               icon: PrimeIcons.CHART_LINE,
               label: 'Polynomial Regression',
               routerLink: '/ml/pr'
+            },
+            {
+              icon: PrimeIcons.CHART_SCATTER,
+              label: 'Support Vector Machine',
+              routerLink: '/ml/svm'
             }
           ]
         }

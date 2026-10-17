@@ -13,7 +13,7 @@ export const decomposeWord = (word: string, sort: boolean): string [] => {
 lineByLine = (text: string) => text.split(/\n/),
 
 simpleTokenizer = (text: string): string[] => text.toLowerCase()
-  .replace(/[^\wáéíóúñü]|_/gi, ' ')
+  .replace(/[^\wáéíóúñü]|[_\d]/gi, ' ')
   .replace(/\s{2}/g, ' ')
   .split(' ')
   .filter(word => word.length > 3)

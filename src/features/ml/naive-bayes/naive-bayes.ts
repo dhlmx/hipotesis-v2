@@ -21,12 +21,13 @@ import { NaiveBayesAlgorithm } from '../../../core/models/ml/naive-bayes-algorit
 // Enums & Constants
 import { APP_TITLE } from '../../../core/constants/general';
 import { CONTROL_EPSILON as EPSILON, CONTROL_RARE_TOKEN_WEIGHT as WEIGHT } from '../../../core/constants/ml/naive-bayes/data';
+import { CSVService } from '../../../core/services/csv.service';
 
 @Component({
   selector: 'app-naive-bayes',
   templateUrl: './naive-bayes.html',
   styleUrl: './naive-bayes.css',
-  providers: [HttpClient],
+  providers: [HttpClient, CSVService],
   imports: [CoreModule, PrimeNgModule],
 })
 export class NaiveBayes implements OnInit {
@@ -39,6 +40,7 @@ export class NaiveBayes implements OnInit {
 
   epsilon = EPSILON;
   weight = WEIGHT;
+  stopWords: string[] = [];
 
   controls: {
     epsilon: FormControl,
@@ -59,6 +61,7 @@ export class NaiveBayes implements OnInit {
   constructor(
     public readonly appService: AppService,
     private readonly confirmationService: ConfirmationService,
+    private readonly csvService: CSVService,
     private readonly messageService: MessageService,
     private readonly pdfService: PdfService
   ) {
@@ -191,7 +194,17 @@ export class NaiveBayes implements OnInit {
   // Private Methods
   private initialize = (): void => {
     this.appService.process.start('Loading initial data...');
-    this.appService.process.stop();
+
+    this.csvService.loadWords('data/stopwords.txt').subscribe({
+      next: (stopWords: string[]) => {
+        this.stopWords = stopWords;
+        console.info('stopWords', stopWords);
+      },
+      complete: () => {
+        this.naiveBayes = new NaiveBayesAlgorithm(this.stopWords);
+        this.appService.process.stop();
+      }
+    });
   }
 
   private readonly manualTest = (): Observable<INaiveBayesTest> => {

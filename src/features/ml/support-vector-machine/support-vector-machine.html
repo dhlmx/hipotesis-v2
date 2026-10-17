@@ -1,0 +1,288 @@
+<p-panel>
+  <ng-template pTemplate="header">
+    <div>
+      <span class="pi pi-home"></span>&nbsp;Inicio&nbsp;&mdash;&rsaquo;&nbsp;
+      <span class="pi pi-microchip-ai"></span>&nbsp;Machine Learning&nbsp;&mdash;&rsaquo;&nbsp;
+      <span class="pi pi-chart-scatter"></span>&nbsp;Support Vector Machine
+    </div>
+  </ng-template>
+
+  <ng-template pTemplate="icons">
+    <div>
+      <button type="button" pButton title="Results"
+        class="p-button-outlined p-button-success">
+        <em class="pi pi-download"></em>
+        <a [href]="fileURL" download="resultados.json" aria-label="Download results">
+          {{fileSize}}
+        </a>
+      </button>
+      <button type="button" pButton (click)="onPrint()" title="Print" class="p-button-outlined p-button-success">
+        <em class="pi pi-print"></em>
+      </button>
+    </div>
+  </ng-template>
+
+  <ng-template  pTemplate="body">
+    <p-divider></p-divider>
+    <div id="htmlContent">
+      <!-- Problem -->
+      <div class="grid grid-cols-1 md:grid-cols-6">
+        <div></div>
+        <div class="md:col-span-4">
+          <p-card>
+            <ng-template pTemplate="header">
+              <p class="font-semibold text-2xl"><span class="pi pi-arrows-alt"></span>&nbsp;Planteamiento</p>
+              <p-divider></p-divider>
+            </ng-template>
+
+            <ng-template pTemplate="body">
+              <p>El algoritmo Support Vector Machine, SVM, es un clasificador que a través de cálculos matemáticos avanzados y complejos intenta crear líneas que separen geométricamente cada clase identificada de las demás, dentro de un conjunto de dayos determinado. El algoritmo utiliza un margen de separación entre las clases separadas por líneas, ese parámetro se llama margen, identificado por w. Existen otros parámetros adicionales de configuración.</p>
+              <br />
+              <p>Por su método geométrico de clasificación, es un método algo limitado, pero muy útil para casos binarios, donde las mediciones pueden distinguirse claramente desde un punto de vista geométrico.</p>
+              <br />
+              <p>Al tener un entrenamiento con datos previamente etiquetados, se trata de un método de clasificación o predicción de datos en el aprendizaje supervisado.</p>
+              <br />
+              <p>Existen diferentes variantes del SVM, entre los que destacan el Support Vector Machine con kernel lineal, Support Vector Machine con kernel polinomial, Support Vector Machine con kernel radial y Support Vector Machine con kernel sigmoidal, entre otros.</p>
+            </ng-template>
+
+            <ng-template pTemplate="footer">
+              <p-divider></p-divider>
+            </ng-template>
+          </p-card>
+        </div>
+        <div></div>
+      </div>
+
+      <!-- Data -->
+      <div class="grid grid-cols-1 md:grid-cols-6">
+        <div></div>
+        <div class="md:col-span-4">
+          <p-card>
+            <ng-template pTemplate="header">
+              <p class="font-semibold text-2xl"><span class="pi pi-copy"></span>&nbsp;Datos</p>
+              <p-divider></p-divider>
+            </ng-template>
+
+            <ng-template pTemplate="body">
+              <div>
+                <p>Los datos de entrada fueron obtenidos de nuestra fuente de estudio y referencia. En este caso se trata de una serie de mediciones de sepáculos y pétalos de la flor de iris.</p>
+                <br />
+                <p>Se trata de la longitud y ancho de los sepáculos (1D, 2D) y pétalos (3D, 4D), respectivamente, de la flor de iris, todas medidas en centímetros. En total, tenemos cuatro dimensiones, y cada conjunto de mediciones  están asociado a la especie que le corresponde, de tres especies distintas: Setosa, Versicolor y Virginica. La especie es la "etiqueta" o "clase" de cada conjunto de datos.</p>
+              </div>
+              <br />
+
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <canvas #sepalLengthCanvas></canvas>
+                </div>
+                <div>
+                  <canvas #sepalWidthCanvas></canvas>
+                </div>
+              </div>
+
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <canvas #petalLengthCanvas></canvas>
+                </div>
+                <div>
+                  <canvas #petalWidthCanvas></canvas>
+                </div>
+              </div>
+
+            </ng-template>
+
+            <ng-template pTemplate="footer">
+              <p-divider></p-divider>
+            </ng-template>
+          </p-card>
+        </div>
+        <div></div>
+      </div>
+
+      <!-- Solution -->
+      <div class="grid grid-cols-1 md:grid-cols-6">
+        <div></div>
+        <div class="md:col-span-4">
+          <p-card>
+            <ng-template pTemplate="header">
+              <p class="font-semibold text-2xl"><span class="pi pi-check-circle"></span>&nbsp;Solución</p>
+              <p-divider></p-divider>
+            </ng-template>
+
+            <ng-template pTemplate="body">
+              <form [formGroup]="form">
+                <p-fieldset legend="Naive Bayes Classifier">
+                  <div>
+                    <br />
+                    <p>El entrenamiento del modelo lo estamos realizando suministrando los datos de las mediciones (en 1D, 2D, 3D y 4D) y la etiqueta de la especie correspondiente.</p>
+                    <br />
+                    <p>Posteriormente, se procede a suminstrar solamente las mediciones, de acuerdo al número de dimensiones que se haya utilizado en el entrenamiento: 1D, 2D, 3D o 4D. De esa manera, el algoritmo predice la especie correspondiente.</p>
+                    <br />
+                    <p>Finalmente, realizamos una serie de cálculos para medir la eficiencia alcanzada por el algoritmo.</p>
+                    <br />
+                  </div>
+                  <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div>
+                      <label pLabel for="epsilon">Epsilon</label><br />
+                      <p-inputnumber [formControl]="controls.epsilon" mode="decimal" [showButtons]="true" inputId="epsilon"
+                        [min]="epsilon.min" [max]="epsilon.max" [step]="epsilon.step" [minFractionDigits]="2" [maxFractionDigits]="2" fluid />
+                    </div>
+                    <div>
+                      <label pLabel for="weight">Rare Token Weight</label><br />
+                      <p-inputnumber [formControl]="controls.weight" mode="decimal" [showButtons]="true" inputId="weight"
+                        [min]="weight.min" [max]="weight.max" [step]="weight.step" [maxFractionDigits]="0" fluid />
+                    </div>
+                    <div>
+                      <br />
+                      <button pButton type="button" label="Train" title="Train" [disabled]="form.invalid" (click)="onTrain()" class="p-button-outlined p-button-info w-full"></button>
+                    </div>
+                    <div>
+                      <br />
+                      <button pButton type="button" label="Predict" title="Predict" [disabled]="form.invalid" (click)="onPredict(false)" class="p-button-outlined p-button-info w-full"></button>
+                    </div>
+                  </div>
+                </p-fieldset>
+              </form>
+
+              <br />
+
+              <!-- Naive Bayes Classifier -->
+              <!--
+              @if (naiveBayes.trainings.length > 0) {
+                <div class="grid grid-cols-1">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th colspan="7" class="text-lg">
+                          Naive Bayes Classifier
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr class="text-center text-lg">
+                        <td colspan="7">
+                          Trainings
+                        </td>
+                      </tr>
+                      <tr class="text-center">
+                        <td class="width-10">
+                          Id
+                        </td>
+                        <td class="width-15">
+                          Filename
+                        </td>
+                        <td class="width-15">
+                          Label
+                        </td>
+                        <td colspan="2" class="width-30">
+                          Lines
+                        </td>
+                        <td class="width-15">
+                          Processed Tokens
+                        </td>
+                        <td class="width-15">
+                          Added Tokens
+                        </td>
+                      </tr>
+                      @for (training of naiveBayes.trainings; track $index) {
+                        <tr class="text-center">
+                          <td>{{ $index + 1 }}</td>
+                          <td>{{ training.filename }}</td>
+                          <td>{{ training.label }}</td>
+                          <td colspan="2" class="text-right">{{ training.lines | number:'1.0-0' }}</td>
+                          <td class="text-right">{{ training.processedTokens| number:'1.0-0' }}</td>
+                          <td class="text-right">{{ training.addedTokens | number:'1.0-0' }}</td>
+                        </tr>
+                      }
+                      @if (naiveBayes.tests.length > 0) {
+                        <tr class="text-center text-lg">
+                          <td colspan="7">
+                            Tests
+                          </td>
+                        </tr>
+                        <tr class="text-center">
+                          <td>Id</td>
+                          <td>Filename</td>
+                          <td>Label</td>
+                          <td class="text-right">Total</td>
+                          <td class="text-right">Correct</td>
+                          <td class="text-right">Incorrect</td>
+                          <td class="text-right">Efficiency</td>
+                        </tr>
+                        @for (test of naiveBayes.tests; track $index) {
+                          @if (!$last) {
+                            <tr class="text-center">
+                              <td>{{ $index + 1 }}</td>
+                              <td>{{ test.filename }}</td>
+                              <td>{{ test.label }}</td>
+                              <td class="text-right">{{ test.total | number:'1.0-0' }}</td>
+                              <td class="text-right">{{ test.correct | number:'1.0-0' }}</td>
+                              <td class="text-right">{{ test.incorrect | number:'1.0-0' }}</td>
+                              <td class="text-right">{{ test.efficiency | number:'1.2-2' }}&nbsp;%</td>
+                            </tr>
+                          } @else {
+                            <tr class="text-center">
+                              <td colspan="3">Totals</td>
+                              <td class="text-right">{{ test.total | number:'1.0-0' }}</td>
+                              <td class="text-right">{{ test.correct | number:'1.0-0' }}</td>
+                              <td class="text-right">{{ test.incorrect | number:'1.0-0' }}</td>
+                              <td class="text-right">{{ test.efficiency | number:'1.2-2' }}&nbsp;%</td>
+                            </tr>
+                          }
+                        }
+                      }
+                    </tbody>
+                  </table>
+                </div>
+              }
+              -->
+            </ng-template>
+
+            <ng-template pTemplate="footer">
+              <p-divider></p-divider>
+            </ng-template>
+          </p-card>
+        </div>
+        <div></div>
+      </div>
+    </div>
+  </ng-template>
+
+  <ng-template pTemplate="footer">
+    <div class="grid grid-cols-1 md:grid-cols-6">
+      <div></div>
+      <div class="md:col-span-4">
+        <p-card>
+          <ng-template pTemplate="header">
+            <p class="font-semibold text-2xl"><span class="pi pi-paperclip"></span>&nbsp;Referencias</p>
+            <p-divider></p-divider>
+          </ng-template>
+
+          <ng-template pTemplate="body">
+            <div>
+              <p><span class="text-italic">Support Vector Machine.</span>
+                <br />Kaber, Burak,&nbsp;<span class="text-italic">Hands-On Machine Learning with JavaScript.</span>
+                <br />Pps: 156-164. Packt Publishing Ltd. Birmingham, UK. 2018.
+              </p>
+            </div>
+          </ng-template>
+
+          <ng-template pTemplate="footer">
+            <p-divider></p-divider>
+          </ng-template>
+        </p-card>
+      </div>
+      <div></div>
+    </div>
+  </ng-template>
+
+  <p-confirmDialog [style]="{width: '50vw'}" [baseZIndex]="10000" rejectButtonStyleClass="p-button-text"></p-confirmDialog>
+  <p-toast></p-toast>
+</p-panel>
+
+<app-message-modal
+  [visible]="appService.process.isInProcess()"
+  [message]="appService.process.message()"
+  [advance]="appService.process.advance()"
+  [steps]="appService.process.steps()">
+</app-message-modal>
