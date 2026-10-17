@@ -14,8 +14,9 @@
       "prefix": "app",
       "architect": {
         "build": {
-          "builder": "@angular/build:application",
+          "builder": "@angular-builders/custom-esbuild:application",
           "options": {
+            "plugins": ["./esbuild-plugin.js"],
             "browser": "src/main.ts",
             "tsConfig": "tsconfig.app.json",
             "assets": [

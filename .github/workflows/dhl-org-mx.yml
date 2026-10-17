@@ -26,9 +26,6 @@ jobs:
       - name: Angular installation
         run: npm install --global @angular/cli@21.2.13
 
-      - name: Worker Threads installation
-        run: npm install --save worker_threads
-
       - name: Dependencies installation
         run: npm install
 
