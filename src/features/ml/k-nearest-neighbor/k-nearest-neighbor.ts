@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, inject, OnInit, PLATFORM_ID, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { isPlatformBrowser, } from '@angular/common';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ConfirmationService, ConfirmEventType, MessageService } from 'primeng/api';
@@ -10,36 +10,33 @@ import { PrimeNgModule } from '../../../core/modules/prime-ng.module';
 
 // Services & Utilities
 import { AppService } from '../../../core/services/app.service';
+import { ChartService } from '../../../core/services/chart.service';
 import { PdfService } from '../../../core/services/pdf.service';
+import { getColor } from '../../../core/constants/color';
 
 // Interfaces & Models
+import { ChartHelper } from '../../../core/models/chart/chart-helper';
 import { IFormControl } from '../../../core/interfaces/iform-control';
 import { IPerson } from '../../../core/interfaces/ml/iperson';
 import { KNearestNeighborAlgorithm } from '../../../core/models/ml/k-nearest-neighbor-algorithm';
 
 // Enums & Constants
 import { APP_TITLE } from '../../../core/constants/general';
-import { K, K_NEAREST_NEIGHBOR_CHART, HEIGHT, PERSONS, WEIGHT } from '../../../core/constants/ml/k-nearest-neighbor/data';
+import { K, HEIGHT, PERSONS, WEIGHT } from '../../../core/constants/ml/k-nearest-neighbor/data';
 
 @Component({
   selector: 'app-k-nearest-neighbor',
   templateUrl: './k-nearest-neighbor.html',
   styleUrl: './k-nearest-neighbor.css',
-  providers: [],
+  providers: [ChartService],
   imports: [CoreModule, PrimeNgModule],
 })
-export class KNearestNeighbor implements OnInit, AfterViewInit {
-  @ViewChild('kNNCanvas', { static: false }) kNNCanvas!: ElementRef<HTMLCanvasElement>;
-
-  private readonly platformId = inject(PLATFORM_ID);
-  private readonly documentStyle = getComputedStyle(document.documentElement);
-  private textColor = '';
-  private textColorSecondary = '';
-  private surfaceBorder = '';
+export class KNearestNeighbor implements OnInit, AfterViewInit, OnDestroy {
+  @ViewChild('knnCanvas', { static: false }) knnCanvas!: ElementRef<HTMLCanvasElement>;
 
   private readonly persons: IPerson[] = PERSONS;
-  private knnSetup = { ...K_NEAREST_NEIGHBOR_CHART };
-  private kNNChart!: Chart;
+  private readonly knnSetup = new ChartHelper('scatter');
+  private knnChart!: Chart;
 
   height: IFormControl = { ...HEIGHT };
   k: IFormControl = { ...K };
@@ -65,31 +62,17 @@ export class KNearestNeighbor implements OnInit, AfterViewInit {
 
   constructor(
     public readonly appService: AppService,
+    private readonly chartService: ChartService,
     private readonly confirmationService: ConfirmationService,
     private readonly messageService: MessageService,
     private readonly pdfService: PdfService
   ) {
     this.appService.setTitle(APP_TITLE, 'K-Nearest Neighbor');
     this.appService.process.start('Loading...');
-
-    if (isPlatformBrowser(this.platformId)) {
-      this.textColor = this.documentStyle.getPropertyValue('--p-text-color');
-      this.textColorSecondary = this.documentStyle.getPropertyValue('--p-text-muted-color');
-      this.surfaceBorder = this.documentStyle.getPropertyValue('--p-content-border-color');
-    } else {
-      this.textColor = '#000000';
-      this.textColorSecondary = '#000000';
-      this.surfaceBorder = '#000000';
-    }
-
-    this.knnSetup.options.scales.x.ticks.color = this.textColorSecondary;
-    this.knnSetup.options.scales.x.grid.color = this.surfaceBorder;
-    this.knnSetup.options.scales.y.ticks.color = this.textColorSecondary;
-    this.knnSetup.options.scales.y.grid.color = this.surfaceBorder;
-    this.knnSetup.options.plugins.legend.labels.color = this.textColor;
+    this.appService.resetFile();
 
     window.addEventListener('resize', () => {
-      this.kNNChart.resize();
+      this.knnChart.resize();
     });
 
     this.appService.process.stop();
@@ -100,7 +83,35 @@ export class KNearestNeighbor implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    this.renderKNNGraph();
+    this.appService.process.start('Loading data...');
+
+    this.knnChart = this.chartService.render2D(this.knnCanvas, this.knnSetup);
+
+    this.knnChart.data.labels = this.labels;
+
+    this.chartService.addDataset(this.knnChart, {
+      label: 'Female',
+      data: this.women,
+      backgroundColor: getColor('Black'),
+      borderColor: getColor('Aqua'),
+      pointRadius: 4
+    });
+
+    this.chartService.addDataset(this.knnChart, {
+      label: 'Male',
+      data: this.men,
+      backgroundColor: getColor('Black'),
+      borderColor: getColor('Orange'),
+      pointRadius: 4
+    });
+
+    this.knnChart.update();
+
+    this.appService.process.stop();
+  }
+
+  ngOnDestroy(): void {
+    this.knnChart.destroy();
   }
 
   get data(): number[][] {
@@ -181,18 +192,8 @@ export class KNearestNeighbor implements OnInit, AfterViewInit {
   private initialize = (): void => {
     this.appService.process.start('Loading initial data...');
 
-    this.knnSetup.data.labels = this.labels;
-    this.knnSetup.data.datasets[0].data = this.women;
-    this.knnSetup.data.datasets[1].data = this.men;
+    // TODO
 
     this.appService.process.stop();
-  }
-
-  private renderKNNGraph = (): void => {
-    const kNNContext = this.kNNCanvas.nativeElement.getContext('2d');
-
-    if (kNNContext) {
-      this.kNNChart = new Chart(kNNContext, { ...this.knnSetup });
-    }
   }
 }

@@ -6,6 +6,7 @@ import { CSVService } from './csv.service';
 
 // Models & Interfaces & Types
 import { IIRIS, IIris } from '../interfaces/ml/iiris';
+import { randomSeries } from '../utilities/random';
 type IrisSpecie = 'Iris-setosa' | 'Iris-versicolor' | 'Iris-virginica';
 
 @Injectable({
@@ -41,7 +42,6 @@ export class IrisService {
     return this._iris.map((iris: IIris) => [iris.sepalLengthCm, iris.sepalWidthCm, iris.petalLengthCm, iris.petalWidthCm]);
   }
 
-
   get specimens(): IIris[] {
     return this._iris;
   }
@@ -49,7 +49,6 @@ export class IrisService {
   get petalLengths(): number[] {
     return this._iris.map((iris: IIris) => iris.petalLengthCm);
   }
-
   get petalWidths(): number[] {
     return this._iris.map((iris: IIris) => iris.petalWidthCm);
   }
@@ -73,6 +72,14 @@ export class IrisService {
   getNumber3D = (index: number): number[][] => [[this._iris[index].sepalLengthCm, this._iris[index].sepalWidthCm, this._iris[index].petalLengthCm]];
 
   getNumber4D = (index: number): number[][] => [[this._iris[index].sepalLengthCm, this._iris[index].sepalWidthCm, this._iris[index].petalLengthCm, this._iris[index].petalWidthCm]];
+
+  getRandomSample = (size: number): { train: IIris[], test: IIris[] } => {
+    const indexes: number[] = randomSeries(size, 0, this._iris.length - 1, false, true);
+    return {
+      train: this._iris.filter(iris => !indexes.includes(iris.id)),
+      test: this._iris.filter(iris => indexes.includes(iris.id))
+    };
+  }
 
   getSpecies = (index: number): string => this._iris[index].species;
 

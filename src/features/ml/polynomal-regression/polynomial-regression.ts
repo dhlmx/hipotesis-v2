@@ -1,5 +1,4 @@
-import { AfterViewInit, Component, ElementRef, inject, OnInit, PLATFORM_ID, ViewChild } from '@angular/core';
-import { isPlatformBrowser } from '@angular/common';
+import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ConfirmationService, ConfirmEventType, MessageService } from 'primeng/api';
 import { Chart } from 'chart.js';
@@ -11,41 +10,37 @@ import { PrimeNgModule } from '../../../core/modules/prime-ng.module';
 
 // Services
 import { AppService } from '../../../core/services/app.service';
+import { ChartService } from '../../../core/services/chart.service';
 import { PdfService } from '../../../core/services/pdf.service';
 
 // Interfaces & Models
+import { ChartHelper } from '../../../core/models/chart/chart-helper';
 
 // Enums & Constants
 import { APP_TITLE } from '../../../core/constants/general';
-import { CHART_FX, CHART_LOSS, CHART_PROBLEM, XS, YS, ZS } from '../../../core/constants/ml/polynomail-regression/data';
+import { XS, YS, ZS } from '../../../core/constants/ml/polynomail-regression/data';
+import { IDataset } from '../../../core/interfaces/charts/idataset';
+import { IAxisTitle } from '../../../core/interfaces/charts/iaxis-title';
 
 @Component({
   selector: 'app-polynomial-regression',
   templateUrl: './polynomial-regression.html',
   styleUrl: './polynomial-regression.css',
-  providers: [],
+  providers: [ChartService],
   imports: [CoreModule, PrimeNgModule],
 })
-export class PolynomialRegression implements OnInit, AfterViewInit {
+export class PolynomialRegression implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('versusCanvas', { static: false }) versusCanvas!: ElementRef<HTMLCanvasElement>;
   @ViewChild('lossCanvas', { static: false }) lossCanvas!: ElementRef<HTMLCanvasElement>;
   @ViewChild('fxCanvas', { static: false }) fxCanvas!: ElementRef<HTMLCanvasElement>;
 
+  private readonly versusSetup = new ChartHelper('line');
+  private readonly lossSetup = new ChartHelper('line');
+  private readonly fxSetup = new ChartHelper('line');
+
   versusChart!: Chart;
   lossChart!: Chart;
   fxChart!: Chart;
-
-  versusSetup: any = { ...CHART_PROBLEM };
-  lossSetup: any = { ...CHART_LOSS };
-  fxSetup: any = { ...CHART_FX };
-
-  chartOptions: any = {};
-
-  readonly platformId = inject(PLATFORM_ID);
-  readonly documentStyle = getComputedStyle(document.documentElement);
-  textColor = '';
-  textColorSecondary = '';
-  surfaceBorder = '';
 
   // Polynomial Model
   optimizer: tf.AdamOptimizer;
@@ -71,42 +66,16 @@ export class PolynomialRegression implements OnInit, AfterViewInit {
 
   constructor(
     public readonly appService: AppService,
+    private readonly chartService: ChartService,
     private readonly confirmationService: ConfirmationService,
     private readonly messageService: MessageService,
     private readonly pdfService: PdfService
   ) {
     this.appService.setTitle(APP_TITLE, 'Polynomial Regression');
     this.appService.process.start('Loading...');
+    this.appService.resetFile();
 
-    if (isPlatformBrowser(this.platformId)) {
-      this.textColor = this.documentStyle.getPropertyValue('--p-text-color');
-      this.textColorSecondary = this.documentStyle.getPropertyValue('--p-text-muted-color');
-      this.surfaceBorder = this.documentStyle.getPropertyValue('--p-content-border-color');
-    } else {
-      this.textColor = '#000000';
-      this.textColorSecondary = '#000000';
-      this.surfaceBorder = '#000000';
-    }
-
-    this.versusSetup.options.plugins.legend.labels.color = this.textColor;
-    this.versusSetup.options.scales.x.ticks.color = this.textColorSecondary;
-    this.versusSetup.options.scales.x.grid.color = this.surfaceBorder;
-    this.versusSetup.options.scales.y.ticks.color = this.textColorSecondary;
-    this.versusSetup.options.scales.y.grid.color = this.surfaceBorder;
-
-    this.lossSetup.options.plugins.legend.labels.color = this.textColor;
-    this.lossSetup.options.scales.x.ticks.color = this.textColorSecondary;
-    this.lossSetup.options.scales.x.grid.color = this.surfaceBorder;
-    this.lossSetup.options.scales.y.ticks.color = this.textColorSecondary;
-    this.lossSetup.options.scales.y.grid.color = this.surfaceBorder;
-
-    this.fxSetup.options.plugins.legend.labels.color = this.textColor;
-    this.fxSetup.options.scales.x.ticks.color = this.textColorSecondary;
-    this.fxSetup.options.scales.x.grid.color = this.surfaceBorder;
-    this.fxSetup.options.scales.y.ticks.color = this.textColorSecondary;
-    this.fxSetup.options.scales.y.grid.color = this.surfaceBorder;
-
-    this.optimizer = tf.train.adam(this.controls.learningRate.value);
+    this.setCharts();
 
     window.addEventListener('resize', () => {
       this.versusChart.resize();
@@ -114,6 +83,7 @@ export class PolynomialRegression implements OnInit, AfterViewInit {
       this.fxChart.resize();
     });
 
+    this.optimizer = tf.train.adam(this.controls.learningRate.value);
     this.appService.process.stop();
   }
 
@@ -122,9 +92,15 @@ export class PolynomialRegression implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    this.renderVersusGraph();
-    this.renderLossGraph();
-    this.renderFxGraph();
+    this.versusChart = this.chartService.render2D(this.versusCanvas, this.versusSetup);
+    this.lossChart = this.chartService.render2D(this.lossCanvas, this.lossSetup);
+    this.fxChart = this.chartService.render2D(this.fxCanvas, this.fxSetup);
+  }
+
+  ngOnDestroy(): void {
+    this.versusChart.destroy();
+    this.lossChart.destroy();
+    this.fxChart.destroy();
   }
 
   onPrint = (): void => {
@@ -165,12 +141,12 @@ export class PolynomialRegression implements OnInit, AfterViewInit {
     });
   }
 
-  onTrain(): void {
+  onRun = (): void => {
     this.appService.process.start('Training model...');
 
     setTimeout(() => {
       this.optimizer = tf.train.adam(this.controls.learningRate.value);
-      this.train(this.controls.trainingIterations.value);
+      this.run(this.controls.trainingIterations.value);
       this.updateData();
       this.lossChart.update();
       this.fxChart.update();
@@ -178,7 +154,8 @@ export class PolynomialRegression implements OnInit, AfterViewInit {
     }, 1000);
   }
 
-  private initialize = (): void => {
+  // Private Methods
+  private readonly initialize = (): void => {
     this.appService.process.start('Loading initial data...');
 
     XS.dataSync().forEach((value: number) => {
@@ -186,19 +163,19 @@ export class PolynomialRegression implements OnInit, AfterViewInit {
     });
 
     YS.dataSync().forEach((value: number) => {
-      this.versusSetup.data.datasets[0].data.push(value);
+      (this.versusSetup.data.datasets[0].data as number[]).push(value);
     });
 
     ZS.dataSync().forEach((value: number) => {
-      this.versusSetup.data.datasets[1].data.push(value);
+      (this.versusSetup.data.datasets[1].data as number[]).push(value);
     });
 
     this.appService.process.stop();
   }
 
-  private getLoss = (prediction: tf.Tensor, label: tf.Tensor): tf.Scalar => prediction.sub(label).square().mean();
+  private readonly getLoss = (prediction: tf.Tensor, label: tf.Tensor): tf.Scalar => prediction.sub(label).square().mean();
 
-  private getPolynomialRegression = (x: tf.Tensor, weights: Array<tf.Variable>): tf.Tensor => {
+  private readonly getPolynomialRegression = (x: tf.Tensor, weights: Array<tf.Variable>): tf.Tensor => {
     const tfs: Array<tf.Tensor> = [];
 
     weights.forEach((w, i) => {
@@ -214,41 +191,68 @@ export class PolynomialRegression implements OnInit, AfterViewInit {
     return tfs.reduce((a, b) => a.add(b), tf.scalar(0));
   }
 
-  private getSecureRandom = (): number => {
+  private readonly getSecureRandom = (): number => {
     const randomValue = new Uint32Array(1);
     crypto.getRandomValues(randomValue);
     return randomValue[0] / 0x100000000;
   }
 
-  private getWeights = (degree: number, variable: tf.Variable): Array<tf.Variable> => {
+  private readonly getWeights = (degree: number, variable: tf.Variable): Array<tf.Variable> => {
     return Array.from({ length: degree + 1 }, () => variable);
   }
 
-  private renderFxGraph = (): void => {
-    const fxContext = this.fxCanvas.nativeElement.getContext('2d');
+  private readonly setCharts = (): void => {
+    this.versusSetup.addDataset({
+      label: 'Sin(x)',
+      data: [] as number[],
+      fill: false,
+      borderColor: '#42A5F5',
+      tension: 0.4
+    } as IDataset);
 
-    if (fxContext) {
-      this.fxChart = new Chart(fxContext, this.fxSetup);
-    }
+    this.versusSetup.addDataset({
+      label: 'Sin(x) + Noise',
+      data: [] as number[],
+      fill: false,
+      borderColor: '#FFA726',
+      tension: 0.4
+    } as IDataset);
+
+    this.versusSetup.setXTitle({ text: 'Radians' } as IAxisTitle);
+    this.versusSetup.setYTitle({ text: 'Sin(x), Sin(x) + Noise' } as IAxisTitle);
+
+    this.lossSetup.addDataset({
+      label: 'Loss',
+      data: [] as number[],
+      fill: true,
+      borderColor: '#66BB6A',
+      tension: 0.4
+    } as IDataset);
+
+    this.lossSetup.setXTitle({ text: 'Iterations' } as IAxisTitle);
+    this.lossSetup.setYTitle({ text: 'Loss' } as IAxisTitle);
+
+    this.fxSetup.addDataset({
+      label: 'Sin(x)',
+      data: [] as number[],
+      fill: false,
+      borderColor: '#42A5F5',
+      tension: 0.4
+    } as IDataset);
+
+    this.fxSetup.addDataset({
+      label: 'F(x)',
+      data: [] as number[],
+      fill: false,
+      borderColor: '#FFA726',
+      tension: 0.4
+    } as IDataset);
+
+    this.versusSetup.setXTitle({ text: 'Radians' } as IAxisTitle);
+    this.versusSetup.setYTitle({ text: 'Sin(x), F(x)' } as IAxisTitle);
   }
 
-  private renderLossGraph = (): void => {
-    const lossContext = this.lossCanvas.nativeElement.getContext('2d');
-
-    if (lossContext) {
-      this.lossChart = new Chart(lossContext, this.lossSetup);
-    }
-  }
-
-  private renderVersusGraph = (): void => {
-    const versusContext = this.versusCanvas.nativeElement.getContext('2d');
-
-    if (versusContext) {
-      this.versusChart = new Chart(versusContext, this.versusSetup);
-    }
-  }
-
-  private train = (iterations: number) => {
+  private readonly run = (iterations: number) => {
     this.losses = [];
     this.predictions = [];
 
@@ -265,13 +269,13 @@ export class PolynomialRegression implements OnInit, AfterViewInit {
     }
   };
 
-  private updateData = (): void => {
+  private readonly updateData = (): void => {
     this.lossSetup.data.labels = [];
     this.lossSetup.data.datasets[0].data = [];
 
     this.losses.forEach((loss, index) => {
       this.lossSetup.data.labels.push((index + 1).toString());
-      this.lossSetup.data.datasets[0].data.push(Number(loss));
+      (this.lossSetup.data.datasets[0].data as number[]).push(Number(loss));
     });
 
     this.fxSetup.data.labels = this.versusSetup.data.labels;
@@ -279,7 +283,7 @@ export class PolynomialRegression implements OnInit, AfterViewInit {
     this.fxSetup.data.datasets[1].data = [];
 
     this.predictions.forEach((prediction) => {
-      this.fxSetup.data.datasets[1].data.push(Number(prediction));
+      (this.fxSetup.data.datasets[1].data as number[]).push(Number(prediction));
     });
   }
 }

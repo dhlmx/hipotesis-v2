@@ -1,5 +1,4 @@
-import { Component, inject, OnInit, PLATFORM_ID } from '@angular/core';
-import { isPlatformBrowser, } from '@angular/common';
+import { Component, inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { catchError, forkJoin, from, map, Observable, of } from 'rxjs';
@@ -11,6 +10,8 @@ import { PrimeNgModule } from '../../../core/modules/prime-ng.module';
 
 // Services & Utilities
 import { AppService } from '../../../core/services/app.service';
+import { ChartService } from '../../../core/services/chart.service';
+import { CSVService } from '../../../core/services/csv.service';
 import { PdfService } from '../../../core/services/pdf.service';
 
 // Interfaces & Models
@@ -21,22 +22,16 @@ import { NaiveBayesAlgorithm } from '../../../core/models/ml/naive-bayes-algorit
 // Enums & Constants
 import { APP_TITLE } from '../../../core/constants/general';
 import { CONTROL_EPSILON as EPSILON, CONTROL_RARE_TOKEN_WEIGHT as WEIGHT } from '../../../core/constants/ml/naive-bayes/data';
-import { CSVService } from '../../../core/services/csv.service';
 
 @Component({
   selector: 'app-naive-bayes',
   templateUrl: './naive-bayes.html',
   styleUrl: './naive-bayes.css',
-  providers: [HttpClient, CSVService],
+  providers: [ChartService, CSVService, HttpClient],
   imports: [CoreModule, PrimeNgModule],
 })
 export class NaiveBayes implements OnInit {
   private readonly http = inject(HttpClient);
-  private readonly platformId = inject(PLATFORM_ID);
-  private readonly documentStyle = getComputedStyle(document.documentElement);
-  private textColor = '';
-  private textColorSecondary = '';
-  private surfaceBorder = '';
 
   epsilon = EPSILON;
   weight = WEIGHT;
@@ -60,25 +55,14 @@ export class NaiveBayes implements OnInit {
 
   constructor(
     public readonly appService: AppService,
+    private readonly chartService: ChartService,
     private readonly confirmationService: ConfirmationService,
     private readonly csvService: CSVService,
     private readonly messageService: MessageService,
     private readonly pdfService: PdfService
   ) {
     this.appService.setTitle(APP_TITLE, 'Naive-Bayes Classifier');
-    this.appService.process.start('Loading...');
-
-    if (isPlatformBrowser(this.platformId)) {
-      this.textColor = this.documentStyle.getPropertyValue('--p-text-color');
-      this.textColorSecondary = this.documentStyle.getPropertyValue('--p-text-muted-color');
-      this.surfaceBorder = this.documentStyle.getPropertyValue('--p-content-border-color');
-    } else {
-      this.textColor = '#000000';
-      this.textColorSecondary = '#000000';
-      this.surfaceBorder = '#000000';
-    }
-
-    this.appService.process.stop();
+    this.appService.resetFile();
   }
 
   ngOnInit(): void {
@@ -198,7 +182,6 @@ export class NaiveBayes implements OnInit {
     this.csvService.loadWords('data/stopwords.txt').subscribe({
       next: (stopWords: string[]) => {
         this.stopWords = stopWords;
-        console.info('stopWords', stopWords);
       },
       complete: () => {
         this.naiveBayes = new NaiveBayesAlgorithm(this.stopWords);

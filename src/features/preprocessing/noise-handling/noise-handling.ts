@@ -1,5 +1,4 @@
-import { AfterViewInit, Component, ElementRef, inject, OnInit, PLATFORM_ID, ViewChild } from '@angular/core';
-import { isPlatformBrowser } from '@angular/common';
+import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ConfirmationService, ConfirmEventType, MessageService } from 'primeng/api';
 import { Chart } from 'chart.js';
@@ -11,11 +10,12 @@ import { PrimeNgModule } from '../../../core/modules/prime-ng.module';
 
 // Services
 import { AppService } from '../../../core/services/app.service';
+import { ChartService } from '../../../core/services/chart.service';
 import { PdfService } from '../../../core/services/pdf.service';
 
 // Interfaces & Models
-import { IChartData } from '../../../core/interfaces/charts/ichart-data';
 import { IDayValue } from '../../../core/interfaces/preprocessing/iday-value';
+import { ChartHelper } from '../../../core/models/chart/chart-helper';
 
 // Enums & Constants
 import { APP_TITLE } from '../../../core/constants/general';
@@ -25,7 +25,7 @@ import { XS, YS, ZS } from '../../../core/constants/ml/polynomail-regression/dat
   selector: 'app-noise-handling',
   templateUrl: './noise-handling.html',
   styleUrl: './noise-handling.css',
-  providers: [],
+  providers: [ChartService],
   imports: [CoreModule, PrimeNgModule],
 })
 export class NoiseHandling implements OnInit, AfterViewInit {
@@ -36,13 +36,10 @@ export class NoiseHandling implements OnInit, AfterViewInit {
   versusChart!: Chart;
   lossChart!: Chart;
   fxChart!: Chart;
-  chartOptions: any = {};
 
-  readonly platformId = inject(PLATFORM_ID);
-  readonly documentStyle = getComputedStyle(document.documentElement);
-  textColor = '';
-  textColorSecondary = '';
-  surfaceBorder = '';
+  versusSetup = new ChartHelper('line');
+  lossSetup = new ChartHelper('line');
+  fxSetup = new ChartHelper('line');
 
   // Polynomial Model
   optimizer: tf.AdamOptimizer;
@@ -66,109 +63,16 @@ export class NoiseHandling implements OnInit, AfterViewInit {
     ...this.controls
   });
 
-  readonly data: IChartData = {
-    labels: [],
-    datasets: [
-      {
-        label: 'Sin(x)',
-        data: [],
-        fill: false,
-        borderColor: '#42A5F5',
-        tension: this.controls.graphTension.value
-      },
-      {
-        label: 'Sin(x) + Noise',
-        data: [],
-        fill: false,
-        borderColor: '#FFA726',
-        tension: this.controls.graphTension.value
-      }
-    ]
-  };
-
-  readonly lossData: IChartData = {
-    labels: [],
-    datasets: [
-      {
-        label: 'Loss',
-        data: [],
-        fill: true,
-        borderColor: '#66BB6A',
-        tension: this.controls.graphTension.value
-      }
-    ]
-  };
-
-  readonly fxData: IChartData = {
-    labels: [],
-    datasets: [
-      {
-        label: 'Sin(x)',
-        data: [],
-        fill: false,
-        borderColor: '#42A5F5',
-        tension: this.controls.graphTension.value
-      },
-      {
-        label: 'F(x)',
-        data: [],
-        fill: false,
-        borderColor: '#FFA726',
-        tension: this.controls.graphTension.value
-      }
-    ]
-  };
 
   constructor(
     public readonly appService: AppService,
+    private readonly chartService: ChartService,
     private readonly confirmationService: ConfirmationService,
     private readonly messageService: MessageService,
     private readonly pdfService: PdfService
   ) {
     this.appService.setTitle(APP_TITLE, 'ML - Polynomial Regression');
-
-    if (isPlatformBrowser(this.platformId)) {
-      this.textColor = this.documentStyle.getPropertyValue('--p-text-color');
-      this.textColorSecondary = this.documentStyle.getPropertyValue('--p-text-muted-color');
-      this.surfaceBorder = this.documentStyle.getPropertyValue('--p-content-border-color');
-    } else {
-      this.textColor = '#000000';
-      this.textColorSecondary = '#000000';
-      this.surfaceBorder = '#000000';
-    }
-
-    this.chartOptions = {
-      responsive: true,
-      aspectRatio: 2,
-      maintainAspectRatio: true,
-      plugins: {
-        legend: {
-          labels: {
-            color: this.textColor
-          }
-        }
-      },
-      scales: {
-        x: {
-            ticks: {
-              color: this.textColorSecondary
-            },
-            grid: {
-              color: this.surfaceBorder,
-              drawBorder: false
-            }
-          },
-          y: {
-            ticks: {
-              color: this.textColorSecondary
-            },
-            grid: {
-              color: this.surfaceBorder,
-              drawBorder: false
-            }
-          }
-      }
-    };
+    this.appService.resetFile();
 
     this.optimizer = tf.train.adam(this.controls.learningRate.value);
 
@@ -184,9 +88,76 @@ export class NoiseHandling implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    this.renderVersusGraph();
-    this.renderLossGraph();
-    this.renderFxGraph();
+    this.versusSetup.addDataset({
+      label: 'Sin(x)',
+      data: [],
+      backgroundColor: '#42A5F5',
+      borderColor: '#42A5F5',
+      borderWidth: 2,
+      fill: false,
+      pointBackgroundColor: '#42A5F5',
+      pointRadius: 3,
+      pointStyle: 'circle',
+      showLine: false,
+      tension: this.controls.graphTension.value
+    });
+
+    this.versusSetup.addDataset({
+      label: 'Sin(x) + Noise',
+      data: [],
+      backgroundColor: '#FFA726',
+      borderColor: '#FFA726',
+      borderWidth: 2,
+      fill: false,
+      pointBackgroundColor: '#FFA726',
+      pointRadius: 3,
+      pointStyle: 'circle',
+      tension: this.controls.graphTension.value
+    });
+
+    this.lossSetup.addDataset({
+      label: 'Loss',
+      data: [],
+      backgroundColor: '#66BB6A',
+      borderColor: '#66BB6A',
+      borderWidth: 2,
+      fill: false,
+      pointBackgroundColor: '#66BB6A',
+      pointRadius: 3,
+      pointStyle: 'circle',
+      showLine: false,
+      tension: this.controls.graphTension.value
+    });
+
+    this.fxSetup.addDataset({
+      label: 'Sin(x)',
+      data: [],
+      backgroundColor: '#42A5F5',
+      borderColor: '#42A5F5',
+      borderWidth: 2,
+      fill: false,
+      pointBackgroundColor: '#42A5F5',
+      pointRadius: 3,
+      pointStyle: 'circle',
+      tension: this.controls.graphTension.value
+    });
+
+    this.fxSetup.addDataset({
+      label: 'F(x)',
+      data: [],
+      backgroundColor: '#FFA726',
+      borderColor: '#FFA726',
+      borderWidth: 2,
+      fill: false,
+      pointBackgroundColor: '#FFA726',
+      pointRadius: 3,
+      pointStyle: 'circle',
+      tension: this.controls.graphTension.value
+    });
+
+    this.chartService.render2D(this.versusCanvas, this.versusSetup);
+    this.chartService.render2D(this.lossCanvas, this.lossSetup);
+    this.chartService.render2D(this.fxCanvas, this.fxSetup);
   }
 
   onPrint = (): void => {
@@ -243,17 +214,20 @@ export class NoiseHandling implements OnInit, AfterViewInit {
   private initialize = (): void => {
     this.appService.process.start('Loading initial data...');
 
+    /*
     XS.dataSync().forEach((value: number) => {
-      this.data.labels.push(value.toFixed(2));
+      let val = value.toFixed(2);
+      this.versusSetup.data.labels.push(val);
     });
 
     YS.dataSync().forEach((value: number) => {
-      this.data.datasets[0].data.push(value);
+      this.versusSetup.data.datasets[0].data.push(value.toFixed(2));
     });
 
     ZS.dataSync().forEach((value: number) => {
-      this.data.datasets[1].data.push(value);
+      this.versusSetup.data.datasets[1].data.push(value);
     });
+    */
 
     this.appService.process.stop();
   }
@@ -286,41 +260,6 @@ export class NoiseHandling implements OnInit, AfterViewInit {
     return Array.from({ length: degree + 1 }, () => variable);
   }
 
-  private renderFxGraph = (): void => {
-    const fxContext = this.fxCanvas.nativeElement.getContext('2d');
-
-    if (fxContext) {
-      this.fxChart = new Chart(fxContext, {
-        type: 'line',
-        data: this.fxData,
-        options: this.chartOptions
-      });
-    }
-  }
-
-  private renderLossGraph = (): void => {
-    const lossContext = this.lossCanvas.nativeElement.getContext('2d');
-
-    if (lossContext) {
-      this.lossChart = new Chart(lossContext, {
-        type: 'line',
-        data: this.lossData,
-        options: this.chartOptions
-      });
-    }
-  }
-
-  private renderVersusGraph = (): void => {
-    const versusContext = this.versusCanvas.nativeElement.getContext('2d');
-
-    if (versusContext) {
-      this.versusChart = new Chart(versusContext, {
-        type: 'line',
-        data: this.data,
-        options: this.chartOptions
-      });
-    }
-  }
 
   private train = (iterations: number) => {
     this.losses = [];
@@ -369,20 +308,22 @@ export class NoiseHandling implements OnInit, AfterViewInit {
   }
 
   private updateData = (): void => {
-    this.lossData.labels = [];
-    this.lossData.datasets[0].data = [];
+    this.lossChart.data.labels = [];
+    this.lossChart.data.datasets[0].data = [];
 
+    /*
     this.losses.forEach((loss, index) => {
-      this.lossData.labels.push((index + 1).toString());
-      this.lossData.datasets[0].data.push(Number(loss));
+      this.lossChart.data.labels.push((index + 1).toString());
+      this.lossChart.data.datasets[0].data.push(Number(loss));
     });
 
-    this.fxData.labels = this.data.labels;
-    this.fxData.datasets[0].data = this.data.datasets[1].data;
-    this.fxData.datasets[1].data = [];
+    this.fxChart.data.labels = this.data.labels;
+    this.fxChart.data.datasets[0].data = this.data.datasets[1].data;
+    this.fxChart.data.datasets[1].data = [];
 
     this.predictions.forEach((prediction) => {
       this.fxData.datasets[1].data.push(Number(prediction));
     });
+    */
   }
 }

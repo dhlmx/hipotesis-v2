@@ -2,6 +2,7 @@ import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angula
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { ConfirmationService, ConfirmEventType, MessageService } from 'primeng/api';
+import { Chart } from 'chart.js';
 import { SVM } from '@kanaries/ml';
 
 // Modules
@@ -11,18 +12,19 @@ import { PrimeNgModule } from '../../../core/modules/prime-ng.module';
 // Services & Utilities
 import { AppService } from '../../../core/services/app.service';
 import { ChartService } from '../../../core/services/chart.service';
-import { CSVService } from '../../../core/services/csv.service';
 import { IrisService } from '../../../core/services/iris.service';
 import { PdfService } from '../../../core/services/pdf.service';
 
 // Interfaces & Models
+import { ChartHelper } from '../../../core/models/chart/chart-helper';
+import { IIris } from '../../../core/interfaces/ml/iiris';
 
 // Enums & Constants
 import { APP_TITLE } from '../../../core/constants/general';
 import { CONTROL_EPSILON as EPSILON, CONTROL_RARE_TOKEN_WEIGHT as WEIGHT } from '../../../core/constants/ml/naive-bayes/data';
-import { Chart } from 'chart.js';
-import { SEPAL_LENGTH, SEPAL_WIDTH, PETAL_LENGTH, PETAL_WIDTH } from '../../../core/constants/ml/support-vector-machine/data';
-import { ICHART_LINE_DEFAULT } from '../../../core/interfaces/charts/ichart-line';
+import { PETAL_LENGTH, PETAL_WIDTH, SEPAL_LENGTH, SEPAL_WIDTH } from '../../../core/constants/ml/support-vector-machine/data';
+import { ITitle } from '../../../core/interfaces/charts/ititle';
+import { IAxisTitle } from '../../../core/interfaces/charts/iaxis-title';
 
 
 @Component({
@@ -38,10 +40,10 @@ export class SupportVectorMachine implements OnInit, AfterViewInit {
   @ViewChild('petalLengthCanvas', { static: false }) petalLengthCanvas!: ElementRef<HTMLCanvasElement>;
   @ViewChild('petalWidthCanvas', { static: false }) petalWidthCanvas!: ElementRef<HTMLCanvasElement>;
 
-  private readonly sepalLengthSetup = { ...ICHART_LINE_DEFAULT, ...SEPAL_LENGTH };
-  private readonly sepalWidthSetup = { ...ICHART_LINE_DEFAULT, ...SEPAL_WIDTH };
-  private readonly petalLengthSetup = { ...ICHART_LINE_DEFAULT, ...PETAL_LENGTH };
-  private readonly petalWidthSetup = { ...ICHART_LINE_DEFAULT, ...PETAL_WIDTH };
+  private readonly sepalLength = new ChartHelper('line');
+  private readonly sepalWidth = new ChartHelper('line');
+  private readonly petalLength = new ChartHelper('line');
+  private readonly petalWidth = new ChartHelper('line');
 
   private sepalLengthChart!: Chart;
   private sepalWidthChart!: Chart;
@@ -66,6 +68,11 @@ export class SupportVectorMachine implements OnInit, AfterViewInit {
   weight = WEIGHT;
   svm = new SVM.LinearSVR({ C: 1, epsilon: 0, maxIter: 1000, randomState: 0 });
 
+  randomSample: any = {
+    train: [] as IIris[],
+    test: [] as IIris[]
+  };
+
   constructor(
     public readonly appService: AppService,
     private readonly chartService: ChartService,
@@ -74,8 +81,12 @@ export class SupportVectorMachine implements OnInit, AfterViewInit {
     private readonly messageService: MessageService,
     private readonly pdfService: PdfService
   ) {
+    console.info('contructor()...');
     this.appService.setTitle(APP_TITLE, 'Support Vector Machine');
+    this.appService.process.start('Loading...');
     this.appService.resetFile();
+
+    this.setCharts();
 
     window.addEventListener('resize', () => {
       this.sepalLengthChart.resize();
@@ -86,51 +97,51 @@ export class SupportVectorMachine implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
+    console.info('ngOnInit...');
     this.initialize();
   }
 
   ngAfterViewInit(): void {
-    this.appService.process.start('Loading initial data...');
+    this.appService.process.start('Loading graphical data...');
 
-    this.sepalLengthChart = this.chartService.render2D(this.sepalLengthCanvas, this.sepalLengthSetup);
-    this.sepalWidthChart = this.chartService.render2D(this.sepalWidthCanvas, this.sepalWidthSetup);
-    this.petalLengthChart = this.chartService.render2D(this.petalLengthCanvas, this.petalLengthSetup);
-    this.petalWidthChart = this.chartService.render2D(this.petalWidthCanvas, this.petalWidthSetup);
+    console.info('ngAfeterViewInit...');
 
     this.iris.load('data/iris.csv').subscribe({
       next: () => {
+        this.sepalLengthChart = this.chartService.render2D(this.sepalLengthCanvas, this.sepalLength.toObject());
+        this.sepalWidthChart = this.chartService.render2D(this.sepalWidthCanvas, this.sepalWidth.toObject());
+        this.petalLengthChart = this.chartService.render2D(this.petalLengthCanvas, this.petalLength.toObject());
+        this.petalWidthChart = this.chartService.render2D(this.petalWidthCanvas, this.petalWidth.toObject());
       },
       complete: () => {
-        this.sepalLengthChart.data.datasets[0].data = this.iris.getSepalLengthBySpecie('Iris-setosa');
-        this.sepalLengthChart.data.datasets[1].data = this.iris.getSepalLengthBySpecie('Iris-versicolor');
-        this.sepalLengthChart.data.datasets[2].data = this.iris.getSepalLengthBySpecie('Iris-virginica');
-        this.sepalLengthChart.data.labels = this.iris.labels;
+        this.sepalLength.setLabels(this.iris.labels.map(label => label.toString()));
+        this.sepalLength.addDataset(SEPAL_LENGTH.setosa.dataset, this.iris.getSepalLengthBySpecie('Iris-setosa'));
+        this.sepalLength.addDataset(SEPAL_LENGTH.versicolor.dataset, this.iris.getSepalLengthBySpecie('Iris-versicolor'));
+        this.sepalLength.addDataset(SEPAL_LENGTH.virginica.dataset, this.iris.getSepalLengthBySpecie('Iris-virginica'));
         this.sepalLengthChart.update();
 
-        this.sepalWidthChart.data.datasets[0].data = this.iris.getSepalWidthBySpecie('Iris-setosa');
-        this.sepalWidthChart.data.datasets[1].data = this.iris.getSepalWidthBySpecie('Iris-versicolor');
-        this.sepalWidthChart.data.datasets[2].data = this.iris.getSepalWidthBySpecie('Iris-virginica');
-        this.sepalWidthChart.data.labels = this.iris.labels;
+        this.sepalWidth.setLabels(this.iris.labels.map(label => label.toString()));
+        this.sepalWidth.addDataset(SEPAL_WIDTH.setosa.dataset, this.iris.getSepalWidthBySpecie('Iris-setosa'));
+        this.sepalWidth.addDataset(SEPAL_WIDTH.versicolor.dataset, this.iris.getSepalWidthBySpecie('Iris-versicolor'));
+        this.sepalWidth.addDataset(SEPAL_WIDTH.virginica.dataset, this.iris.getSepalWidthBySpecie('Iris-virginica'));
         this.sepalWidthChart.update();
 
-        this.petalLengthChart.data.datasets[0].data = this.iris.getPetalLengthBySpecie('Iris-setosa');
-        this.petalLengthChart.data.datasets[1].data = this.iris.getPetalLengthBySpecie('Iris-versicolor');
-        this.petalLengthChart.data.datasets[2].data = this.iris.getPetalLengthBySpecie('Iris-virginica');
-        this.petalLengthChart.data.labels = this.iris.labels;
+        this.petalLength.setLabels(this.iris.labels.map(label => label.toString()));
+        this.petalLength.addDataset(PETAL_LENGTH.setosa.dataset, this.iris.getPetalLengthBySpecie('Iris-setosa'));
+        this.petalLength.addDataset(PETAL_LENGTH.versicolor.dataset, this.iris.getPetalLengthBySpecie('Iris-versicolor'));
+        this.petalLength.addDataset(PETAL_LENGTH.virginica.dataset, this.iris.getPetalLengthBySpecie('Iris-virginica'));
         this.petalLengthChart.update();
 
-        this.petalWidthChart.data.datasets[0].data = this.iris.getPetalWidthBySpecie('Iris-setosa');
-        this.petalWidthChart.data.datasets[1].data = this.iris.getPetalWidthBySpecie('Iris-versicolor');
-        this.petalWidthChart.data.datasets[2].data = this.iris.getPetalWidthBySpecie('Iris-virginica');
-        this.petalWidthChart.data.labels = this.iris.labels;
+        this.petalWidth.setLabels(this.iris.labels.map(label => label.toString()));
+        this.petalWidth.addDataset(PETAL_WIDTH.setosa.dataset, this.iris.getPetalWidthBySpecie('Iris-setosa'));
+        this.petalWidth.addDataset(PETAL_WIDTH.versicolor.dataset, this.iris.getPetalWidthBySpecie('Iris-versicolor'));
+        this.petalWidth.addDataset(PETAL_WIDTH.virginica.dataset, this.iris.getPetalWidthBySpecie('Iris-virginica'));
         this.petalWidthChart.update();
 
-        this.svm.fit(this.iris.numbers4D, this.iris.labels);
+        this.randomSample = this.iris.getRandomSample(15);
         this.appService.process.stop();
       }
     });
-
-    this.appService.process.stop();
   }
 
   get fileURL(): string {
@@ -191,36 +202,30 @@ export class SupportVectorMachine implements OnInit, AfterViewInit {
 
   onTrain(): void {
     this.appService.process.start('Training...');
-
-    this.iris.load('data/iris.csv').subscribe({
-      next: () => {
-      },
-      complete: () => {
-        setTimeout(() => {
-          this.sepalLengthChart.data.datasets[0].data = this.iris.sepalLengths;
-          this.sepalLengthChart.data.labels = this.iris.labels;
-          this.sepalLengthChart.update();
-
-          this.sepalWidthChart.data.datasets[0].data = this.iris.sepalWidths;
-          this.sepalWidthChart.data.labels = this.iris.labels;
-          this.sepalWidthChart.update();
-
-          this.petalLengthChart.data.datasets[0].data = this.iris.petalLengths;
-          this.petalLengthChart.data.labels = this.iris.labels;
-          this.petalLengthChart.update();
-
-          this.petalWidthChart.data.datasets[0].data = this.iris.petalWidths;
-          this.petalWidthChart.data.labels = this.iris.labels;
-          this.petalWidthChart.update();
-
-          this.svm.fit(this.iris.numbers4D, this.iris.labels);
-          this.appService.process.stop();
-        }, 2000);
-      }
-    });
+    this.svm.fit(this.iris.numbers4D, this.iris.labels);
+    this.appService.process.stop();
   }
 
   // Private Methods
   private readonly initialize = (): void => {
+    // TODO
   }
+
+  private readonly setCharts = (): void => {
+    this.sepalLength.setTitle({ text: 'Sepal Length by Species', font: { size: 22 } } as ITitle);
+    this.sepalLength.setXTitle({ text: 'Measurements' } as IAxisTitle);
+    this.sepalLength.setYTitle({ text: 'Length (cm)' } as IAxisTitle);
+
+    this.sepalWidth.setTitle({ text: 'Sepal Width by Species', font: { size: 22 } } as ITitle);
+    this.sepalWidth.setXTitle({ text: 'Measurements' } as IAxisTitle);
+    this.sepalWidth.setYTitle({ text: 'Width (cm)' } as IAxisTitle);
+
+    this.petalLength.setTitle({ text: 'Petal Length by Species', font: { size: 22 } } as ITitle);
+    this.petalLength.setXTitle({ text: 'Measurements' } as IAxisTitle);
+    this.petalLength.setYTitle({ text: 'Length (cm)' } as IAxisTitle);
+
+    this.petalWidth.setTitle({ text: 'Petal Width by Species', font: { size: 22 } } as ITitle);
+    this.petalWidth.setXTitle({ text: 'Measurements' } as IAxisTitle);
+    this.petalWidth.setYTitle({ text: 'Width (cm)' } as IAxisTitle);
+  };
 }

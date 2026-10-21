@@ -1,10 +1,10 @@
 import { Component, inject, Input, OnChanges, OnInit, PLATFORM_ID, SimpleChanges } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { PrimeNgModule } from '../../../modules/prime-ng.module';
+import { IData } from '../../../interfaces/charts/idata';
+import { IOptions } from '../../../interfaces/charts/ioptions';
 
 // Interfaces & Models
-import { IChartData } from '../../../interfaces/charts/ichart-data';
-import { IChartOptions } from '../../../interfaces/charts/ichart-options';
 
 @Component({
   selector: 'app-line-chart',
@@ -20,8 +20,8 @@ export class LineChart implements OnChanges, OnInit {
   textColorSecondary = '';
   surfaceBorder = '';
 
-  @Input()data: IChartData = {} as IChartData;
-  public options: IChartOptions = {} as IChartOptions;
+  @Input()data: IData = {} as IData;
+  public options: IOptions = {} as IOptions;
 
   constructor() {
     if (isPlatformBrowser(this.platformId)) {
@@ -43,6 +43,7 @@ export class LineChart implements OnChanges, OnInit {
   }
 
   initChart() {
+    /*
     if (isPlatformBrowser(this.platformId)) {
       this.options = {
         maintainAspectRatio: false,
@@ -57,7 +58,8 @@ export class LineChart implements OnChanges, OnInit {
         scales: {
           x: {
               ticks: {
-                color: this.textColorSecondary
+                color: this.textColorSecondary,
+
               },
               grid: {
                 color: this.surfaceBorder,
@@ -76,5 +78,6 @@ export class LineChart implements OnChanges, OnInit {
         }
       };
     }
+      */
   }
 }

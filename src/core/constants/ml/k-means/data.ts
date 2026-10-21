@@ -1,10 +1,8 @@
-import { ICHART_SCATTER_DEFAULT } from '../../../interfaces/charts/ichart-scatter';
 import { IFormControl } from '../../../interfaces/iform-control';
 import { randomPredefinedColor } from '../../../utilities/random';
 
 // Chart.js
 export const CHART_K_MEANS: any = {
-  ...ICHART_SCATTER_DEFAULT,
   data: {
     labels: [],
     datasets: []
@@ -25,7 +23,7 @@ export const CHART_K_MEANS: any = {
         }
       },
       subtitle: {
-        display: true,
+        display: false,
         text: 'Random Data',
         font: {
           size: 12
@@ -71,7 +69,6 @@ export const CHART_K_MEANS: any = {
 },
 
 CHART_K_MEANS_SOLUTION: any = {
-  ...ICHART_SCATTER_DEFAULT,
   data: {
     labels: [],
     datasets: []
@@ -138,7 +135,6 @@ CHART_K_MEANS_SOLUTION: any = {
 },
 
 CHART_RMSE: any = {
-  ...ICHART_SCATTER_DEFAULT,
   type: 'line',
   data: {
     labels: [],

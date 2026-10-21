@@ -9,8 +9,7 @@ import { IPointXYZ } from '../interfaces/ml/ipoint-xyz';
 })
 export class ChartService {
   private readonly _documentStyle = getComputedStyle(document.documentElement);
-  private readonly platformId = inject(PLATFORM_ID);
-  private readonly _platformId: any;
+  private readonly _platformId = inject(PLATFORM_ID);
   private readonly _textColor: string;
   private readonly _textColorSecondary: string;
   private readonly _surfaceBorder: string;
@@ -21,9 +20,9 @@ export class ChartService {
       this._textColorSecondary = this._documentStyle.getPropertyValue('--p-text-muted-color');
       this._surfaceBorder = this._documentStyle.getPropertyValue('--p-content-border-color');
     } else {
-      this._textColor = 'darkgray';
-      this._textColorSecondary = 'darkgray';
-      this._surfaceBorder = 'darkgray';
+      this._textColor = '#ffffff';
+      this._textColorSecondary = '#a1a1aa';
+      this._surfaceBorder = '#3f3f46';
     }
   }
 
@@ -39,9 +38,47 @@ export class ChartService {
     return this._surfaceBorder;
   }
 
-  addDataSet = (chart: Chart, dataSet: any): void => {
-    chart.data.datasets.push(dataSet);
+  addDataset = (chart: Chart, dataset: any, data?: any[]): void => {
+    if (data) {
+      dataset.data = data;
+    }
+
+    chart.data.datasets.push({ ...dataset });
   };
+
+  removeDataset = (chart: Chart, dataSetIndex: number): void => {
+    if (dataSetIndex >= 0 && dataSetIndex < chart.data.datasets.length) {
+    chart.data.datasets.splice(dataSetIndex, 1);
+    }
+  };
+
+  removeDatasets = (chart: Chart): void => {
+    chart.data.datasets = [];
+  };
+
+  render2D = (canvas: ElementRef<HTMLCanvasElement>, configuration: any): Chart => {
+    const context2D = canvas.nativeElement.getContext('2d');
+
+    this.configureDefaultColors(configuration);
+
+    if (context2D) {
+      return new Chart(context2D, configuration);
+    } else {
+      console.error('No se pudo obtener el contexto 2D del canvas.');
+      return new Chart(canvas.nativeElement, configuration);
+    }
+  };
+
+  setData = (chart: Chart, dataSetIndex: number, data: number[]|IPointXY[]): void => {
+    if (dataSetIndex >= 0 && dataSetIndex < chart.data.datasets.length) {
+      chart.data.datasets[dataSetIndex].data = data;
+    }
+    console.error(`setData: ERROR: index out of range: ${dataSetIndex}`);
+  }
+
+  setLabels = (chart: Chart, labels: number[]|string[]): void => {
+    chart.data.labels = labels;
+  }
 
   toPointXY = (point: number[]): IPointXY => {
     if (point.length === 2) {
@@ -63,27 +100,6 @@ export class ChartService {
 
   toPointsXYZ = (points: number[][]): IPointXYZ[] => points.map(point => this.toPointXYZ(point));
 
-  removeDataSet = (chart: Chart, dataSetIndex: number): void => {
-    chart.data.datasets.splice(dataSetIndex, 1);
-  };
-
-  removeDataSets = (chart: Chart): void => {
-    chart.data.datasets = [];
-  };
-
-  render2D = (canvas: ElementRef<HTMLCanvasElement>, configuration: any): Chart => {
-    const context2D = canvas.nativeElement.getContext('2d');
-
-    this.configureDefaultColors(configuration);
-
-    if (context2D) {
-      return new Chart(context2D, configuration);
-    } else {
-      console.error('No se pudo obtener el contexto 2D del canvas.');
-      return new Chart(canvas.nativeElement, configuration);
-    }
-  };
-
   // Private Methods
   private readonly configureDefaultColors = (setup: any): void => {
     setup.options.scales.x.ticks.color = this.textColorSecondary;
@@ -92,7 +108,4 @@ export class ChartService {
     setup.options.scales.y.grid.color = this.surfaceBorder;
     setup.options.plugins.legend.labels.color = this.textColor;
   };
-
-
-
 }

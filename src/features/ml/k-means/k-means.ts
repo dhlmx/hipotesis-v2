@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ConfirmationService, ConfirmEventType, MessageService } from 'primeng/api';
 import { Chart } from 'chart.js';
@@ -10,19 +10,23 @@ import { PrimeNgModule } from '../../../core/modules/prime-ng.module';
 // Services & Utilities
 import { AppService } from '../../../core/services/app.service';
 import { ChartService } from '../../../core/services/chart.service';
+import { PdfService } from '../../../core/services/pdf.service';
 import { getColor } from '../../../core/constants/color';
 import { getFormArray, getRangesFromFormArray } from '../../../core/utilities/form';
-import { PdfService } from '../../../core/services/pdf.service';
 import { randomMultidimensionalSeries } from '../../../core/utilities/random';
 
 // Interfaces & Models
-import { ICHART_LINE_DEFAULT } from '../../../core/interfaces/charts/ichart-line';
+import { ChartHelper } from '../../../core/models/chart/chart-helper';
+import { IAxisTitle } from '../../../core/interfaces/charts/iaxis-title';
+import { IDataset } from '../../../core/interfaces/charts/idataset';
+import { IPointXY } from '../../../core/interfaces/charts/ipoint-xy';
+import { ITitle } from '../../../core/interfaces/charts/ititle';
 import { KMeansAlgorithm } from '../../../core/models/ml/k-means-algorithm';
 
 // Enums & Constants
 import { APP_TITLE } from '../../../core/constants/general';
 import { AXES } from '../../../core/constants/math/math';
-import { CHART_K_MEANS, CHART_K_MEANS_SOLUTION, CHART_RMSE, DIMENSION, ITERATIONS, K, POINTS, RANGE_MIN, RANGE_MAX } from '../../../core/constants/ml/k-means/data';
+import { DIMENSION, ITERATIONS, K, POINTS, RANGE_MIN, RANGE_MAX } from '../../../core/constants/ml/k-means/data';
 
 @Component({
   selector: 'app-k-means',
@@ -31,14 +35,15 @@ import { CHART_K_MEANS, CHART_K_MEANS_SOLUTION, CHART_RMSE, DIMENSION, ITERATION
   providers: [FormBuilder, ChartService],
   imports: [CoreModule, PrimeNgModule],
 })
-export class KMeans implements OnInit, AfterViewInit {
+export class KMeans implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('kMeansCanvas', { static: false }) kMeansCanvas!: ElementRef<HTMLCanvasElement>;
   @ViewChild('kMeansSolutionCanvas', { static: false }) kMeansSolutionCanvas!: ElementRef<HTMLCanvasElement>;
   @ViewChild('rmseCanvas', { static: false }) rmseCanvas!: ElementRef<HTMLCanvasElement>;
 
-  private kMeansSetup = { ...CHART_K_MEANS };
-  private kMeansSolutionSetup = { ...CHART_K_MEANS_SOLUTION };
-  private rmseSetup = { ...ICHART_LINE_DEFAULT, ...CHART_RMSE };
+  private kMeansSetup = new ChartHelper('scatter');
+  private kMeansSolutionSetup = new ChartHelper('scatter');
+  private rmseSetup = new ChartHelper('line');
+
   private kMeansChart!: Chart;
   private kMeansSolutionChart!: Chart;
   private rmseChart!: Chart;
@@ -91,7 +96,6 @@ export class KMeans implements OnInit, AfterViewInit {
   rangesForm = new FormGroup({
   });
 
-
   constructor(
     public readonly appService: AppService,
     private readonly chartService: ChartService,
@@ -104,6 +108,8 @@ export class KMeans implements OnInit, AfterViewInit {
     this.appService.process.start('Loading...');
     this.appService.resetFile();
 
+    this.preconfigCharts();
+
     window.addEventListener('resize', () => {
       this.kMeansChart.resize();
       this.kMeansSolutionChart.resize();
@@ -111,6 +117,11 @@ export class KMeans implements OnInit, AfterViewInit {
     });
 
     this.appService.process.stop();
+  }
+  ngOnDestroy(): void {
+    this.kMeansChart.destroy();
+    this.kMeansSolutionChart.destroy();
+    this.rmseChart.destroy();
   }
 
   ngOnInit(): void {
@@ -183,58 +194,6 @@ export class KMeans implements OnInit, AfterViewInit {
     // this.buildRangesFormArray();
   };
 
-  onCalculate(): void {
-    this.appService.process.start('Training model...');
-
-    this.kMeans = new KMeansAlgorithm();
-    this.kMeans.init(this.points, this.modelControls.k.value, this.modelControls.iterations.value);
-    this.kMeans.solve();
-
-    // K-Means Chart
-    this.chartService.removeDataSets(this.kMeansSolutionChart);
-
-    this.kMeans.centroids.forEach((centroid, centroidIndex) => {
-      let centroidColor = this.getCentroidColor(centroidIndex);
-
-      // Centroid
-      this.chartService.addDataSet(this.kMeansSolutionChart, {
-        label: `K${centroidIndex + 1}`,
-        data: [this.chartService.toPointXY(centroid)],
-        backgroundColor: centroidColor,
-        borderColor: centroidColor,
-        pointRadius: 8,
-      });
-
-      // Allocations
-      this.chartService.addDataSet(this.kMeansSolutionChart, {
-        label: `Points to K${centroidIndex + 1}`,
-        data: this.kMeans.allocations.filter(a => a.nearestCentroid === centroidIndex).map(s => this.chartService.toPointXY(s.point)),
-        backgroundColor: getColor('Black'),
-        borderColor: centroidColor,
-        pointRadius: 4,
-      });
-    });
-
-    this.kMeansSolutionChart.update();
-
-    // RMSE Chart
-    this.rmseChart.data.labels = this.kMeans.logIterations;
-
-    this.chartService.removeDataSets(this.rmseChart);
-    this.chartService.addDataSet(this.rmseChart, {
-      label: 'RMSE vs Iterations',
-      data: this.kMeans.logRMSEs,
-      fill: false,
-      borderColor: getColor('Lime'), // '#66BB6A',
-      tension: 0.4
-    });
-
-    this.rmseChart.update();
-
-    this.appService.createDataJson(this.kMeans.info());
-    this.appService.process.stop();
-  }
-
   onGenerateData = (): void => {
     this.appService.process.start('Generating data...');
     this.kMeans.reset();
@@ -247,28 +206,17 @@ export class KMeans implements OnInit, AfterViewInit {
       true
     );
 
-    this.chartService.removeDataSets(this.kMeansChart);
-    this.chartService.addDataSet(this.kMeansChart, {
-      label: 'Points',
-      data: this.chartService.toPointsXY(this.points),
-      backgroundColor: getColor('Black'),
-      borderColor: '#42A5F5',
-      pointRadius: 4,
-    });
-
+    // Points
+    this.chartService.setData(this.kMeansChart, 0, this.chartService.toPointsXY(this.points));
     this.kMeansChart.update();
 
-    this.rmseChart.data.labels = this.kMeans.logIterations;
+    // Points + Centroids
+    this.chartService.removeDatasets(this.kMeansSolutionChart);
+    this.kMeansSolutionChart.update();
 
-    this.chartService.removeDataSets(this.rmseChart);
-    this.chartService.addDataSet(this.rmseChart, {
-      label: 'RMSE vs Iterations',
-      data: this.kMeans.logRMSEs,
-      fill: false,
-      borderColor: '#66BB6A',
-      tension: 0.4
-    });
-
+    // RMSE
+    this.chartService.setData(this.rmseChart, 0, this.kMeans.logRMSEs);
+    this.chartService.setLabels(this.rmseChart, this.kMeans.logIterations);
     this.rmseChart.update();
 
     this.appService.process.stop();
@@ -288,6 +236,49 @@ export class KMeans implements OnInit, AfterViewInit {
         this.appService.process.stop();
       }
     });
+  };
+
+  onRun = (): void => {
+    this.appService.process.start('Running K-Means Algorithm...');
+
+    this.kMeans = new KMeansAlgorithm();
+    this.kMeans.init(this.points, this.modelControls.k.value, this.modelControls.iterations.value);
+    this.kMeans.solve();
+
+    // K-Means Solution Chart
+    this.chartService.removeDatasets(this.kMeansSolutionChart);
+
+    this.kMeans.centroids.forEach((centroid, centroidIndex) => {
+      let centroidColor = this.getCentroidColor(centroidIndex);
+
+      // Centroid
+      this.chartService.addDataset(this.kMeansSolutionChart, {
+        label: `K${centroidIndex + 1}`,
+        data: [this.chartService.toPointXY(centroid)],
+        backgroundColor: centroidColor,
+        borderColor: centroidColor,
+        pointRadius: 8,
+      });
+
+      // Allocations
+      this.chartService.addDataset(this.kMeansSolutionChart, {
+        label: `Points to K${centroidIndex + 1}`,
+        data: this.kMeans.allocations.filter(a => a.nearestCentroid === centroidIndex).map(s => this.chartService.toPointXY(s.point)),
+        backgroundColor: getColor('Black'),
+        borderColor: centroidColor,
+        pointRadius: 4,
+      });
+    });
+
+    this.kMeansSolutionChart.update();
+
+    // RMSE Chart
+    this.chartService.setData(this.rmseChart, 0, this.kMeans.logRMSEs);
+    this.rmseChart.data.labels = this.kMeans.logIterations;
+    this.rmseChart.update();
+
+    this.appService.createDataJson(this.kMeans.info());
+    this.appService.process.stop();
   };
 
   onSave(): void {
@@ -315,7 +306,7 @@ export class KMeans implements OnInit, AfterViewInit {
   round = (value: number): number => Math.round(value);
 
   // Private Methods
-  private buildRangesFormArray = (): void => {
+  private readonly buildRangesFormArray = (): void => {
     this.dataControls.ranges = this.fb.array<FormGroup>([]);
     this.rangesControls = [];
 
@@ -337,7 +328,41 @@ export class KMeans implements OnInit, AfterViewInit {
     })
   };
 
-  private initialize = (): void => {
+  private readonly preconfigCharts = (): void => {
+    // Points
+    this.kMeansSetup.addDataset({
+      label: 'Points',
+      data: [] as IPointXY[],
+      backgroundColor: getColor('Black'),
+      borderColor:  '#42A5F5',
+      pointRadius: 4,
+    } as IDataset);
+    this.kMeansSetup.setTitle({ text: 'K-Means Algorithm', font: { size: 22 } } as ITitle);
+    this.kMeansSetup.setSubtitle({ text: 'Random Points', font: { size: 12 } } as ITitle);
+    this.kMeansSetup.setXTitle({ text: 'Range 1D (x)' } as IAxisTitle);
+    this.kMeansSetup.setYTitle({ text: 'Range 2D (y)' } as IAxisTitle);
+
+    // Points + Centroids
+    this.kMeansSolutionSetup.setTitle({ text: 'K-Means Algorithm', font: { size: 22 } } as ITitle);
+    this.kMeansSolutionSetup.setSubtitle({ text: 'Random Points + Centroids', font: { size: 12 } } as ITitle);
+    this.kMeansSolutionSetup.setXTitle({ text: 'Range 1D (x)' } as IAxisTitle);
+    this.kMeansSolutionSetup.setYTitle({ text: 'Range 2D (y)' } as IAxisTitle);
+
+    // RMSE
+    this.rmseSetup.addDataset({
+      label: 'RMSE vs Iterations',
+      data: [] as number[],
+      fill: false,
+      borderColor: getColor('Green'),
+      tension: 0.4
+    } as IDataset);
+    this.rmseSetup.setTitle({ text: 'Root Mean Squared Error, RMSE', font: { size: 22 } } as ITitle);
+    this.rmseSetup.setSubtitle({ text: 'RMSE vs Iterations', font: { size: 12 } } as ITitle);
+    this.rmseSetup.setXTitle({ text: 'Iterations' } as IAxisTitle);
+    this.rmseSetup.setYTitle({ text: 'RMSE' } as IAxisTitle);
+  }
+
+  private readonly initialize = (): void => {
     this.appService.process.start('Loading initial data...');
 
     this.buildRangesFormArray();

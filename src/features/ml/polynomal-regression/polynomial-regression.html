@@ -92,7 +92,7 @@
                   </div>
                 </p-fieldset>
                 <br />
-                <p-fieldset legend="Model Training">
+                <p-fieldset legend="Polynomial Regression">
                   <div class="grid grid-cols-1 md:grid-cols-4">
                     <div>
                       <label pLabel for="degree">Polynomial Degree</label><br />
@@ -108,7 +108,7 @@
                     </div>
                     <div>
                       <br />
-                      <button pButton type="button" label="Train Model" title="Train" [disabled]="form.invalid" (click)="onTrain()" class="p-button-outlined p-button-info w-full"></button>
+                      <button pButton type="button" label="Run Polynomial Regression" title="Run Algorithm" [disabled]="form.invalid" (click)="onRun()" class="p-button-outlined p-button-info w-full"></button>
                     </div>
                   </div>
                 </p-fieldset>

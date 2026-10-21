@@ -17,12 +17,12 @@ export const IIRIS: IIris = {
 };
 
 export const isIIris = (iris: any): iris is IIris => {
-  const test = iris as IIris;
+  const source = iris as IIris;
 
-  return test.id !== undefined
-    && test.sepalLengthCm !== undefined
-    && test.sepalWidthCm !== undefined
-    && test.petalLengthCm !== undefined
-    && test.petalWidthCm !== undefined
-    && test.species !== undefined;
+  return source.id !== undefined
+    && source.sepalLengthCm !== undefined
+    && source.sepalWidthCm !== undefined
+    && source.petalLengthCm !== undefined
+    && source.petalWidthCm !== undefined
+    && source.species !== undefined;
 };

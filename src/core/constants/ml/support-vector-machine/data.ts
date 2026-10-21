@@ -1,42 +1,152 @@
-import { COLORS } from '../../color';
+import { getColor } from '../../color';
 
-// chart.js
-export const SEPAL_LENGTH_DATA: any = {
-  labels: [],
-  datasets: [
-    {
+export const SEPAL_LENGTH: any = {
+  setosa: {
+    dataset: {
       label: 'Iris-setosa',
       data: [],
-      backgroundColor: COLORS[2].hex,
-      borderColor: COLORS[2].hex,
-      pointRadius: 3,
+      backgroundColor: getColor('Black'),
+      borderColor: getColor('Aqua'),
+      pointRadius: 4,
       pointStyle: 'cross',
       showLine: false
-    },
-    {
+    }
+  },
+  versicolor: {
+    dataset: {
       label: 'Iris-versicolor',
       data: [],
-      backgroundColor: COLORS[12].hex,
-      borderColor: COLORS[12].hex,
-      pointRadius: 3,
+      backgroundColor: getColor('Black'),
+      borderColor: getColor('Fuchsia'),
+      pointRadius: 4,
       pointStyle: 'circle',
       showLine: false
-    },
-    {
+    }
+  },
+  virginica: {
+    dataset: {
       label: 'Iris-virginica',
       data: [],
-      backgroundColor: COLORS[15].hex,
-      borderColor: COLORS[15].hex,
-      pointRadius: 3,
+      backgroundColor: getColor('Black'),
+      borderColor: getColor('Lime'),
+      pointRadius: 4,
       pointStyle: 'triangle',
       showLine: false
     }
-  ]
-},
+  }
+};
 
-SEPAL_LENGTH: any = {
+export const SEPAL_WIDTH: any = {
+  setosa: {
+    dataset: {
+      label: 'Iris-setosa',
+      data: [],
+      backgroundColor: getColor('Black'),
+      borderColor: getColor('Aqua'),
+      pointRadius: 4,
+      pointStyle: 'cross',
+      showLine: false
+    }
+  },
+  versicolor: {
+    dataset: {
+      label: 'Iris-versicolor',
+      data: [],
+      backgroundColor: getColor('Black'),
+      borderColor: getColor('Fuchsia'),
+      pointRadius: 4,
+      pointStyle: 'circle',
+      showLine: false
+    }
+  },
+  virginica: {
+    dataset: {
+      label: 'Iris-virginica',
+      data: [],
+      backgroundColor: getColor('Black'),
+      borderColor: getColor('Lime'),
+      pointRadius: 4,
+      pointStyle: 'triangle',
+      showLine: false
+    }
+  }
+};
+
+export const PETAL_LENGTH: any = {
+  setosa: {
+    dataset: {
+      label: 'Iris-setosa',
+      data: [],
+      backgroundColor: getColor('Black'),
+      borderColor: getColor('Aqua'),
+      pointRadius: 4,
+      pointStyle: 'cross',
+      showLine: false
+    }
+  },
+  versicolor: {
+    dataset: {
+      label: 'Iris-versicolor',
+      data: [],
+      backgroundColor: getColor('Black'),
+      borderColor: getColor('Fuchsia'),
+      pointRadius: 4,
+      pointStyle: 'circle',
+      showLine: false
+    }
+  },
+  virginica: {
+    dataset: {
+      label: 'Iris-virginica',
+      data: [],
+      backgroundColor: getColor('Black'),
+      borderColor: getColor('Lime'),
+      pointRadius: 4,
+      pointStyle: 'triangle',
+      showLine: false
+    }
+  }
+};
+
+export const PETAL_WIDTH: any = {
+  setosa: {
+    dataset: {
+      label: 'Iris-setosa',
+      data: [],
+      backgroundColor: getColor('Black'),
+      borderColor: getColor('Aqua'),
+      pointRadius: 4,
+      pointStyle: 'cross',
+      showLine: false
+    }
+  },
+  versicolor: {
+    dataset: {
+      label: 'Iris-versicolor',
+      data: [],
+      backgroundColor: getColor('Black'),
+      borderColor: getColor('Fuchsia'),
+      pointRadius: 4,
+      pointStyle: 'circle',
+      showLine: false
+    }
+  },
+  virginica: {
+    dataset: {
+      label: 'Iris-virginica',
+      data: [],
+      backgroundColor: getColor('Black'),
+      borderColor: getColor('Lime'),
+      pointRadius: 4,
+      pointStyle: 'triangle',
+      showLine: false
+    }
+  }
+};
+
+export const SEPAL_LENGTH_CHART: any = {
   type: 'line',
-  data: SEPAL_LENGTH_DATA,
+  data: [],
   options: {
     responsive: true,
     aspectRatio: 2,
@@ -50,7 +160,7 @@ SEPAL_LENGTH: any = {
       },
       title: {
         display: true,
-        text: 'Sepal Length by specie',
+        text: 'Sepal Length by Specie',
         font: {
           size: 24
         }
@@ -96,42 +206,9 @@ SEPAL_LENGTH: any = {
   }
 };
 
-export const SEPAL_WIDTH_DATA: any = {
-  labels: [],
-  datasets: [
-    {
-      label: 'Iris-setosa',
-      data: [],
-      backgroundColor: COLORS[2].hex,
-      borderColor: COLORS[2].hex,
-      pointRadius: 3,
-      pointStyle: 'cross',
-      showLine: false
-    },
-    {
-      label: 'Iris-versicolor',
-      data: [],
-      backgroundColor: COLORS[12].hex,
-      borderColor: COLORS[12].hex,
-      pointRadius: 3,
-      pointStyle: 'circle',
-      showLine: false
-    },
-    {
-      label: 'Iris-virginica',
-      data: [],
-      backgroundColor: COLORS[15].hex,
-      borderColor: COLORS[15].hex,
-      pointRadius: 3,
-      pointStyle: 'triangle',
-      showLine: false
-    }
-  ]
-},
-
-SEPAL_WIDTH: any = {
+export const SEPAL_WIDTH_CHART: any = {
   type: 'line',
-  data: SEPAL_WIDTH_DATA,
+  data: [],
   options: {
     responsive: true,
     aspectRatio: 2,
@@ -191,42 +268,9 @@ SEPAL_WIDTH: any = {
   }
 };
 
-export const PETAL_LENGTH_DATA: any = {
-  labels: [],
-  datasets: [
-    {
-      label: 'Iris-setosa',
-      data: [],
-      backgroundColor: COLORS[2].hex,
-      borderColor: COLORS[2].hex,
-      pointRadius: 3,
-      pointStyle: 'cross',
-      showLine: false
-    },
-    {
-      label: 'Iris-versicolor',
-      data: [],
-      backgroundColor: COLORS[12].hex,
-      borderColor: COLORS[12].hex,
-      pointRadius: 3,
-      pointStyle: 'circle',
-      showLine: false
-    },
-    {
-      label: 'Iris-virginica',
-      data: [],
-      backgroundColor: COLORS[15].hex,
-      borderColor: COLORS[15].hex,
-      pointRadius: 3,
-      pointStyle: 'triangle',
-      showLine: false
-    }
-  ]
-},
-
-PETAL_LENGTH: any = {
+export const PETAL_LENGTH_CHART: any = {
   type: 'line',
-  data: PETAL_LENGTH_DATA,
+  data: [],
   options: {
     responsive: true,
     aspectRatio: 2,
@@ -286,33 +330,40 @@ PETAL_LENGTH: any = {
   }
 };
 
+// chart.js
+/*
+
+
+
+
+
 export const PETAL_WIDTH_DATA: any = {
   labels: [],
   datasets: [
     {
       label: 'Iris-setosa',
       data: [],
-      backgroundColor: COLORS[2].hex,
-      borderColor: COLORS[2].hex,
-      pointRadius: 3,
+      backgroundColor: getColor('Black'),
+      borderColor: getColor('Aqua'),
+      pointRadius: 4,
       pointStyle: 'cross',
       showLine: false
     },
     {
       label: 'Iris-versicolor',
       data: [],
-      backgroundColor: COLORS[12].hex,
-      borderColor: COLORS[12].hex,
-      pointRadius: 3,
+      backgroundColor: getColor('Black'),
+      borderColor: getColor('Fuchsia'),
+      pointRadius: 4,
       pointStyle: 'circle',
       showLine: false
     },
     {
       label: 'Iris-virginica',
       data: [],
-      backgroundColor: COLORS[15].hex,
-      borderColor: COLORS[15].hex,
-      pointRadius: 3,
+      backgroundColor: getColor('Black'),
+      borderColor: getColor('Lime'),
+      pointRadius: 4,
       pointStyle: 'triangle',
       showLine: false
     }
@@ -380,3 +431,4 @@ PETAL_WIDTH: any = {
     }
   }
 };
+*/

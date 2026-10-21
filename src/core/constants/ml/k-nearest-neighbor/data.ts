@@ -1,16 +1,23 @@
 import { IFormControl } from '../../../interfaces/iform-control';
 import { IPerson } from '../../../interfaces/ml/iperson';
-import { COLORS } from '../../color';
 
 // Constants
 export const HEIGHT: IFormControl = { value: 65.00, min: 1.00, max: 100.00, minLength: 1, maxLength: 6, step: 0.10 },
-
 K: IFormControl = { value: 3, min: 1, max: 10, minLength: 1, maxLength: 2, step: 1 },
-
 WEIGHT: IFormControl = { value: 150.00, min: 1.00, max: 900.00, minLength: 1, maxLength: 6, step: 0.10 };
 
 // chart.js
-export const K_NEAREST_NEIGHBOR_DATA: any = {
+/*
+export const K_NEAREST_NEIGHBOR_CHART: any = {
+  ...ICHART_SCATTER_DEFAULT
+};
+,
+  data: {
+    labels: [],
+    datasets: []
+  }
+
+{
   labels: [],
   datasets: [
     {
@@ -28,11 +35,8 @@ export const K_NEAREST_NEIGHBOR_DATA: any = {
       pointRadius: 2
     }
   ]
-},
-
-K_NEAREST_NEIGHBOR_CHART: any = {
-  type: 'scatter',
-  data: K_NEAREST_NEIGHBOR_DATA,
+}
+,
   options: {
     responsive: true,
     aspectRatio: 2,
@@ -88,7 +92,9 @@ K_NEAREST_NEIGHBOR_CHART: any = {
       }
     }
   }
-};
+
+*/
+
 
 // Data
 export const PERSONS: IPerson[] = [

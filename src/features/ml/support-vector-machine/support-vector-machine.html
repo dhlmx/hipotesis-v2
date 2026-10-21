@@ -36,7 +36,7 @@
             </ng-template>
 
             <ng-template pTemplate="body">
-              <p>El algoritmo Support Vector Machine, SVM, es un clasificador que a través de cálculos matemáticos avanzados y complejos intenta crear líneas que separen geométricamente cada clase identificada de las demás, dentro de un conjunto de dayos determinado. El algoritmo utiliza un margen de separación entre las clases separadas por líneas, ese parámetro se llama margen, identificado por w. Existen otros parámetros adicionales de configuración.</p>
+              <p>El algoritmo Support Vector Machine, SVM, es un clasificador que a través de cálculos matemáticos avanzados y complejos intenta crear líneas que separen geométricamente cada clase identificada de las demás, dentro de un conjunto de datos determinado. El algoritmo utiliza un margen de separación entre las clases separadas por líneas, ese parámetro se llama margen, identificado por w. Existen otros parámetros adicionales de configuración.</p>
               <br />
               <p>Por su método geométrico de clasificación, es un método algo limitado, pero muy útil para casos binarios, donde las mediciones pueden distinguirse claramente desde un punto de vista geométrico.</p>
               <br />
@@ -65,9 +65,15 @@
 
             <ng-template pTemplate="body">
               <div>
-                <p>Los datos de entrada fueron obtenidos de nuestra fuente de estudio y referencia. En este caso se trata de una serie de mediciones de sepáculos y pétalos de la flor de iris.</p>
+                <p>Los datos de entrada fueron obtenidos de nuestra fuente de estudio y referencia. En este caso se trata de una serie de mediciones de sepáculos y pétalos de la flor de iris, realizados alrededor de 1936 por el botánico Edgar Anderson y el biólogo y estadístico Ronald Fisher.</p>
                 <br />
-                <p>Se trata de la longitud y ancho de los sepáculos (1D, 2D) y pétalos (3D, 4D), respectivamente, de la flor de iris, todas medidas en centímetros. En total, tenemos cuatro dimensiones, y cada conjunto de mediciones  están asociado a la especie que le corresponde, de tres especies distintas: Setosa, Versicolor y Virginica. La especie es la "etiqueta" o "clase" de cada conjunto de datos.</p>
+                <p>En total, se trata de 600 mediciones, 150 por cada dimensión o característica medida: longitud y ancho de los sepáculos y pétalos de la flor de iris. A su vez, cada conjunto de 150 mediciones se corresponden con las tres especis de iris existentes: Setosa, Versicolor y Virginica.</p>
+                <br />
+                <p>Por consiguiente, cada especie de iris se encuentra representada por 50 mediciones en centímedtros de la longitud y el ancho de sus sepáculos y pétalos.</p>
+                <br />
+                <p>Hemos definido cada dimensión, característica o "feature" de la siguiente manera: 1D, longitud de sepáculo; 2D, ancho de sepáculo; 3D, longitud de pétalo; y 4D, ancho de pétalo.</p>
+                <br />
+                <p>El objetivo es predecir la especie de iris a partir de las mediciones de la longitud y ancho de sus sepáculos y pétalos.</p>
               </div>
               <br />
 
@@ -88,7 +94,6 @@
                   <canvas #petalWidthCanvas></canvas>
                 </div>
               </div>
-
             </ng-template>
 
             <ng-template pTemplate="footer">
@@ -110,17 +115,73 @@
             </ng-template>
 
             <ng-template pTemplate="body">
+              <div>
+                <p>La aplicación realizará la predicción de una muestra aleatoria de quince mediciones tomadas de los datos de la flor de iris. El resto de los datos serán utilizados para el entrenamiento del algoritmo.</p>
+                <br />
+                <p>El entrenamiento del modelo se realiza suministrando las 4 dimensiones mencionadas en el planteamiento del problema (1D, 2D, 3D y 4D) junto a la etiqueta de la especie correspondiente.</p>
+                <br />
+                <p>Finalmente, realizamos una serie de cálculos para medir la eficiencia alcanzada por el algoritmo.</p>
+                <br />
+              </div>
+
+              <!-- Random Sample -->
+              <div class="grid grid-cols-1">
+                <table>
+                  <thead>
+                    <tr>
+                      <th colspan="6" class="text-lg">
+                        Random Test Data
+                      </th>
+                    </tr>
+                    <tr class="text-center">
+                      <td class="width-15">
+                        Measurement
+                      </td>
+                      <td class="width-15">
+                        Sepal Length [cm]
+                      </td>
+                      <td class="width-15">
+                        Sepal Width [cm]
+                      </td>
+                      <td class="width-15">
+                        Petal Length [cm]
+                      </td>
+                      <td class="width-15">
+                        Petal Width [cm]
+                      </td>
+                      <td class="width-25">
+                        Species
+                      </td>
+                    </tr>
+                  </thead>
+                  <tbody>
+                  <!-- Measurements -->
+                    @for (sample of randomSample.test; track $index) {
+                      <tr class="text-center">
+                        <td>{{ sample.id }}</td>
+                        <td class="text-right">{{ sample.sepalLengthCm | number:'1.2-2' }}</td>
+                        <td class="text-right">{{ sample.sepalWidthCm | number:'1.2-2' }}</td>
+                        <td class="text-right">{{ sample.petalLengthCm | number:'1.2-2' }}</td>
+                        <td class="text-right">{{ sample.sepalWidthCm| number:'1.2-2' }}</td>
+                        <td class="text-right">{{ sample.species }}</td>
+                      </tr>
+                    }
+                  </tbody>
+                  <tfoot>
+                    <tr class="text-center text-lg">
+                      <td colspan="5" class="text-right">
+                        Prediction&nbsp;
+                      </td>
+                      <td>
+                        {{'Iris-setosa'}}
+                      </td>
+                    </tr>
+                  </tfoot>
+                </table>
+              </div>
+
               <form [formGroup]="form">
-                <p-fieldset legend="Naive Bayes Classifier">
-                  <div>
-                    <br />
-                    <p>El entrenamiento del modelo lo estamos realizando suministrando los datos de las mediciones (en 1D, 2D, 3D y 4D) y la etiqueta de la especie correspondiente.</p>
-                    <br />
-                    <p>Posteriormente, se procede a suminstrar solamente las mediciones, de acuerdo al número de dimensiones que se haya utilizado en el entrenamiento: 1D, 2D, 3D o 4D. De esa manera, el algoritmo predice la especie correspondiente.</p>
-                    <br />
-                    <p>Finalmente, realizamos una serie de cálculos para medir la eficiencia alcanzada por el algoritmo.</p>
-                    <br />
-                  </div>
+                <p-fieldset legend="Support Vector Machine">
                   <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
                     <div>
                       <label pLabel for="epsilon">Epsilon</label><br />
