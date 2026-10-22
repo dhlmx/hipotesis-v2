@@ -3,11 +3,12 @@ import { catchError, map, Observable, of } from 'rxjs';
 
 // Services & Utilities
 import { CSVService } from './csv.service';
+import { randomSeries } from '../utilities/random';
 
 // Models & Interfaces & Types
 import { IIRIS, IIris } from '../interfaces/ml/iiris';
-import { randomSeries } from '../utilities/random';
 type IrisSpecie = 'Iris-setosa' | 'Iris-versicolor' | 'Iris-virginica';
+
 
 @Injectable({
   providedIn: 'root'
@@ -18,12 +19,12 @@ export class IrisService {
 
   constructor(private readonly csv: CSVService) { }
 
-  get classes(): string[] {
-    return [...new Set(this._iris.map((iris: IIris) => iris.species))];
+  get measurements(): number[] {
+    return this._iris.map(iris => iris.id);
   }
 
   get labels(): number[] {
-    return this.species.map((_, index) => index + 1)
+    return this.species.map(specie => this.uniqueSpecies.indexOf(specie));
   }
 
   get numbers1D(): number[][] {
@@ -42,13 +43,10 @@ export class IrisService {
     return this._iris.map((iris: IIris) => [iris.sepalLengthCm, iris.sepalWidthCm, iris.petalLengthCm, iris.petalWidthCm]);
   }
 
-  get specimens(): IIris[] {
-    return this._iris;
-  }
-
   get petalLengths(): number[] {
     return this._iris.map((iris: IIris) => iris.petalLengthCm);
   }
+
   get petalWidths(): number[] {
     return this._iris.map((iris: IIris) => iris.petalWidthCm);
   }
@@ -65,6 +63,14 @@ export class IrisService {
     return this._iris.map((iris: IIris) => iris.species);
   }
 
+  get specimens(): IIris[] {
+    return this._iris;
+  }
+
+  get uniqueSpecies(): string[] {
+    return [...new Set(this._iris.map((iris: IIris) => iris.species))];
+  }
+
   getNumber1D = (index: number): number[][] => [[this._iris[index].sepalLengthCm]];
 
   getNumber2D = (index: number): number[][] => [[this._iris[index].sepalLengthCm, this._iris[index].sepalWidthCm]];
@@ -73,11 +79,27 @@ export class IrisService {
 
   getNumber4D = (index: number): number[][] => [[this._iris[index].sepalLengthCm, this._iris[index].sepalWidthCm, this._iris[index].petalLengthCm, this._iris[index].petalWidthCm]];
 
-  getRandomSample = (size: number): { train: IIris[], test: IIris[] } => {
-    const indexes: number[] = randomSeries(size, 0, this._iris.length - 1, false, true);
+  getRandomSample = (size: number): {
+    train: { measurements: number[], features: number[][], species: string[], labels: number[] },
+    test: { measurements: number[], features: number[][], species: string[], labels: number[] }
+   } => {
+    const indexes: number[] = randomSeries(size, 0, this._iris.length - 1, false, true),
+          trainData = this._iris.filter(iris => !indexes.includes(iris.id)),
+          testData = this._iris.filter(iris => indexes.includes(iris.id));
+
     return {
-      train: this._iris.filter(iris => !indexes.includes(iris.id)),
-      test: this._iris.filter(iris => indexes.includes(iris.id))
+      train: {
+        measurements: trainData.map(iris => iris.id),
+        features: trainData.map(iris => [iris.sepalLengthCm, iris.sepalWidthCm, iris.petalLengthCm, iris.petalWidthCm]),
+        species: trainData.map(iris => iris.species),
+        labels: trainData.map(iris => this.uniqueSpecies.indexOf(iris.species))
+      },
+      test: {
+        measurements: testData.map(iris => iris.id),
+        features: testData.map(iris => [iris.sepalLengthCm, iris.sepalWidthCm, iris.petalLengthCm, iris.petalWidthCm]),
+        species: testData.map(iris => iris.species),
+        labels: testData.map(iris => this.uniqueSpecies.indexOf(iris.species))
+      }
     };
   }
 

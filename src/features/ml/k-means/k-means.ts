@@ -108,8 +108,6 @@ export class KMeans implements OnInit, AfterViewInit, OnDestroy {
     this.appService.process.start('Loading...');
     this.appService.resetFile();
 
-    this.preconfigCharts();
-
     window.addEventListener('resize', () => {
       this.kMeansChart.resize();
       this.kMeansSolutionChart.resize();
@@ -207,16 +205,16 @@ export class KMeans implements OnInit, AfterViewInit, OnDestroy {
     );
 
     // Points
-    this.chartService.setData(this.kMeansChart, 0, this.chartService.toPointsXY(this.points));
+    this.kMeansSetup.setData(0, this.chartService.toPointsXY(this.points));
     this.kMeansChart.update();
 
     // Points + Centroids
-    this.chartService.removeDatasets(this.kMeansSolutionChart);
+    this.kMeansSolutionSetup.removeDatasets();
     this.kMeansSolutionChart.update();
 
     // RMSE
-    this.chartService.setData(this.rmseChart, 0, this.kMeans.logRMSEs);
-    this.chartService.setLabels(this.rmseChart, this.kMeans.logIterations);
+    this.rmseSetup.setData(0, this.kMeans.logRMSEs);
+    this.rmseSetup.setLabels(this.kMeans.logIterations.map(logIteration => logIteration.toString()));
     this.rmseChart.update();
 
     this.appService.process.stop();
@@ -273,8 +271,8 @@ export class KMeans implements OnInit, AfterViewInit, OnDestroy {
     this.kMeansSolutionChart.update();
 
     // RMSE Chart
-    this.chartService.setData(this.rmseChart, 0, this.kMeans.logRMSEs);
-    this.rmseChart.data.labels = this.kMeans.logIterations;
+    this.rmseSetup.setData(0, this.kMeans.logRMSEs);
+    this.rmseSetup.setLabels(this.kMeans.logIterations.map(logIteration => logIteration.toString()));
     this.rmseChart.update();
 
     this.appService.createDataJson(this.kMeans.info());
@@ -328,7 +326,7 @@ export class KMeans implements OnInit, AfterViewInit, OnDestroy {
     })
   };
 
-  private readonly preconfigCharts = (): void => {
+  private readonly setCharts = (): void => {
     // Points
     this.kMeansSetup.addDataset({
       label: 'Points',
@@ -363,7 +361,7 @@ export class KMeans implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private readonly initialize = (): void => {
-    this.appService.process.start('Loading initial data...');
+    this.setCharts();
 
     this.buildRangesFormArray();
 
@@ -372,7 +370,5 @@ export class KMeans implements OnInit, AfterViewInit, OnDestroy {
         this.buildRangesFormArray();
       }
     });
-
-    this.appService.process.stop();
   }
 }

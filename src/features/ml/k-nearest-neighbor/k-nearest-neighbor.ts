@@ -1,5 +1,4 @@
-import { AfterViewInit, Component, ElementRef, inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { isPlatformBrowser, } from '@angular/common';
+import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ConfirmationService, ConfirmEventType, MessageService } from 'primeng/api';
 import { Chart } from 'chart.js';
@@ -23,6 +22,8 @@ import { KNearestNeighborAlgorithm } from '../../../core/models/ml/k-nearest-nei
 // Enums & Constants
 import { APP_TITLE } from '../../../core/constants/general';
 import { K, HEIGHT, PERSONS, WEIGHT } from '../../../core/constants/ml/k-nearest-neighbor/data';
+import { IDataset } from '../../../core/interfaces/charts/idataset';
+import { IPointXY } from '../../../core/interfaces/charts/ipoint-xy';
 
 @Component({
   selector: 'app-k-nearest-neighbor',
@@ -83,30 +84,7 @@ export class KNearestNeighbor implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit(): void {
-    this.appService.process.start('Loading data...');
-
     this.knnChart = this.chartService.render2D(this.knnCanvas, this.knnSetup);
-
-    this.knnChart.data.labels = this.labels;
-
-    this.chartService.addDataset(this.knnChart, {
-      label: 'Female',
-      data: this.women,
-      backgroundColor: getColor('Black'),
-      borderColor: getColor('Aqua'),
-      pointRadius: 4
-    });
-
-    this.chartService.addDataset(this.knnChart, {
-      label: 'Male',
-      data: this.men,
-      backgroundColor: getColor('Black'),
-      borderColor: getColor('Orange'),
-      pointRadius: 4
-    });
-
-    this.knnChart.update();
-
     this.appService.process.stop();
   }
 
@@ -190,10 +168,26 @@ export class KNearestNeighbor implements OnInit, AfterViewInit, OnDestroy {
 
   // Private Methods
   private initialize = (): void => {
-    this.appService.process.start('Loading initial data...');
+    this.setCharts();
+  }
 
-    // TODO
+  private setCharts = (): void => {
+    this.knnSetup.setLabels(this.labels);
 
-    this.appService.process.stop();
+    this.knnSetup.addDataset({
+      label: 'Female',
+      data: this.chartService.toPointsXY(this.women),
+      backgroundColor: getColor('Black'),
+      borderColor: getColor('Aqua'),
+      pointRadius: 4
+    } as IDataset);
+
+    this.knnSetup.addDataset({
+      label: 'Male',
+      data: this.chartService.toPointsXY(this.men),
+      backgroundColor: getColor('Black'),
+      borderColor: getColor('Orange'),
+      pointRadius: 4
+    } as IDataset);
   }
 }

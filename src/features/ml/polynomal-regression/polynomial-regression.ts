@@ -15,12 +15,12 @@ import { PdfService } from '../../../core/services/pdf.service';
 
 // Interfaces & Models
 import { ChartHelper } from '../../../core/models/chart/chart-helper';
+import { IAxisTitle } from '../../../core/interfaces/charts/iaxis-title';
+import { IDataset } from '../../../core/interfaces/charts/idataset';
 
 // Enums & Constants
 import { APP_TITLE } from '../../../core/constants/general';
 import { XS, YS, ZS } from '../../../core/constants/ml/polynomail-regression/data';
-import { IDataset } from '../../../core/interfaces/charts/idataset';
-import { IAxisTitle } from '../../../core/interfaces/charts/iaxis-title';
 
 @Component({
   selector: 'app-polynomial-regression',
@@ -75,8 +75,6 @@ export class PolynomialRegression implements OnInit, AfterViewInit, OnDestroy {
     this.appService.process.start('Loading...');
     this.appService.resetFile();
 
-    this.setCharts();
-
     window.addEventListener('resize', () => {
       this.versusChart.resize();
       this.lossChart.resize();
@@ -95,6 +93,8 @@ export class PolynomialRegression implements OnInit, AfterViewInit, OnDestroy {
     this.versusChart = this.chartService.render2D(this.versusCanvas, this.versusSetup);
     this.lossChart = this.chartService.render2D(this.lossCanvas, this.lossSetup);
     this.fxChart = this.chartService.render2D(this.fxCanvas, this.fxSetup);
+
+    this.appService.process.stop();
   }
 
   ngOnDestroy(): void {
@@ -156,21 +156,7 @@ export class PolynomialRegression implements OnInit, AfterViewInit, OnDestroy {
 
   // Private Methods
   private readonly initialize = (): void => {
-    this.appService.process.start('Loading initial data...');
-
-    XS.dataSync().forEach((value: number) => {
-      this.versusSetup.data.labels.push(value.toFixed(2));
-    });
-
-    YS.dataSync().forEach((value: number) => {
-      (this.versusSetup.data.datasets[0].data as number[]).push(value);
-    });
-
-    ZS.dataSync().forEach((value: number) => {
-      (this.versusSetup.data.datasets[1].data as number[]).push(value);
-    });
-
-    this.appService.process.stop();
+    this.setCharts();
   }
 
   private readonly getLoss = (prediction: tf.Tensor, label: tf.Tensor): tf.Scalar => prediction.sub(label).square().mean();
@@ -250,6 +236,18 @@ export class PolynomialRegression implements OnInit, AfterViewInit, OnDestroy {
 
     this.versusSetup.setXTitle({ text: 'Radians' } as IAxisTitle);
     this.versusSetup.setYTitle({ text: 'Sin(x), F(x)' } as IAxisTitle);
+
+    XS.dataSync().forEach((value: number) => {
+      this.versusSetup.data.labels.push(value.toFixed(2));
+    });
+
+    YS.dataSync().forEach((value: number) => {
+      (this.versusSetup.data.datasets[0].data as number[]).push(value);
+    });
+
+    ZS.dataSync().forEach((value: number) => {
+      (this.versusSetup.data.datasets[1].data as number[]).push(value);
+    });
   }
 
   private readonly run = (iterations: number) => {

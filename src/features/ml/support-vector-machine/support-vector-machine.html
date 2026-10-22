@@ -129,12 +129,12 @@
                 <table>
                   <thead>
                     <tr>
-                      <th colspan="6" class="text-lg">
+                      <th colspan="7" class="text-lg">
                         Random Test Data
                       </th>
                     </tr>
                     <tr class="text-center">
-                      <td class="width-15">
+                      <td class="width-10">
                         Measurement
                       </td>
                       <td class="width-15">
@@ -149,57 +149,60 @@
                       <td class="width-15">
                         Petal Width [cm]
                       </td>
-                      <td class="width-25">
+                      <td class="width-15">
                         Species
+                      </td>
+                      <td class="width-15">
+                        Label
                       </td>
                     </tr>
                   </thead>
                   <tbody>
                   <!-- Measurements -->
-                    @for (sample of randomSample.test; track $index) {
+                    @for (sample of randomSample.test.features; track $index) {
                       <tr class="text-center">
-                        <td>{{ sample.id }}</td>
-                        <td class="text-right">{{ sample.sepalLengthCm | number:'1.2-2' }}</td>
-                        <td class="text-right">{{ sample.sepalWidthCm | number:'1.2-2' }}</td>
-                        <td class="text-right">{{ sample.petalLengthCm | number:'1.2-2' }}</td>
-                        <td class="text-right">{{ sample.sepalWidthCm| number:'1.2-2' }}</td>
-                        <td class="text-right">{{ sample.species }}</td>
+                        <td>{{ randomSample.test.measurements[$index] }}</td>
+                        <td class="text-right">{{ sample[0] | number:'1.2-2' }}</td>
+                        <td class="text-right">{{ sample[1] | number:'1.2-2' }}</td>
+                        <td class="text-right">{{ sample[2] | number:'1.2-2' }}</td>
+                        <td class="text-right">{{ sample[3] | number:'1.2-2' }}</td>
+                        <td>{{ randomSample.test.species[$index] }}</td>
+                        <td>{{ randomSample.test.labels[$index] }}</td>
                       </tr>
                     }
                   </tbody>
-                  <tfoot>
-                    <tr class="text-center text-lg">
-                      <td colspan="5" class="text-right">
-                        Prediction&nbsp;
-                      </td>
-                      <td>
-                        {{'Iris-setosa'}}
-                      </td>
-                    </tr>
-                  </tfoot>
                 </table>
               </div>
 
+              <br />
+
               <form [formGroup]="form">
-                <p-fieldset legend="Support Vector Machine">
+                <p-fieldset legend="C-Support Vector Classification - Kernel: Radial Basis Function, RBF">
                   <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
                     <div>
-                      <label pLabel for="epsilon">Epsilon</label><br />
-                      <p-inputnumber [formControl]="controls.epsilon" mode="decimal" [showButtons]="true" inputId="epsilon"
-                        [min]="epsilon.min" [max]="epsilon.max" [step]="epsilon.step" [minFractionDigits]="2" [maxFractionDigits]="2" fluid />
+                      <label pLabel for="c">C</label><br />
+                      <p-inputnumber [formControl]="controls.c" mode="decimal" [showButtons]="true" inputId="c"
+                        [min]="c.min" [max]="c.max" [step]="c.step" [minFractionDigits]="0" [maxFractionDigits]="2" fluid />
                     </div>
                     <div>
-                      <label pLabel for="weight">Rare Token Weight</label><br />
-                      <p-inputnumber [formControl]="controls.weight" mode="decimal" [showButtons]="true" inputId="weight"
-                        [min]="weight.min" [max]="weight.max" [step]="weight.step" [maxFractionDigits]="0" fluid />
+                      <label pLabel for="gamma">Gamma</label><br />
+                      <p-inputnumber [formControl]="controls.gamma" mode="decimal" [showButtons]="true" inputId="gamma"
+                        [min]="gamma.min" [max]="gamma.max" [step]="gamma.step" [minFractionDigits]="2" [maxFractionDigits]="2" fluid />
+                    </div>
+                    <div>
+                      <label pLabel for="maxIterations">Maximum Iterations</label><br />
+                      <p-inputnumber [formControl]="controls.maxIterations" mode="decimal" [showButtons]="true" inputId="maxIterations"
+                        [min]="maxIterations.min" [max]="maxIterations.max" [step]="maxIterations.step" [maxFractionDigits]="0" fluid />
                     </div>
                     <div>
                       <br />
                       <button pButton type="button" label="Train" title="Train" [disabled]="form.invalid" (click)="onTrain()" class="p-button-outlined p-button-info w-full"></button>
                     </div>
+                  </div>
+                  <div class="grid grid-cols-1 gap-4">
                     <div>
                       <br />
-                      <button pButton type="button" label="Predict" title="Predict" [disabled]="form.invalid" (click)="onPredict(false)" class="p-button-outlined p-button-info w-full"></button>
+                      <button pButton type="button" label="Predict" title="Predict" [disabled]="form.invalid" (click)="onPredict()" class="p-button-outlined p-button-info w-full"></button>
                     </div>
                   </div>
                 </p-fieldset>
@@ -207,96 +210,100 @@
 
               <br />
 
-              <!-- Naive Bayes Classifier -->
-              <!--
-              @if (naiveBayes.trainings.length > 0) {
+              <!-- SVM Predictions -->
+              @if (predictions.length > 0) {
                 <div class="grid grid-cols-1">
                   <table>
                     <thead>
                       <tr>
-                        <th colspan="7" class="text-lg">
-                          Naive Bayes Classifier
+                        <th colspan="6" class="text-lg">
+                          SVM Predictions
                         </th>
+                      </tr>
+                      <tr class="text-center">
+                        <td class="width-15">
+                          Measurement
+                        </td>
+                        <td class="width-20">
+                          Species
+                        </td>
+                        <td class="width-10">
+                          Label
+                        </td>
+                        <td class="width-25">
+                          Prediction
+                        </td>
+                        <td class="width-15">
+                          Adjustment
+                        </td>
+                        <td class="width-15">
+                          Is Correct?
+                        </td>
                       </tr>
                     </thead>
                     <tbody>
-                      <tr class="text-center text-lg">
-                        <td colspan="7">
-                          Trainings
-                        </td>
-                      </tr>
-                      <tr class="text-center">
-                        <td class="width-10">
-                          Id
-                        </td>
-                        <td class="width-15">
-                          Filename
-                        </td>
-                        <td class="width-15">
-                          Label
-                        </td>
-                        <td colspan="2" class="width-30">
-                          Lines
-                        </td>
-                        <td class="width-15">
-                          Processed Tokens
-                        </td>
-                        <td class="width-15">
-                          Added Tokens
-                        </td>
-                      </tr>
-                      @for (training of naiveBayes.trainings; track $index) {
+                    <!-- Comparison -->
+                      @for (test of tests; track $index) {
                         <tr class="text-center">
-                          <td>{{ $index + 1 }}</td>
-                          <td>{{ training.filename }}</td>
-                          <td>{{ training.label }}</td>
-                          <td colspan="2" class="text-right">{{ training.lines | number:'1.0-0' }}</td>
-                          <td class="text-right">{{ training.processedTokens| number:'1.0-0' }}</td>
-                          <td class="text-right">{{ training.addedTokens | number:'1.0-0' }}</td>
+                          <td>{{ test.measurement }}</td>
+                          <td>{{ test.species }}</td>
+                          <td>{{ test.label | number:'1.0-0' }}</td>
+                          <td class="text-right">{{ test.prediction | number:'1.16-16' }}</td>
+                          <td>{{ test.adjustment | number:'1.0-0' }}</td>
+                          <td>{{ test.isTrue ? 'Yes' : 'No' }}</td>
                         </tr>
                       }
-                      @if (naiveBayes.tests.length > 0) {
-                        <tr class="text-center text-lg">
-                          <td colspan="7">
-                            Tests
-                          </td>
-                        </tr>
+                    </tbody>
+                    <tfoot>
+                      <tr class="text-center text-lg">
+                        <td colspan="5" class="text-right">
+                          Accuracy&nbsp;
+                        </td>
+                        <td>
+                          {{tests.filter(t => t.isTrue).length / tests.length * 100 | number:'1.2-2' }}&nbsp;%
+                        </td>
+                      </tr>
+                    </tfoot>
+                  </table>
+                </div>
+
+                <br />
+
+                <div class="grid grid-cols-1">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th colspan="4" class="text-lg">
+                          Confusion Matrix
+                        </th>
+                      </tr>
+                      <tr class="text-center">
+                        <td class="width-25">&nbsp;</td>
+                        <td class="width-25">
+                          Predicted&nbsp;{{ uniqueSpecies[0] }}
+                        </td>
+                        <td class="width-25">
+                          Predicted&nbsp;{{ uniqueSpecies[1] }}
+                        </td>
+                        <td class="width-25">
+                          Predicted&nbsp;{{ uniqueSpecies[2] }}
+                        </td>
+                      </tr>
+                    </thead>
+                    <tbody>
+                    <!-- Confusion Matrix -->
+                      @for (confusion of matrix; track $index) {
                         <tr class="text-center">
-                          <td>Id</td>
-                          <td>Filename</td>
-                          <td>Label</td>
-                          <td class="text-right">Total</td>
-                          <td class="text-right">Correct</td>
-                          <td class="text-right">Incorrect</td>
-                          <td class="text-right">Efficiency</td>
+                          <td>Actual&nbsp;{{ uniqueSpecies[$index] }}</td>
+                          <td>{{ confusion[0] | number:'1.0-0' }}</td>
+                          <td>{{ confusion[1] | number:'1.0-0' }}</td>
+                          <td>{{ confusion[2] | number:'1.0-0' }}</td>
                         </tr>
-                        @for (test of naiveBayes.tests; track $index) {
-                          @if (!$last) {
-                            <tr class="text-center">
-                              <td>{{ $index + 1 }}</td>
-                              <td>{{ test.filename }}</td>
-                              <td>{{ test.label }}</td>
-                              <td class="text-right">{{ test.total | number:'1.0-0' }}</td>
-                              <td class="text-right">{{ test.correct | number:'1.0-0' }}</td>
-                              <td class="text-right">{{ test.incorrect | number:'1.0-0' }}</td>
-                              <td class="text-right">{{ test.efficiency | number:'1.2-2' }}&nbsp;%</td>
-                            </tr>
-                          } @else {
-                            <tr class="text-center">
-                              <td colspan="3">Totals</td>
-                              <td class="text-right">{{ test.total | number:'1.0-0' }}</td>
-                              <td class="text-right">{{ test.correct | number:'1.0-0' }}</td>
-                              <td class="text-right">{{ test.incorrect | number:'1.0-0' }}</td>
-                              <td class="text-right">{{ test.efficiency | number:'1.2-2' }}&nbsp;%</td>
-                            </tr>
-                          }
-                        }
                       }
                     </tbody>
                   </table>
                 </div>
               }
-              -->
             </ng-template>
 
             <ng-template pTemplate="footer">

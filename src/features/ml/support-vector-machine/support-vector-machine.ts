@@ -1,9 +1,9 @@
-import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { ConfirmationService, ConfirmEventType, MessageService } from 'primeng/api';
 import { Chart } from 'chart.js';
-import { SVM } from '@kanaries/ml';
+import { Metrics, SVM } from '@kanaries/ml';
 
 // Modules
 import { CoreModule } from '../../../core/modules/core.module';
@@ -17,15 +17,13 @@ import { PdfService } from '../../../core/services/pdf.service';
 
 // Interfaces & Models
 import { ChartHelper } from '../../../core/models/chart/chart-helper';
-import { IIris } from '../../../core/interfaces/ml/iiris';
+import { IAxisTitle } from '../../../core/interfaces/charts/iaxis-title';
+import { ISVMTest } from '../../../core/interfaces/ml/isvm-test';
+import { ITitle } from '../../../core/interfaces/charts/ititle';
 
 // Enums & Constants
 import { APP_TITLE } from '../../../core/constants/general';
-import { CONTROL_EPSILON as EPSILON, CONTROL_RARE_TOKEN_WEIGHT as WEIGHT } from '../../../core/constants/ml/naive-bayes/data';
-import { PETAL_LENGTH, PETAL_WIDTH, SEPAL_LENGTH, SEPAL_WIDTH } from '../../../core/constants/ml/support-vector-machine/data';
-import { ITitle } from '../../../core/interfaces/charts/ititle';
-import { IAxisTitle } from '../../../core/interfaces/charts/iaxis-title';
-
+import { CONTROL_C, CONTROL_GAMMA, CONTROL_MAX_ITERATIONS, PETAL_LENGTH, PETAL_WIDTH, SEPAL_LENGTH, SEPAL_WIDTH } from '../../../core/constants/ml/support-vector-machine/data';
 
 @Component({
   selector: 'app-support-vector-machine',
@@ -34,7 +32,7 @@ import { IAxisTitle } from '../../../core/interfaces/charts/iaxis-title';
   providers: [HttpClient, IrisService, ChartService],
   imports: [CoreModule, PrimeNgModule],
 })
-export class SupportVectorMachine implements OnInit, AfterViewInit {
+export class SupportVectorMachine implements AfterViewInit, OnDestroy, OnInit {
   @ViewChild('sepalLengthCanvas', { static: false }) sepalLengthCanvas!: ElementRef<HTMLCanvasElement>;
   @ViewChild('sepalWidthCanvas', { static: false }) sepalWidthCanvas!: ElementRef<HTMLCanvasElement>;
   @ViewChild('petalLengthCanvas', { static: false }) petalLengthCanvas!: ElementRef<HTMLCanvasElement>;
@@ -50,28 +48,36 @@ export class SupportVectorMachine implements OnInit, AfterViewInit {
   private petalLengthChart!: Chart;
   private petalWidthChart!: Chart;
 
+  c = CONTROL_C;
+  gamma = CONTROL_GAMMA;
+  maxIterations = CONTROL_MAX_ITERATIONS;
+
   controls: {
-    epsilon: FormControl,
-    weight: FormControl
+    c: FormControl,
+    gamma: FormControl,
+    maxIterations: FormControl
   } = {
-    epsilon: new FormControl(EPSILON.value,
-      [Validators.required, Validators.min(EPSILON.min), Validators.max(EPSILON.max), Validators.minLength(EPSILON.minLength), Validators.maxLength(EPSILON.maxLength)]),
-    weight: new FormControl(WEIGHT.value,
-      [Validators.required, Validators.min(WEIGHT.min), Validators.max(WEIGHT.max), Validators.minLength(WEIGHT.minLength), Validators.maxLength(WEIGHT.maxLength)])
+    c: new FormControl(this.c.value, [Validators.required, Validators.min(this.c.min), Validators.max(this.c.max)]),
+    gamma: new FormControl(this.gamma.value, [Validators.required, Validators.min(this.gamma.min), Validators.max(this.gamma.max)]),
+    maxIterations: new FormControl(this.maxIterations.value, [Validators.required, Validators.min(this.maxIterations.min), Validators.max(this.maxIterations.max)])
   };
 
   form = new FormGroup({
     ...this.controls
   });
 
-  epsilon = EPSILON;
-  weight = WEIGHT;
-  svm = new SVM.LinearSVR({ C: 1, epsilon: 0, maxIter: 1000, randomState: 0 });
-
-  randomSample: any = {
-    train: [] as IIris[],
-    test: [] as IIris[]
+  randomSample: {
+    train: { measurements: number[], features: number[][], species: string[], labels: number[] },
+    test: { measurements: number[], features: number[][], species: string[], labels: number[] }
+  } = {
+  train: { measurements: [], features: [], species: [], labels: [] },
+  test: { measurements: [], features: [], species: [], labels: [] }
   };
+
+  svm = new SVM.SVC();
+  predictions: number[] = [];
+  tests: ISVMTest[] = [];
+  matrix: number[][] = [];
 
   constructor(
     public readonly appService: AppService,
@@ -81,12 +87,9 @@ export class SupportVectorMachine implements OnInit, AfterViewInit {
     private readonly messageService: MessageService,
     private readonly pdfService: PdfService
   ) {
-    console.info('contructor()...');
     this.appService.setTitle(APP_TITLE, 'Support Vector Machine');
-    this.appService.process.start('Loading...');
+    this.appService.process.start('Loading data...');
     this.appService.resetFile();
-
-    this.setCharts();
 
     window.addEventListener('resize', () => {
       this.sepalLengthChart.resize();
@@ -97,15 +100,10 @@ export class SupportVectorMachine implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
-    console.info('ngOnInit...');
     this.initialize();
   }
 
   ngAfterViewInit(): void {
-    this.appService.process.start('Loading graphical data...');
-
-    console.info('ngAfeterViewInit...');
-
     this.iris.load('data/iris.csv').subscribe({
       next: () => {
         this.sepalLengthChart = this.chartService.render2D(this.sepalLengthCanvas, this.sepalLength.toObject());
@@ -114,25 +112,25 @@ export class SupportVectorMachine implements OnInit, AfterViewInit {
         this.petalWidthChart = this.chartService.render2D(this.petalWidthCanvas, this.petalWidth.toObject());
       },
       complete: () => {
-        this.sepalLength.setLabels(this.iris.labels.map(label => label.toString()));
+        this.sepalLength.setLabels(this.iris.measurements.map(m => m.toString()));
         this.sepalLength.addDataset(SEPAL_LENGTH.setosa.dataset, this.iris.getSepalLengthBySpecie('Iris-setosa'));
         this.sepalLength.addDataset(SEPAL_LENGTH.versicolor.dataset, this.iris.getSepalLengthBySpecie('Iris-versicolor'));
         this.sepalLength.addDataset(SEPAL_LENGTH.virginica.dataset, this.iris.getSepalLengthBySpecie('Iris-virginica'));
         this.sepalLengthChart.update();
 
-        this.sepalWidth.setLabels(this.iris.labels.map(label => label.toString()));
+        this.sepalWidth.setLabels(this.iris.measurements.map(m => m.toString()));
         this.sepalWidth.addDataset(SEPAL_WIDTH.setosa.dataset, this.iris.getSepalWidthBySpecie('Iris-setosa'));
         this.sepalWidth.addDataset(SEPAL_WIDTH.versicolor.dataset, this.iris.getSepalWidthBySpecie('Iris-versicolor'));
         this.sepalWidth.addDataset(SEPAL_WIDTH.virginica.dataset, this.iris.getSepalWidthBySpecie('Iris-virginica'));
         this.sepalWidthChart.update();
 
-        this.petalLength.setLabels(this.iris.labels.map(label => label.toString()));
+        this.petalLength.setLabels(this.iris.measurements.map(m => m.toString()));
         this.petalLength.addDataset(PETAL_LENGTH.setosa.dataset, this.iris.getPetalLengthBySpecie('Iris-setosa'));
         this.petalLength.addDataset(PETAL_LENGTH.versicolor.dataset, this.iris.getPetalLengthBySpecie('Iris-versicolor'));
         this.petalLength.addDataset(PETAL_LENGTH.virginica.dataset, this.iris.getPetalLengthBySpecie('Iris-virginica'));
         this.petalLengthChart.update();
 
-        this.petalWidth.setLabels(this.iris.labels.map(label => label.toString()));
+        this.petalWidth.setLabels(this.iris.measurements.map(m => m.toString()));
         this.petalWidth.addDataset(PETAL_WIDTH.setosa.dataset, this.iris.getPetalWidthBySpecie('Iris-setosa'));
         this.petalWidth.addDataset(PETAL_WIDTH.versicolor.dataset, this.iris.getPetalWidthBySpecie('Iris-versicolor'));
         this.petalWidth.addDataset(PETAL_WIDTH.virginica.dataset, this.iris.getPetalWidthBySpecie('Iris-virginica'));
@@ -144,6 +142,13 @@ export class SupportVectorMachine implements OnInit, AfterViewInit {
     });
   }
 
+  ngOnDestroy(): void {
+    this.sepalLengthChart.destroy();
+    this.sepalWidthChart.destroy();
+    this.petalLengthChart.destroy();
+    this.petalWidthChart.destroy();
+  }
+
   get fileURL(): string {
     return this.appService.fileURL;
   }
@@ -152,13 +157,35 @@ export class SupportVectorMachine implements OnInit, AfterViewInit {
     return this.appService.fileSize;
   }
 
-  onPredict(isNeutral: boolean = false): void {
-    const pred = this.svm.predict(this.iris.getNumber4D(25));
+  get uniqueSpecies(): string[] {
+    return this.iris.uniqueSpecies;
+  }
+
+  onPredict(): void {
+    this.predictions = this.svm.predict(this.randomSample.test.features);
+
+    this.predictions.forEach((p, i) => {
+      let adjustment = Math.round(p);
+      this.tests.push({
+        measurement: this.randomSample.test.measurements[i],
+        species: this.randomSample.test.species[i],
+        label: this.randomSample.test.labels[i],
+        prediction: p,
+        adjustment,
+        isTrue: adjustment === this.randomSample.test.labels[i]
+      });
+    });
+
+    this.matrix = Metrics.confusionMatrix(
+        this.tests.map(t => t.adjustment),
+        this.tests.map(t => t.label),
+        this.iris.uniqueSpecies.map((_, i) => i)
+      );
 
     this.appService.createDataJson({
-      prediction: pred,
-      real: this.iris.getSpecies(25),
-      predicted: this.iris.getSpecies(Math.round(pred[0]))
+      tests: this.tests,
+      accuracy: this.tests.filter(t => t.isTrue).length / this.tests.length,
+      matrix: this.matrix
     });
   };
 
@@ -178,7 +205,7 @@ export class SupportVectorMachine implements OnInit, AfterViewInit {
     });
   };
 
-  onSave(): void {
+  onSave = (): void => {
     this.confirmationService.confirm({
       message: '¿Estás seguro de proceder?',
       header: 'Confirmación',
@@ -198,17 +225,34 @@ export class SupportVectorMachine implements OnInit, AfterViewInit {
         }
       }
     });
-  }
+  };
 
-  onTrain(): void {
+  onTrain = (): void => {
     this.appService.process.start('Training...');
-    this.svm.fit(this.iris.numbers4D, this.iris.labels);
-    this.appService.process.stop();
+
+    this.appService.resetFile();
+
+    this.svm = new SVM.SVC({
+      C: this.controls.c.value,
+      kernel: 'rbf',
+      gamma: this.controls.gamma.value,
+      maxIter: this.controls.maxIterations.value
+    });
+
+    this.predictions = [];
+    this.tests = [];
+    this.matrix = [];
+
+    setTimeout(() => {
+      this.svm.fit(this.randomSample.train.features, this.randomSample.train.labels);
+      this.appService.process.stop();
+      this.messageService.add({ severity: 'success', summary: 'Info', detail: 'Training finished' })
+    }, 1000);
   }
 
   // Private Methods
   private readonly initialize = (): void => {
-    // TODO
+    this.setCharts();
   }
 
   private readonly setCharts = (): void => {
