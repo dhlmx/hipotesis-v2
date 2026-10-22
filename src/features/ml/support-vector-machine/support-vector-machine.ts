@@ -165,6 +165,7 @@ export class SupportVectorMachine implements AfterViewInit, OnDestroy, OnInit {
     this.predictions = this.svm.predict(this.randomSample.test.features);
 
     this.predictions.forEach((p, i) => {
+      console.info('Prediction', p);
       let adjustment = Math.round(p);
       this.tests.push({
         measurement: this.randomSample.test.measurements[i],
@@ -172,7 +173,7 @@ export class SupportVectorMachine implements AfterViewInit, OnDestroy, OnInit {
         label: this.randomSample.test.labels[i],
         prediction: p,
         adjustment,
-        isTrue: adjustment === this.randomSample.test.labels[i]
+        isTrue: p === this.randomSample.test.labels[i] || adjustment === this.randomSample.test.labels[i]
       });
     });
 

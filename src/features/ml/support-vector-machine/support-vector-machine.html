@@ -216,7 +216,7 @@
                   <table>
                     <thead>
                       <tr>
-                        <th colspan="6" class="text-lg">
+                        <th colspan="5" class="text-lg">
                           SVM Predictions
                         </th>
                       </tr>
@@ -224,19 +224,16 @@
                         <td class="width-15">
                           Measurement
                         </td>
-                        <td class="width-20">
+                        <td class="width-25">
                           Species
                         </td>
-                        <td class="width-10">
+                        <td class="width-20">
                           Label
                         </td>
-                        <td class="width-25">
+                        <td class="width-20">
                           Prediction
                         </td>
-                        <td class="width-15">
-                          Adjustment
-                        </td>
-                        <td class="width-15">
+                        <td class="width-20">
                           Is Correct?
                         </td>
                       </tr>
@@ -248,15 +245,14 @@
                           <td>{{ test.measurement }}</td>
                           <td>{{ test.species }}</td>
                           <td>{{ test.label | number:'1.0-0' }}</td>
-                          <td class="text-right">{{ test.prediction | number:'1.16-16' }}</td>
-                          <td>{{ test.adjustment | number:'1.0-0' }}</td>
+                          <td class="text-right">{{ test.prediction | number:'1.0-0' }}</td>
                           <td>{{ test.isTrue ? 'Yes' : 'No' }}</td>
                         </tr>
                       }
                     </tbody>
                     <tfoot>
                       <tr class="text-center text-lg">
-                        <td colspan="5" class="text-right">
+                        <td colspan="4" class="text-right">
                           Accuracy&nbsp;
                         </td>
                         <td>
