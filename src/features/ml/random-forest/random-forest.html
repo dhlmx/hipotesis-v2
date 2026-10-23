@@ -1,0 +1,352 @@
+<p-panel>
+  <ng-template pTemplate="header">
+    <div>
+      <span class="pi pi-home"></span>&nbsp;Inicio&nbsp;&mdash;&rsaquo;&nbsp;
+      <span class="pi pi-microchip-ai"></span>&nbsp;Machine Learning&nbsp;&mdash;&rsaquo;&nbsp;
+      <span class="pi pi-share-alt"></span>&nbsp;Random Forest
+    </div>
+  </ng-template>
+
+  <ng-template pTemplate="icons">
+    <div>
+      <button type="button" pButton title="Results"
+        class="p-button-outlined p-button-success">
+        <em class="pi pi-download"></em>
+        <a [href]="fileURL" download="resultados.json" aria-label="Download results">
+          {{fileSize}}
+        </a>
+      </button>
+      <button type="button" pButton (click)="onPrint()" title="Print" class="p-button-outlined p-button-success">
+        <em class="pi pi-print"></em>
+      </button>
+    </div>
+  </ng-template>
+
+  <ng-template  pTemplate="body">
+    <p-divider></p-divider>
+    <div id="htmlContent">
+      <!-- Problem -->
+      <div class="grid grid-cols-1 md:grid-cols-6">
+        <div></div>
+        <div class="md:col-span-4">
+          <p-card>
+            <ng-template pTemplate="header">
+              <p class="font-semibold text-2xl"><span class="pi pi-arrows-alt"></span>&nbsp;Planteamiento</p>
+              <p-divider></p-divider>
+            </ng-template>
+
+            <ng-template pTemplate="body">
+              <p>El algoritmo Random Forest, RF, es un clasificador avanzado, robusto y muy versátil, sobre todo cuando no se trata de casos con un extenso número de dimensiones o features. Dada su complejidad matemática, debe considerarse que para features numerosos o cantidades enormes de datos, el entrenamiento puede ser muy costoso en términos de tiempo y procesamiento computacional.</p>
+              <br />
+              <p>Por otro lado, tiene la virtud de poder manejar distintos tipos de dimensiones o features, es decir datos numéricos y de caracteres. Además, suele ser un algoritmo resistente al ruido y al sobreajuste u overfitting. Por lo anterior, el algoritmo ayuda a reducir la dimensionalidad de los datos, es decir a seleccionar mejor las características, dimensiones o features más relevantes.</p>
+              <br />
+              <p>Es un clasificador de tipo "ensemble", por medio de conjuntos de árboles de decisiones que el algoritmo va construyendo automáticamente. Todo esto se basa a su vez en conceptos como ganancia de información, entropía y una métrica llamada Impureza de Gini.</p>
+              <br />
+              <p>En resumen, el clasificador Random Forest combina muchos árboles de decisión y predice por mayoría de votos, obtenidos a través de los cálculos explicados anteriormente, de manera muy breve y algo simplificada.</p>
+            </ng-template>
+
+            <ng-template pTemplate="footer">
+              <p-divider></p-divider>
+            </ng-template>
+          </p-card>
+        </div>
+        <div></div>
+      </div>
+
+      <!-- Data -->
+      <div class="grid grid-cols-1 md:grid-cols-6">
+        <div></div>
+        <div class="md:col-span-4">
+          <p-card>
+            <ng-template pTemplate="header">
+              <p class="font-semibold text-2xl"><span class="pi pi-copy"></span>&nbsp;Datos</p>
+              <p-divider></p-divider>
+            </ng-template>
+
+            <ng-template pTemplate="body">
+              <div>
+                <p>Los datos de entrada fueron obtenidos de nuestra fuente de estudio y referencia. En este caso se trata de una serie de mediciones de sepáculos y pétalos de la flor de iris, realizados alrededor de 1936 por el botánico Edgar Anderson y el biólogo y estadístico Ronald Fisher.</p>
+                <br />
+                <p>En total, se trata de 600 mediciones, 150 por cada dimensión o característica medida: longitud y ancho de los sepáculos y pétalos de la flor de iris. A su vez, cada conjunto de 150 mediciones se corresponden con las tres especis de iris existentes: Setosa, Versicolor y Virginica.</p>
+                <br />
+                <p>Por consiguiente, cada especie de iris se encuentra representada por 50 mediciones en centímedtros de la longitud y el ancho de sus sepáculos y pétalos.</p>
+                <br />
+                <p>Hemos definido cada dimensión, característica o "feature" de la siguiente manera: 1D, longitud de sepáculo; 2D, ancho de sepáculo; 3D, longitud de pétalo; y 4D, ancho de pétalo.</p>
+                <br />
+                <p>El objetivo es predecir la especie de iris a partir de las mediciones de la longitud y ancho de sus sepáculos y pétalos.</p>
+              </div>
+              <br />
+
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <canvas #sepalLengthCanvas></canvas>
+                </div>
+                <div>
+                  <canvas #sepalWidthCanvas></canvas>
+                </div>
+              </div>
+
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <canvas #petalLengthCanvas></canvas>
+                </div>
+                <div>
+                  <canvas #petalWidthCanvas></canvas>
+                </div>
+              </div>
+            </ng-template>
+
+            <ng-template pTemplate="footer">
+              <p-divider></p-divider>
+            </ng-template>
+          </p-card>
+        </div>
+        <div></div>
+      </div>
+
+      <!-- Solution -->
+      <div class="grid grid-cols-1 md:grid-cols-6">
+        <div></div>
+        <div class="md:col-span-4">
+          <p-card>
+            <ng-template pTemplate="header">
+              <p class="font-semibold text-2xl"><span class="pi pi-check-circle"></span>&nbsp;Solución</p>
+              <p-divider></p-divider>
+            </ng-template>
+
+            <ng-template pTemplate="body">
+              <div>
+                <p>La aplicación realizará la predicción de una muestra aleatoria de quince mediciones tomadas de los datos de la flor de iris. El resto de los datos serán utilizados para el entrenamiento del algoritmo.</p>
+                <br />
+                <p>El entrenamiento del modelo se realiza suministrando las 4 dimensiones mencionadas en el planteamiento del problema (1D, 2D, 3D y 4D) junto a la etiqueta de la especie correspondiente.</p>
+                <br />
+                <p>Finalmente, realizamos una serie de cálculos para medir la eficiencia alcanzada por el algoritmo.</p>
+                <br />
+              </div>
+
+              <!-- Random Sample -->
+              <div class="grid grid-cols-1">
+                <table>
+                  <thead>
+                    <tr>
+                      <th colspan="7" class="text-lg">
+                        Random Test Data
+                      </th>
+                    </tr>
+                    <tr class="text-center">
+                      <td class="width-10">
+                        Measurement
+                      </td>
+                      <td class="width-15">
+                        Sepal Length [cm]
+                      </td>
+                      <td class="width-15">
+                        Sepal Width [cm]
+                      </td>
+                      <td class="width-15">
+                        Petal Length [cm]
+                      </td>
+                      <td class="width-15">
+                        Petal Width [cm]
+                      </td>
+                      <td class="width-15">
+                        Species
+                      </td>
+                      <td class="width-15">
+                        Label
+                      </td>
+                    </tr>
+                  </thead>
+                  <tbody>
+                  <!-- Measurements -->
+                    @for (sample of randomSample.test.features; track $index) {
+                      <tr class="text-center">
+                        <td>{{ randomSample.test.measurements[$index] }}</td>
+                        <td class="text-right">{{ sample[0] | number:'1.2-2' }}</td>
+                        <td class="text-right">{{ sample[1] | number:'1.2-2' }}</td>
+                        <td class="text-right">{{ sample[2] | number:'1.2-2' }}</td>
+                        <td class="text-right">{{ sample[3] | number:'1.2-2' }}</td>
+                        <td>{{ randomSample.test.species[$index] }}</td>
+                        <td>{{ randomSample.test.labels[$index] }}</td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              </div>
+
+              <br />
+
+              <form [formGroup]="form">
+                <p-fieldset legend="Random Forest Classifier">
+                  <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div>
+                      <label pLabel for="maxFeatures">Maximum Features</label><br />
+                      <p-select inputId="maxFeatures" [formControl]="controls.maxFeatures" [options]="maxFeaturesOptions"
+                        optionLabel="label" optionValue="value" placeholder="Select an option" class="w-full" />
+                    </div>
+                    <div>
+                      <label pLabel for="estimators">Estimators</label><br />
+                      <p-inputnumber inputId="estimators" [formControl]="controls.estimators" mode="decimal" [showButtons]="true"
+                        [min]="estimators.min" [max]="estimators.max" [step]="estimators.step" [minFractionDigits]="0" [maxFractionDigits]="0" fluid />
+                    </div>
+                    <div>
+                      <label pLabel for="randomState">Random State</label><br />
+                      <p-inputnumber inputId="randomState" [formControl]="controls.randomState" mode="decimal" [showButtons]="true"
+                        [min]="randomState.min" [max]="randomState.max" [step]="randomState.step" [maxFractionDigits]="0" fluid />
+                    </div>
+                    <div>
+                      <br />
+                      <button pButton type="button" label="Train" title="Train" [disabled]="form.invalid" (click)="onTrain()" class="p-button-outlined p-button-info w-full"></button>
+                    </div>
+                  </div>
+                  <div class="grid grid-cols-1 gap-4">
+                    <div>
+                      <br />
+                      <button pButton type="button" label="Predict" title="Predict" [disabled]="form.invalid" (click)="onPredict()" class="p-button-outlined p-button-info w-full"></button>
+                    </div>
+                  </div>
+                </p-fieldset>
+              </form>
+
+              <br />
+
+              <!-- SVM Predictions -->
+              @if (predictions.length > 0) {
+                <div class="grid grid-cols-1">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th colspan="5" class="text-lg">
+                          SVM Predictions
+                        </th>
+                      </tr>
+                      <tr class="text-center">
+                        <td class="width-15">
+                          Measurement
+                        </td>
+                        <td class="width-25">
+                          Species
+                        </td>
+                        <td class="width-20">
+                          Label
+                        </td>
+                        <td class="width-20">
+                          Prediction
+                        </td>
+                        <td class="width-20">
+                          Is Correct?
+                        </td>
+                      </tr>
+                    </thead>
+                    <tbody>
+                    <!-- Comparison -->
+                      @for (test of tests; track $index) {
+                        <tr class="text-center">
+                          <td>{{ test.measurement }}</td>
+                          <td>{{ test.species }}</td>
+                          <td>{{ test.label | number:'1.0-0' }}</td>
+                          <td class="text-right">{{ test.prediction | number:'1.0-0' }}</td>
+                          <td>{{ test.isTrue ? 'Yes' : 'No' }}</td>
+                        </tr>
+                      }
+                    </tbody>
+                    <tfoot>
+                      <tr class="text-center text-lg">
+                        <td colspan="4" class="text-right">
+                          Accuracy&nbsp;
+                        </td>
+                        <td>
+                          {{tests.filter(t => t.isTrue).length / tests.length * 100 | number:'1.2-2' }}&nbsp;%
+                        </td>
+                      </tr>
+                    </tfoot>
+                  </table>
+                </div>
+
+                <br />
+
+                <div class="grid grid-cols-1">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th colspan="4" class="text-lg">
+                          Confusion Matrix
+                        </th>
+                      </tr>
+                      <tr class="text-center">
+                        <td class="width-25">&nbsp;</td>
+                        <td class="width-25">
+                          Predicted&nbsp;{{ uniqueSpecies[0] }}
+                        </td>
+                        <td class="width-25">
+                          Predicted&nbsp;{{ uniqueSpecies[1] }}
+                        </td>
+                        <td class="width-25">
+                          Predicted&nbsp;{{ uniqueSpecies[2] }}
+                        </td>
+                      </tr>
+                    </thead>
+                    <tbody>
+                    <!-- Confusion Matrix -->
+                      @for (confusion of matrix; track $index) {
+                        <tr class="text-center">
+                          <td>Actual&nbsp;{{ uniqueSpecies[$index] }}</td>
+                          <td>{{ confusion[0] | number:'1.0-0' }}</td>
+                          <td>{{ confusion[1] | number:'1.0-0' }}</td>
+                          <td>{{ confusion[2] | number:'1.0-0' }}</td>
+                        </tr>
+                      }
+                    </tbody>
+                  </table>
+                </div>
+              }
+            </ng-template>
+
+            <ng-template pTemplate="footer">
+              <p-divider></p-divider>
+            </ng-template>
+          </p-card>
+        </div>
+        <div></div>
+      </div>
+    </div>
+  </ng-template>
+
+  <ng-template pTemplate="footer">
+    <div class="grid grid-cols-1 md:grid-cols-6">
+      <div></div>
+      <div class="md:col-span-4">
+        <p-card>
+          <ng-template pTemplate="header">
+            <p class="font-semibold text-2xl"><span class="pi pi-paperclip"></span>&nbsp;Referencias</p>
+            <p-divider></p-divider>
+          </ng-template>
+
+          <ng-template pTemplate="body">
+            <div>
+              <p><span class="text-italic">Random Forest.</span>
+                <br />Kaber, Burak,&nbsp;<span class="text-italic">Hands-On Machine Learning with JavaScript.</span>
+                <br />Pps: 165-171. Packt Publishing Ltd. Birmingham, UK. 2018.
+              </p>
+            </div>
+          </ng-template>
+
+          <ng-template pTemplate="footer">
+            <p-divider></p-divider>
+          </ng-template>
+        </p-card>
+      </div>
+      <div></div>
+    </div>
+  </ng-template>
+
+  <p-confirmDialog [style]="{width: '50vw'}" [baseZIndex]="10000" rejectButtonStyleClass="p-button-text"></p-confirmDialog>
+  <p-toast></p-toast>
+</p-panel>
+
+<app-message-modal
+  [visible]="appService.process.isInProcess()"
+  [message]="appService.process.message()"
+  [advance]="appService.process.advance()"
+  [steps]="appService.process.steps()">
+</app-message-modal>

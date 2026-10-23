@@ -5,6 +5,7 @@ import { KMeans } from './k-means/k-means';
 import { KNearestNeighbor } from './k-nearest-neighbor/k-nearest-neighbor';
 import { NaiveBayes } from './naive-bayes/naive-bayes';
 import { PolynomialRegression } from './polynomal-regression/polynomial-regression';
+import { RandomForest } from './random-forest/random-forest';
 import { SupportVectorMachine } from './support-vector-machine/support-vector-machine';
 
 const routes: Routes = [
@@ -13,6 +14,7 @@ const routes: Routes = [
   { path: 'knn', component: KNearestNeighbor },
   { path: 'nb', component: NaiveBayes },
   { path: 'pr', component: PolynomialRegression },
+  { path: 'rf', component: RandomForest },
   { path: 'svm', component: SupportVectorMachine }
 ];
 

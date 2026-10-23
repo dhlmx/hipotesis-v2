@@ -68,6 +68,11 @@ export class MenuService {
               routerLink: '/ml/pr'
             },
             {
+              icon: PrimeIcons.SHARE_ALT,
+              label: 'Random Forest',
+              routerLink: '/ml/rf'
+            },
+            {
               icon: PrimeIcons.CHART_SCATTER,
               label: 'Support Vector Machine',
               routerLink: '/ml/svm'

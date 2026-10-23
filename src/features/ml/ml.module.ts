@@ -9,6 +9,7 @@ import { KNearestNeighbor } from './k-nearest-neighbor/k-nearest-neighbor';
 import { NaiveBayes } from './naive-bayes/naive-bayes';
 import { PolynomialRegression } from './polynomal-regression/polynomial-regression';
 import { SupportVectorMachine } from './support-vector-machine/support-vector-machine';
+import { RandomForest } from './random-forest/random-forest';
 
 @NgModule({
   declarations: [
@@ -19,6 +20,7 @@ import { SupportVectorMachine } from './support-vector-machine/support-vector-ma
     NaiveBayes,
     NgOptimizedImage,
     PolynomialRegression,
+    RandomForest,
     SupportVectorMachine,
     MLRoutingModule,
   ],providers: [
