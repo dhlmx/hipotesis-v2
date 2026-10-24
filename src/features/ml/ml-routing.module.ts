@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
+import { AssociationRules } from './association-rule/association-rules';
 import { KMeans } from './k-means/k-means';
 import { KNearestNeighbor } from './k-nearest-neighbor/k-nearest-neighbor';
 import { NaiveBayes } from './naive-bayes/naive-bayes';
@@ -10,6 +11,7 @@ import { SupportVectorMachine } from './support-vector-machine/support-vector-ma
 
 const routes: Routes = [
   { path: '', component: KMeans },
+  { path: 'ar', component: AssociationRules },
   { path: 'km', component: KMeans },
   { path: 'knn', component: KNearestNeighbor },
   { path: 'nb', component: NaiveBayes },

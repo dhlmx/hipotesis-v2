@@ -7,6 +7,7 @@ import { randomSeries } from '../utilities/random';
 
 // Models & Interfaces & Types
 import { IIRIS, IIris } from '../interfaces/ml/iiris';
+import { IPointXY } from '../interfaces/charts/ipoint-xy';
 type IrisSpecie = 'Iris-setosa' | 'Iris-versicolor' | 'Iris-virginica';
 
 
@@ -105,17 +106,35 @@ export class IrisService {
 
   getSpecies = (index: number): string => this._iris[index].species;
 
-  getPetalLengthBySpecie = (specie: IrisSpecie): number[] =>
-    this._iris.filter((iris: IIris) => iris.species === specie).map((iris: IIris) => iris.petalLengthCm);
+  getPetalLengthBySpecies = (species: IrisSpecie): number[] =>
+    this._iris.filter((iris: IIris) => iris.species === species).map((iris: IIris) => iris.petalLengthCm);
 
-  getPetalWidthBySpecie = (specie: IrisSpecie): number[] =>
-    this._iris.filter((iris: IIris) => iris.species === specie).map((iris: IIris) => iris.petalWidthCm);
+  getPetalLengthVsWidthBySpecies = (species: IrisSpecie): IPointXY[] =>
+    this._iris.filter((iris: IIris) => iris.species === species).map((iris: IIris) => ({ x: iris.petalLengthCm, y: iris.petalWidthCm }));
 
-  getSepalLengthBySpecie = (specie: IrisSpecie): number[] =>
-    this._iris.filter((iris: IIris) => iris.species === specie).map((iris: IIris) => iris.sepalLengthCm);
+  getPetalWidthBySpecies = (species: IrisSpecie): number[] =>
+    this._iris.filter((iris: IIris) => iris.species === species).map((iris: IIris) => iris.petalWidthCm);
 
-  getSepalWidthBySpecie = (specie: IrisSpecie): number[] =>
-    this._iris.filter((iris: IIris) => iris.species === specie).map((iris: IIris) => iris.sepalWidthCm);
+  getSepalLengthBySpecies = (species: IrisSpecie): number[] =>
+    this._iris.filter((iris: IIris) => iris.species === species).map((iris: IIris) => iris.sepalLengthCm);
+
+  getSepalLengthVsPetalLengthBySpecies = (species: IrisSpecie): IPointXY[] =>
+    this._iris.filter((iris: IIris) => iris.species === species).map((iris: IIris) => ({ x: iris.sepalLengthCm, y: iris.petalLengthCm }));
+
+  getSepalLengthVsPetalWidthBySpecies = (species: IrisSpecie): IPointXY[] =>
+    this._iris.filter((iris: IIris) => iris.species === species).map((iris: IIris) => ({ x: iris.sepalLengthCm, y: iris.petalWidthCm }));
+
+  getSepalLengthVsWidthBySpecies = (species: IrisSpecie): IPointXY[] =>
+    this._iris.filter((iris: IIris) => iris.species === species).map((iris: IIris) => ({ x: iris.sepalLengthCm, y: iris.sepalWidthCm }));
+
+  getSepalWidthBySpecies = (species: IrisSpecie): number[] =>
+    this._iris.filter((iris: IIris) => iris.species === species).map((iris: IIris) => iris.sepalWidthCm);
+
+  getSepalWidthVsPetalLengthBySpecies = (species: IrisSpecie): IPointXY[] =>
+    this._iris.filter((iris: IIris) => iris.species === species).map((iris: IIris) => ({ x: iris.sepalWidthCm, y: iris.petalLengthCm }));
+
+  getSepalWidthVsPetalWidthBySpecies = (species: IrisSpecie): IPointXY[] =>
+    this._iris.filter((iris: IIris) => iris.species === species).map((iris: IIris) => ({ x: iris.sepalWidthCm, y: iris.petalWidthCm }));
 
   load = (path: string): Observable<void> => {
     return this.csv.loadLineByLine(path).pipe(

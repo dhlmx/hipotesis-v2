@@ -4,6 +4,7 @@ import { NgxImageCompressService } from 'ngx-image-compress';
 import { MLRoutingModule } from './ml-routing.module';
 
 // Components
+import { AssociationRules } from './association-rule/association-rules';
 import { KMeans } from './k-means/k-means';
 import { KNearestNeighbor } from './k-nearest-neighbor/k-nearest-neighbor';
 import { NaiveBayes } from './naive-bayes/naive-bayes';
@@ -15,6 +16,7 @@ import { RandomForest } from './random-forest/random-forest';
   declarations: [
   ],
   imports: [
+    AssociationRules,
     KMeans,
     KNearestNeighbor,
     NaiveBayes,

@@ -51,7 +51,12 @@ export class MenuService {
         {
           icon: PrimeIcons.EYE,
           label: 'Supervised',
-          items: [
+          items: [/*
+            {
+              icon: PrimeIcons.ARROW_DOWN_LEFT_AND_ARROW_UP_RIGHT_TO_CENTER,
+              label: 'Association Rules',
+              routerLink: '/ml/ar'
+            },*/
             {
               icon: PrimeIcons.CHART_SCATTER,
               label: 'k-Nearest Neighbor',
